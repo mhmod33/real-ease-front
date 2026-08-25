@@ -1,9 +1,8 @@
 export type UserType =
-  | 'مستشار عقاري'
+  | 'وكيل عقاري مستقل'
   | 'وكيل عقاري'
   | 'شركة عقارية'
-  | 'وكيل تجاري'
-  | 'مدير عقاري';
+  | 'وكيل تجاري';
 
 export interface UserProperty {
   id: string;

@@ -1,7 +1,7 @@
 import { UserProperty } from './user.model';
 
 export type AgentType =
-  | 'وكيل عقاري حصري'
+  | 'وكيل عقاري'
   | 'وكيل عقاري مستقل'
   | 'وكيل تجاري'
   | 'شركة عقارية';

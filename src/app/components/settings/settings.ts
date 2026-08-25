@@ -45,7 +45,7 @@ export class Settings implements OnInit {
   infoModalOpen = false;
   infoModalMessage = '';
 
-  userTypes = ['وكيل عقاري', 'مستشار عقاري', 'شركة عقارية', 'وكيل تجاري', 'مدير عقاري'];
+  userTypes = ['وكيل عقاري', 'وكيل عقاري مستقل', 'شركة عقارية', 'وكيل تجاري'];
 
   constructor(private userService: UserService, private router: Router) {}
 

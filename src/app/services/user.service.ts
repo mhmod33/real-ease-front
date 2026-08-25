@@ -10,7 +10,7 @@ export class UserService {
     {
       id: '1',
       name: 'اسلام ابو مصعب',
-      type: 'مستشار عقاري',
+      type: 'وكيل عقاري مستقل',
       email: 'me653830@gmail.com',
       image: 'images/image 7.png',
       bannerImage: 'images/image-1.png',
@@ -119,7 +119,7 @@ export class UserService {
     {
       id: '4',
       name: 'ولاء السالمي',
-      type: 'وكيل تجاري',
+      type: 'وكيل عقاري',
       email: 'me653830@gmail.com',
       image: 'images/image 5.png',
       bannerImage: 'images/image-3.png',
@@ -146,7 +146,7 @@ export class UserService {
     {
       id: '5',
       name: 'عبد العزيز النصر',
-      type: 'مدير عقاري',
+      type: 'وكيل عقاري',
       email: 'me652@gmail.com',
       image: 'images/image 7.png',
       bannerImage: 'images/image-1.png',

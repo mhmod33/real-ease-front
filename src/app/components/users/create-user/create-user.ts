@@ -26,11 +26,10 @@ export class CreateUser {
 
   userTypes: UserType[] = [
     'وكيل عقاري',
-    'مستشار عقاري',
+    'وكيل عقاري مستقل',
     'شركة عقارية',
     'وكيل تجاري',
-    'مدير عقاري',
-  ];
+    ];
 
   constructor(
     private userService: UserService,

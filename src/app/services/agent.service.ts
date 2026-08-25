@@ -10,7 +10,7 @@ export class AgentService {
     {
       id: '1',
       name: 'مصعب المنصوري',
-      type: 'وكيل عقاري حصري',
+      type: 'وكيل عقاري',
       email: 'me653830@gmail.com',
       image: 'images/image-profile.png',
       bannerImage: 'images/Frame 1000002898.png',
@@ -168,7 +168,7 @@ export class AgentService {
     {
       id: '5',
       name: 'عبد العزيز النصر',
-      type: 'وكيل عقاري حصري',
+      type: 'وكيل عقاري',
       email: 'me652gmail.com',
       image: 'images/image 7.png',
       bannerImage: 'images/Frame 1000002898.png',

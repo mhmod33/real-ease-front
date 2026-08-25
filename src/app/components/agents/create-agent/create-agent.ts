@@ -26,7 +26,7 @@ export class CreateAgent {
 
   agentTypes: AgentType[] = [
     'وكيل عقاري مستقل',
-    'وكيل عقاري حصري',
+    'وكيل عقاري',
     'وكيل تجاري',
     'شركة عقارية',
   ];
