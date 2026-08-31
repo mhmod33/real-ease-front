@@ -200,6 +200,34 @@ h1 {
   background: #0a5a9e;
 }
 
+/* ── OR divider ── */
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 18px 0 14px;
+  color: #b0b9c8;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: #e2e7f0;
+}
+
+/* ── Google button wrapper ── */
+#google-btn {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
 /* ── Left: image panel ── */
 .login-visual-panel {
   flex: 0 0 40%;
