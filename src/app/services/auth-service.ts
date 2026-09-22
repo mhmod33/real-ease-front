@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { Observable, tap } from 'rxjs';
 import { Router } from '@angular/router';
 import {environment } from '../../environments/environment';
@@ -12,6 +12,9 @@ import { User } from '../models/user.model';
 export class AuthService {
   private apiUrl=environment.apiUrl;
   private tokenKey='token';
+  private userKey='auth-user';
+
+  currentUser=signal<User|null>(this.getStoredUser());
   constructor(
     private http:HttpClient,
     private router:Router
@@ -30,12 +33,34 @@ export class AuthService {
   getToken():string|null{
     return localStorage.getItem(this.tokenKey);
   }
+  getCurrentUser(): Observable<User> {
+    return this.http.get<User>(`${this.apiUrl}user`);
+  }
+  
+  private getStoredUser():User |null{
+    const stored=localStorage.getItem(this.userKey);
+    return stored ? JSON.parse(stored) :null; 
+  }
+  private setSession(response:AuthResponse){
+    localStorage.setItem(this.tokenKey,response.token);
+    localStorage.setItem(this.userKey, JSON.stringify(response.user));
+    this.currentUser.set(response.user);
+  }
+  private clearSession(response:AuthResponse){
+    localStorage.removeItem(this.tokenKey);
+    localStorage.removeItem(this.userKey);
+    this.currentUser.set(null);
+    this.router.navigate(['/login']);
+  }
+
+  isAuthinticated():boolean{
+    return !!this.getToken();
+  }
+  isAdmin():boolean{
+    return this.currentUser()?.role==='admin';
+  }
   logout():void{
     localStorage.removeItem(this.tokenKey);
     this.router.navigate(['/login']);
   }
-  getCurrentUser(): Observable<User> {
-    return this.http.get<User>(`${this.apiUrl}user`);
-  }
-
 }

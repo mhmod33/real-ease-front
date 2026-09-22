@@ -1,17 +1,35 @@
 import { Component, signal, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AuthService } from '../../../services/auth-service';
+import { Router } from '@angular/router';
 
 declare const google: any;
 
 @Component({
   selector: 'app-login',
-  imports: [CommonModule],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './login.html',
   styleUrl: './login.css',
 })
 export class Login implements AfterViewInit {
   showPassword = signal(false);
+  errorMessage=signal<string | null>(null);
+  loginForm:FormGroup;
+  
+  constructor(
+    private fb:FormBuilder,
+    private authService:AuthService,
+    private router:Router,
+  ){
 
+    this.loginForm=this.fb.group(
+      {
+        email:['',Validators.required,Validators.email],
+        password:['',Validators.required,Validators.minLength(6)]
+      }
+    );
+  }
   togglePassword(): void {
     this.showPassword.update(v => !v);
   }
@@ -28,6 +46,7 @@ export class Login implements AfterViewInit {
     );
   }
 
+  onSubmit():void{}
   handleGoogleResponse(response: any): void {
     const idToken = response.credential;
     console.log('Google ID Token:', idToken);

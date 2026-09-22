@@ -30,6 +30,7 @@ export interface User {
   propertiesCount: number;
   location: string;
   phone?: string;
+  role:string;
   whatsapp?: string;
   website?: string;
   age?: number;
