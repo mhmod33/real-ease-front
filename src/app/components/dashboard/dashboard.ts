@@ -28,7 +28,7 @@ export class Dashboard {
     (Highcharts as any).mapChart('container', {
         chart: {
           map: topology,
-          backgroundColor: '#EEF2F7'  // الخلفية الزرقاء الفاتحة من الصورة
+          backgroundColor: '#EEF2F7' 
       },
 
         title: {
@@ -141,7 +141,7 @@ export class Dashboard {
 
   yAxis: {
     title: { text: '' },
-    opposite: true,          // ← الأرقام على اليمين
+    opposite: true,       
     gridLineDashStyle: 'Dot',
     gridLineColor: '#cccccc',
     labels: {
@@ -177,12 +177,12 @@ export class Dashboard {
     {
       name: 'الايرادات',
       color: '#E8923A',
-      data: [15, 105, 30, 130, 70, 80, 100, 160, 90, 100, 95,115]  // ← آخر رقم (يناير) بقى 5
+      data: [15, 105, 30, 130, 70, 80, 100, 160, 90, 100, 95,115]
     },
     {
       name: 'اجمالي المبيعات',
       color: '#1B3A6B',
-      data: [7, 30, 90, 55, 80, 80, 90, 75, 35, 75, 60, 50]  // ← آخر رقم (يناير) بقى 5
+      data: [7, 30, 90, 55, 80, 80, 90, 75, 35, 75, 60, 50]
     }
 ]
 });
