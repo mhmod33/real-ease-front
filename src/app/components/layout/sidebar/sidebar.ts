@@ -2,6 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { SidebarService } from '../../../services/sidebar.service';
 import { AppModal } from '../../shared/app-modal/app-modal';
+import { AuthService } from '../../../services/auth-service';
 
 interface NavItem {
   label: string;
@@ -19,7 +20,7 @@ export class Sidebar {
   readonly sidebarService = inject(SidebarService);
   private readonly router = inject(Router);
   readonly collapsed = signal(false);
-
+  private authService=inject(AuthService)
   showLogoutModal = false;
 
   readonly navItems: NavItem[] = [
@@ -45,6 +46,7 @@ export class Sidebar {
   confirmLogout(): void {
     this.showLogoutModal = false;
     this.sidebarService.close();
+    this.authService.logout();
     this.router.navigate(['/login']);
   }
 }

@@ -30,6 +30,11 @@ export class AuthService {
     )
 
   }
+  loginWithEmail(email:string,password:string): Observable<AuthResponse>{
+    return this.http.post<AuthResponse>(`${this.apiUrl}auth/login`,{email,password}).pipe(
+      tap((response)=>this.setSession(response))
+    );
+  }
   getToken():string|null{
     return localStorage.getItem(this.tokenKey);
   }

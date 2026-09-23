@@ -4,6 +4,14 @@
   font-family: "Cairo", "Tajawal", "Segoe UI", Tahoma, Arial, sans-serif;
 }
 
+.error-message{
+  background: brown;
+  color: beige;
+  border-radius: 8px;
+  width: 60%;
+  border:1px solid beige;
+  padding: 8px;
+}
 /* ── Page ── */
 .login-page {
   display: flex;

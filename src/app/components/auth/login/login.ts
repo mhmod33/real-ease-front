@@ -16,7 +16,7 @@ export class Login implements AfterViewInit {
   showPassword = signal(false);
   errorMessage=signal<string | null>(null);
   loginForm:FormGroup;
-  
+  isLoading=signal(false);
   constructor(
     private fb:FormBuilder,
     private authService:AuthService,
@@ -25,8 +25,8 @@ export class Login implements AfterViewInit {
 
     this.loginForm=this.fb.group(
       {
-        email:['',Validators.required,Validators.email],
-        password:['',Validators.required,Validators.minLength(6)]
+        email:['',[Validators.required,Validators.email]],
+        password:['',[Validators.required,Validators.minLength(8)]]
       }
     );
   }
@@ -46,7 +46,36 @@ export class Login implements AfterViewInit {
     );
   }
 
-  onSubmit():void{}
+  onSubmit():void{
+    if(this.loginForm.invalid){
+      this.loginForm.markAllAsTouched();
+      return;
+    }
+    this.errorMessage.set(null);
+    this.isLoading.set(true);
+    const {email,password}=this.loginForm.value;
+    this.authService.loginWithEmail(email,password).subscribe({
+      next: ()=>{
+        this.isLoading.set(false)
+        this.redirectAfterLogin();
+      },
+      error:(err)=>{
+        this.isLoading.set(false)
+        this.errorMessage.set(
+          err.error?.message || 'البريد الإلكتروني أو كلمة المرور غير صحيحة'
+
+        )
+      }
+    })
+  }
+  redirectAfterLogin():void{
+    if(this.authService.isAdmin()){
+      this.router.navigate(['/dashboard'])
+    }
+    else{
+      this.router.navigate(['/properties'])
+    }
+  }
   handleGoogleResponse(response: any): void {
     const idToken = response.credential;
     console.log('Google ID Token:', idToken);

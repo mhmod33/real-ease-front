@@ -71,7 +71,9 @@
         </label>
 
         <a class="forgot-link" href="/forget-password">هل نسيت كلمة المرور؟</a>
-        <button class="login-submit" type="submit">تسجيل الدخول</button>
+        <button class="login-submit" type="submit">          
+          {{ isLoading() ? 'جارٍ تسجيل الدخول...' : 'تسجيل الدخول' }}
+        </button>
 
         <div class="divider">
           <span>أو</span>

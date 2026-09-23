@@ -1,10 +1,12 @@
 import { Routes } from '@angular/router';
+import { guestGuard } from './guards/guest-guard';
 
 export const routes: Routes = [
   {
     path: 'login',
     loadComponent: () =>
       import('./components/auth/login/login').then((m) => m.Login),
+    canActivate:[guestGuard]
   },
   {
     path: 'forget-password',
