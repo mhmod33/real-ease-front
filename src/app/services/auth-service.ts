@@ -6,6 +6,7 @@ import {environment } from '../../environments/environment';
 import { AuthResponse } from '../models/auth-response.model';
 import { GoogleLoginPayload } from '../models/google-login-payload.model';
 import { User } from '../models/user.model';
+import { ProfileModel, Root } from '../models/profile.model';
 @Injectable({
   providedIn: 'root',
 })
@@ -22,11 +23,7 @@ export class AuthService {
   loginWithGoogle(idToken:string):Observable<AuthResponse>{
     const payload:GoogleLoginPayload={id_token:idToken};
     return this.http.post<AuthResponse>(`${this.apiUrl}auth/google`,payload).pipe(
-      tap((response:AuthResponse)=>{
-        if(response.token){
-          localStorage.setItem(this.tokenKey,response.token);
-        }
-      })
+      tap((response:AuthResponse)=>this.setSession(response))
     )
 
   }
@@ -57,9 +54,11 @@ export class AuthService {
     this.currentUser.set(null);
     this.router.navigate(['/login']);
   }
-
   isAuthinticated():boolean{
     return !!this.getToken();
+  }
+  getUserProfile():Observable< Root>{
+    return this.http.get<Root>(`${this.apiUrl}user/profile`);
   }
   isAdmin():boolean{
     return this.currentUser()?.role==='admin';

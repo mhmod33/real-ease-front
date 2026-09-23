@@ -35,6 +35,17 @@ export class Login implements AfterViewInit {
   }
 
   ngAfterViewInit(): void {
+    if (typeof google !== 'undefined') {
+      this.initializeGoogleSignIn();
+      return;
+    }
+
+    document
+      .querySelector<HTMLScriptElement>('script[src="https://accounts.google.com/gsi/client"]')
+      ?.addEventListener('load', () => this.initializeGoogleSignIn(), { once: true });
+  }
+
+  private initializeGoogleSignIn(): void {
     google.accounts.id.initialize({
       client_id: '314057864540-dpc10dbvpk60ra1g71t3h9c92efctqun.apps.googleusercontent.com',
       callback: (response: any) => this.handleGoogleResponse(response),
@@ -78,7 +89,20 @@ export class Login implements AfterViewInit {
   }
   handleGoogleResponse(response: any): void {
     const idToken = response.credential;
-    console.log('Google ID Token:', idToken);
-    // TODO: send idToken to your backend for verification
+    this.errorMessage.set(null);
+    this.isLoading.set(true);
+
+    this.authService.loginWithGoogle(idToken).subscribe({
+      next: () => {
+        this.isLoading.set(false);
+        this.router.navigate(['/dashboard']);
+      },
+      error: (err) => {
+        this.isLoading.set(false);
+        this.errorMessage.set(
+          err.error?.message || 'تعذر تسجيل الدخول باستخدام Google'
+        );
+      },
+    });
   }
 }

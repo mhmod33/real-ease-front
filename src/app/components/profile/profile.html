@@ -1,1 +1,45 @@
-<p>profile works!</p>
+<main class="profile-page" dir="rtl">
+  @if (profile(); as profile) {
+    <div class="profile-heading">
+      <h1>الملف الشخصي، {{ profile.data.name }}</h1>
+      <button type="button" class="edit-button"><span aria-hidden="true">&#9998;</span> تعديل</button>
+    </div>
+    <section class="profile-card" aria-label="الملف الشخصي">
+      <div class="profile-cover">
+        <!-- <img [src]="imageUrl(profile.avatar, '/images/image-1.png')" alt="" class="profile-avatar" /> -->
+        <div class="profile-identity"><h2>{{ profile.data.name }}</h2><p>{{ profile.data.type }}</p></div>
+      </div>
+      <div class="profile-content">
+        <section class="details-section" aria-labelledby="personal-info-title">
+          <h2 id="personal-info-title">المعلومات الشخصية:</h2>
+          <dl class="details-list">
+            <div><dt>العنوان:</dt><dd>{{ profile.data.location || 'غير محدد' }}</dd></div>
+            <div><dt>السن:</dt><dd>{{ profile.data.age || 'غير محدد' }}{{ profile.data.age ? ' عام' : '' }}</dd></div>
+            <div><dt>الإيميل:</dt><dd dir="ltr">{{ profile.data.email }}</dd></div>
+            <div><dt>الموقع الشخصي:</dt><dd dir="ltr">{{ profile.data.personal_website || 'غير محدد' }}</dd></div>
+            <div><dt>رقم الهاتف:</dt><dd dir="ltr">{{ profile.data.phone || 'غير محدد' }}</dd></div>
+          </dl>
+        </section>
+        <section class="bio-section" aria-labelledby="bio-title">
+          <h2 id="bio-title">نبذة عني:</h2><p>{{ profile.data.description || 'لا توجد نبذة تعريفية حالياً.' }}</p>
+          <dl class="summary-list"><div><dt>العقارات:</dt><dd>{{ profile.data.properties.length }}</dd></div><div><dt>الوكالة:</dt><dd>{{ profile.data.type || 'وكيل عقاري' }}</dd></div></dl>
+        </section>
+      </div>
+      <div class="social-links" aria-label="وسائل التواصل">
+        <strong>وسائل التواصل</strong>
+        @if (profile.data.social_media.twitter) { <a [href]="profile.data.social_media.twitter" target="_blank" rel="noreferrer" aria-label="X">𝕏</a> }
+        @if (profile.data.social_media.facebook) { <a [href]="profile.data.social_media.facebook" target="_blank" rel="noreferrer" aria-label="Facebook">f</a> }
+        @if (profile.data.social_media.instagram) { <a [href]="profile.data.social_media.instagram" target="_blank" rel="noreferrer" aria-label="Instagram">◎</a> }
+      </div>
+    </section>
+    <section class="properties-section" aria-labelledby="properties-title">
+      <div class="section-heading"><h2 id="properties-title">عقاراتي</h2><button type="button" class="add-button"><span aria-hidden="true">+</span> إضافة عقار</button></div>
+      <div class="property-grid">
+        @for (property of profile.data.properties; track property.id) {
+          <!-- <article class="property-card"><div class="property-image-wrap"><img [src]="imageUrl('/images/image-1.png')" [alt]="property.name" /><span class="property-status">{{ property.status }}</span><span class="property-city">{{ property.city }}</span></div><div class="property-info"><h3>{{ property.name }}</h3><strong>{{ property.price }}</strong></div></article> -->
+        } @empty { <p class="empty-state">لا توجد عقارات مضافة حالياً.</p> }
+      </div>
+    </section>
+  } 
+  <!-- @else { <div class="loading-state">جاري تحميل الملف الشخصي...</div> } -->
+</main>

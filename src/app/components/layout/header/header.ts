@@ -52,7 +52,7 @@ export class Header {
   readonly userRole = 'صاحب عقارات';
 
   goToProfile(): void {
-    this.router.navigate(['/users', this.sessionService.currentUserId]);
+    this.router.navigate(['/user/profile']);
   }
 
   showNotifications = false;

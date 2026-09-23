@@ -46,6 +46,11 @@ export const routes: Routes = [
           import('./components/dashboard/dashboard').then((m) => m.Dashboard),
       },
       {
+        path: 'user/profile',
+        loadComponent: () =>
+          import('./components/profile/profile').then((m) => m.Profile),
+      },
+      {
         path: 'agents',
         loadComponent: () =>
           import('./components/agents/agents').then((m) => m.Agents),
