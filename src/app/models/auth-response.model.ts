@@ -1,8 +1,8 @@
-import { User } from "./user.model";
-
 export interface AuthResponse {
-    message:string;
-    user:User;
-    token:string;
-    token_type:string;
+    Message: string;
+    UserID: number;
+    UserName: string;
+    UserRole: string;
+    UserPhoto: string | null;
+    Token: string;
 }

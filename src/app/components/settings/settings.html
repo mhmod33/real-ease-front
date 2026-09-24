@@ -4,142 +4,151 @@
   <!-- ── Header ── -->
   <h1 class="settings-title">الاعدادات<span class="title-bold">,</span></h1>
 
+   @if(errorMessage()){
+          <p class="error-message">{{errorMessage()}}</p>
+        }
+
   <!-- ── Card 1: Personal Information ── -->
-  <div class="settings-card">
-    <h2 class="card-section-title">المعلومات الشخصية:</h2>
-
-    <div class="form-grid two-col">
-
-      <!-- Column Right: Name -->
-      <div class="form-group">
-        <input type="text" class="form-control" [(ngModel)]="name" placeholder="الاسم" />
+  <form [formGroup]="editForm" (ngSubmit)="savePersonalInfo()" type="submit">
+    <div class="settings-card">
+      <h2 class="card-section-title">المعلومات الشخصية:</h2>
+  
+      <div class="form-grid two-col">
+  
+        <!-- Column Right: Name -->
+        <div class="form-group">
+          <input type="text" class="form-control" formControlName="name" placeholder="الاسم" value="{{ProfileData()?.data?.name}}" />
+        </div>
+  
+        <!-- Column Left: User Type -->
+        <div class="form-group select-group">
+          <select class="form-control select-control" formControlName="type">
+            <option value="" disabled>نوع الوكيل</option>
+            @for (t of userTypes; track t) {
+              <option [value]="t">{{ t }}</option>
+            }
+          </select>
+          <span class="select-chevron">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+              <polyline points="6 9 12 15 18 9"/>
+            </svg>
+          </span>
+        </div>
+  
+        <!-- Column Right: Address -->
+        <div class="form-group">
+          <input type="text" class="form-control" formControlName="location" placeholder="العنوان" />
+        </div>
+  
+        <!-- Column Left: Agency Name -->
+        <div class="form-group">
+          <input type="text" class="form-control"  formControlName="agency" placeholder="الوكالة" value="{{ProfileData()?.data?.agency}}" />
+        </div>
+  
+        <!-- Column Right: Age -->
+        <div class="form-group">
+          <input type="number" class="form-control" value="{{ProfileData()?.data?.age}}" formControlName="age" placeholder="السن" />
+        </div>
+  
+        <!-- Column Left: Gender -->
+        <div class="form-group select-group">
+          <select class="form-control select-control" formControlName="gender" >
+            <option value="{{ProfileData()?.data?.gender}}"   disabled>الجنس</option>
+            <option value="ذكر">Male</option>
+            <option value="أنثى">Female</option>
+          </select>
+          <span class="select-chevron">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+              <polyline points="6 9 12 15 18 9"/>
+            </svg>
+          </span>
+        </div>
+  
+        <!-- Bio Textarea (Full Width) -->
+        <div class="form-group full-width textarea-group">
+          <textarea class="form-control textarea-control" formControlName="description" rows="4" placeholder="نبذه عني"></textarea>
+          <span class="textarea-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+              <line x1="21" y1="10" x2="3" y2="10"/>
+              <line x1="21" y1="6" x2="3" y2="6"/>
+              <line x1="21" y1="14" x2="3" y2="14"/>
+            </svg>
+          </span>
+        </div>
       </div>
-
-      <!-- Column Left: User Type -->
-      <div class="form-group select-group">
-        <select class="form-control select-control" [(ngModel)]="type">
-          <option value="" disabled>نوع الوكيل</option>
-          @for (t of userTypes; track t) {
-            <option [value]="t">{{ t }}</option>
-          }
-        </select>
-        <span class="select-chevron">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
-            <polyline points="6 9 12 15 18 9"/>
+  
+      <!-- File Upload Zone -->
+      <div
+        class="upload-zone"
+        [class.drag-over]="dragOver"
+        (dragover)="onDragOver($event)"
+        (dragleave)="onDragLeave()"
+        (drop)="onDrop($event)"
+      >
+        <div class="upload-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="32" height="32">
+            <path d="M12 15V3m0 0L8 7m4-4l4 4"/>
+            <path d="M20 21H4a2 2 0 0 1-2-2V12"/>
+            <path d="M22 12v7a2 2 0 0 1-2 2"/>
           </svg>
-        </span>
+        </div>
+        <p class="upload-text">قم برسائلة الملفات هنا أو انقر للتحميل لتغيير صورة الغلاف.</p>
       </div>
-
-      <!-- Column Right: Address -->
-      <div class="form-group">
-        <input type="text" class="form-control" [(ngModel)]="address" placeholder="العنوان" />
-      </div>
-
-      <!-- Column Left: Agency Name -->
-      <div class="form-group">
-        <input type="text" class="form-control" [(ngModel)]="agencyName" placeholder="الوكالة" />
-      </div>
-
-      <!-- Column Right: Age -->
-      <div class="form-group">
-        <input type="number" class="form-control" [(ngModel)]="age" placeholder="السن" />
-      </div>
-
-      <!-- Column Left: Gender -->
-      <div class="form-group select-group">
-        <select class="form-control select-control" [(ngModel)]="gender">
-          <option value="" disabled>الجنس</option>
-          <option value="ذكر">ذكر</option>
-          <option value="أنثى">أنثى</option>
-        </select>
-        <span class="select-chevron">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
-            <polyline points="6 9 12 15 18 9"/>
-          </svg>
-        </span>
-      </div>
-
-      <!-- Bio Textarea (Full Width) -->
-      <div class="form-group full-width textarea-group">
-        <textarea class="form-control textarea-control" [(ngModel)]="description" rows="4" placeholder="نبذه عني"></textarea>
-        <span class="textarea-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
-            <line x1="21" y1="10" x2="3" y2="10"/>
-            <line x1="21" y1="6" x2="3" y2="6"/>
-            <line x1="21" y1="14" x2="3" y2="14"/>
-          </svg>
-        </span>
-      </div>
+  
     </div>
-
-    <!-- File Upload Zone -->
-    <div
-      class="upload-zone"
-      [class.drag-over]="dragOver"
-      (dragover)="onDragOver($event)"
-      (dragleave)="onDragLeave()"
-      (drop)="onDrop($event)"
-    >
-      <div class="upload-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="32" height="32">
-          <path d="M12 15V3m0 0L8 7m4-4l4 4"/>
-          <path d="M20 21H4a2 2 0 0 1-2-2V12"/>
-          <path d="M22 12v7a2 2 0 0 1-2 2"/>
-        </svg>
+  
+    <!-- ── Card 2: Contact & Social Links ── -->
+    <div class="settings-card">
+      <h2 class="card-section-title">وسائل التواصل:</h2>
+  
+      <div class="form-grid two-col">
+        <!-- Right: Phone -->
+        <div class="form-group">
+          <input type="tel" class="form-control" formControlName="phone" placeholder="رقم الهاتف" />
+        </div>
+        <!-- Left: WhatsApp -->
+        <div class="form-group">
+          <input type="tel" class="form-control" formControlName="whatsapp_number" placeholder="رقم الواتساب" />
+        </div>
+        <!-- Right: Email -->
+        <div class="form-group">
+          <input type="email" class="form-control" formControlName="email" placeholder="الايميل" />
+        </div>
+        <!-- Left: Website -->
+        <div class="form-group">
+          <input type="url" class="form-control" formControlName="personal_website" placeholder="الموقع الشخصي" />
+        </div>
       </div>
-      <p class="upload-text">قم برسائلة الملفات هنا أو انقر للتحميل لتغيير صورة الغلاف.</p>
+  
+      <h2 class="card-section-title mt-section">وسائل التواصل الاجتماعي:</h2>
+  
+      <div class="form-grid two-col">
+        <!-- Right: Facebook -->
+        <div class="form-group">
+          <input type="text" class="form-control" value="{{ProfileData()?.data?.social_media?.facebook}}" placeholder="فيسبوك" />
+        </div>
+        <!-- Left: Instagram -->
+        <div class="form-group">
+          <input type="text" class="form-control" value="{{ProfileData()?.data?.social_media?.instagram}}" placeholder="انستاجرام" />
+        </div>
+        <!-- Right: Twitter X -->
+        <div class="form-group">
+          <input type="text" class="form-control" value="{{ProfileData()?.data?.social_media?.twitter}}" placeholder="تويتر اكس" />
+        </div>
+        <!-- Left: LinkedIn -->
+        <div class="form-group">
+          <input type="text" class="form-control" value="{{ProfileData()?.data?.social_media?.linkedin}}" placeholder="لينكد إن" />
+        </div>
+      </div>
+  
+      <!-- <button class="btn-save" (click)="saveSocialInfo()">حفظ التعديلات</button> -->
     </div>
+  
+    <button class="btn-save" type="submit" > 
+        {{ isLoading() ? 'جارٍ حفظ التعديلات...' : 'حفظ التعديلات' }}
+    </button>
 
-    <button class="btn-save" (click)="savePersonalInfo()">حفظ التعديلات</button>
-  </div>
-
-  <!-- ── Card 2: Contact & Social Links ── -->
-  <div class="settings-card">
-    <h2 class="card-section-title">وسائل التواصل:</h2>
-
-    <div class="form-grid two-col">
-      <!-- Right: Phone -->
-      <div class="form-group">
-        <input type="tel" class="form-control" [(ngModel)]="phone" placeholder="رقم الهاتف" />
-      </div>
-      <!-- Left: WhatsApp -->
-      <div class="form-group">
-        <input type="tel" class="form-control" [(ngModel)]="whatsapp" placeholder="رقم الواتساب" />
-      </div>
-      <!-- Right: Email -->
-      <div class="form-group">
-        <input type="email" class="form-control" [(ngModel)]="email" placeholder="الايميل" />
-      </div>
-      <!-- Left: Website -->
-      <div class="form-group">
-        <input type="url" class="form-control" [(ngModel)]="website" placeholder="الموقع الشخصي" />
-      </div>
-    </div>
-
-    <h2 class="card-section-title mt-section">وسائل التواصل الاجتماعي:</h2>
-
-    <div class="form-grid two-col">
-      <!-- Right: Facebook -->
-      <div class="form-group">
-        <input type="text" class="form-control" [(ngModel)]="facebook" placeholder="فيسبوك" />
-      </div>
-      <!-- Left: Instagram -->
-      <div class="form-group">
-        <input type="text" class="form-control" [(ngModel)]="instagram" placeholder="انستاجرام" />
-      </div>
-      <!-- Right: Twitter X -->
-      <div class="form-group">
-        <input type="text" class="form-control" [(ngModel)]="twitter" placeholder="تويتر اكس" />
-      </div>
-      <!-- Left: LinkedIn -->
-      <div class="form-group">
-        <input type="text" class="form-control" [(ngModel)]="linkedin" placeholder="لينكد إن" />
-      </div>
-    </div>
-
-    <button class="btn-save" (click)="saveSocialInfo()">حفظ التعديلات</button>
-  </div>
-
+  </form>
   <!-- ── Card 3: Delete Account Danger Zone ── -->
   <div class="settings-card danger-card">
     <h2 class="card-section-title danger-title">حذف الحساب؟</h2>

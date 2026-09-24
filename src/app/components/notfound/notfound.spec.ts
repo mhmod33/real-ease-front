@@ -30,11 +30,11 @@ describe('Notfound', () => {
     expect(nav).not.toBeNull();
 
     burger?.click();
-    expect(burger?.dataset.state).toBe('open');
-    expect(nav?.dataset.state).toBe('open');
+    expect(burger?.dataset['state']).toBe('open');
+    expect(nav?.dataset['state']).toBe('open');
 
     burger?.click();
-    expect(burger?.dataset.state).toBe('closed');
-    expect(nav?.dataset.state).toBe('closed');
+    expect(burger?.dataset['state']).toBe('closed');
+    expect(nav?.dataset['state']).toBe('closed');
   });
 });

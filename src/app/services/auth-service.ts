@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, signal } from '@angular/core';
-import { Observable, tap } from 'rxjs';
+import { Observable, of, tap } from 'rxjs';
 import { Router } from '@angular/router';
 import {environment } from '../../environments/environment';
 import { AuthResponse } from '../models/auth-response.model';
@@ -41,14 +41,44 @@ export class AuthService {
   
   private getStoredUser():User |null{
     const stored=localStorage.getItem(this.userKey);
-    return stored ? JSON.parse(stored) :null; 
+    if (!stored) {
+      return null;
+    }
+
+    try {
+      return JSON.parse(stored) as User;
+    } catch {
+      localStorage.removeItem(this.userKey);
+      return null;
+    }
+  }
+  getLoggedInUserId(): Observable<string | null> {
+    const user=this.currentUser();
+    console.log('Logged in user ID:', user?.id);
+    return of(user?.id || null);
   }
   private setSession(response:AuthResponse){
-    localStorage.setItem(this.tokenKey,response.token);
-    localStorage.setItem(this.userKey, JSON.stringify(response.user));
-    this.currentUser.set(response.user);
+    if (!response?.Token || !response.UserID || !response.UserName) {
+      this.clearSession();
+      throw new Error('Invalid authentication response');
+    }
+
+    const user: User = {
+      id: String(response.UserID),
+      name: response.UserName,
+      type: 'وكيل عقاري',
+      email: '',
+      image: response.UserPhoto ?? '',
+      propertiesCount: 0,
+      location: '',
+      role: response.UserRole,
+    };
+
+    localStorage.setItem(this.tokenKey, response.Token);
+    localStorage.setItem(this.userKey, JSON.stringify(user));
+    this.currentUser.set(user);
   }
-  private clearSession(response:AuthResponse){
+  private clearSession(){
     localStorage.removeItem(this.tokenKey);
     localStorage.removeItem(this.userKey);
     this.currentUser.set(null);
@@ -60,11 +90,13 @@ export class AuthService {
   getUserProfile():Observable< Root>{
     return this.http.get<Root>(`${this.apiUrl}user/profile`);
   }
+  editProfile(data: Record<string, unknown>):Observable<Root>{
+    return this.http.put<Root>(`${this.apiUrl}user/profile`, data);
+  }
   isAdmin():boolean{
     return this.currentUser()?.role==='admin';
   }
   logout():void{
-    localStorage.removeItem(this.tokenKey);
-    this.router.navigate(['/login']);
+    this.clearSession();
   }
 }

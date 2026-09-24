@@ -12,19 +12,23 @@ export class Profile {
   profile = signal<Root | null>(null);
   constructor(
     private authService:AuthService,
+    private router:Router
   ){}
   ngOnInit():void{
     this.getProfileData();
   }
   getProfileData():void{
+    
     this.authService.getUserProfile().subscribe({
       next:(response)=>{
-        console.log("returned data successfully",response)
         this.profile.set(response)
       },
       error:(err)=>{
         console.error(err)
       },
     })
+  }
+  navigateToEditPage():void{
+    this.router.navigate(['/settings']);
   }
 }

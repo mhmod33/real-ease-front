@@ -10,15 +10,18 @@ export interface ProfileModel {
   name: string
   email: string
   phone: string
+  agency:string
   whatsapp_phone: string
   personal_website: string
   role: string
   avatar: any
+  gender: string
   social_media: SocialMedia
   location: string
   description: string
   type: string
   age: number
+  cover_photo:string
   properties: Property[]
 }
 
