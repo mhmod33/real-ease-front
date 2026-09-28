@@ -39,13 +39,15 @@ export class UserDetails implements OnInit {
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
-    if (id) {
-      this.user = this.userService.getUserById(id);
+    if (!id) {
+      this.router.navigate(['/notfound']);
+      return;
     }
 
-    if (!this.user) {
-      this.user = this.userService.getUserById('5') || this.userService.getUsers()[0];
-    }
+    this.userService.getUserById(id).subscribe({
+      next: (user) => this.user = user,
+      error: () => this.router.navigate(['/notfound']),
+    });
   }
 
   goToSettings(): void {
@@ -93,9 +95,10 @@ export class UserDetails implements OnInit {
   }
 
   onEditSave(updated: UserProperty): void {
-    const target = this.user?.properties?.find((p) => p.id === updated.id);
-    if (target) {
-      Object.assign(target, updated);
+    if (this.user?.properties) {
+      this.user.properties = this.user.properties.map((property) =>
+        property.id === updated.id ? updated : property
+      );
     }
     this.editModalOpen = false;
     this.editingProperty = null;

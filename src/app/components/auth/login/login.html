@@ -14,7 +14,8 @@
         @if(errorMessage()){
           <p class="error-message">{{errorMessage()}}</p>
         }
-      <form class="login-form" [formGroup]="loginForm" (ngSubmit) ="onSubmit()">
+      <div class="login-form">
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
 
         <!-- Email -->
         <label class="form-field" aria-label="البريد الالكتروني">
@@ -75,12 +76,14 @@
           {{ isLoading() ? 'جارٍ تسجيل الدخول...' : 'تسجيل الدخول' }}
         </button>
 
+        </form>
+
         <div class="divider">
           <span>أو</span>
         </div>
 
         <div id="google-btn"></div>
-      </form>
+      </div>
     </section>
 
     <!-- Left: Visual panel -->

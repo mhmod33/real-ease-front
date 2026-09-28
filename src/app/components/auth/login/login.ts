@@ -46,14 +46,19 @@ export class Login implements AfterViewInit {
   }
 
   private initializeGoogleSignIn(): void {
+    const button = document.getElementById('google-btn');
+    if (!button) {
+      return;
+    }
+
     google.accounts.id.initialize({
       client_id: '314057864540-dpc10dbvpk60ra1g71t3h9c92efctqun.apps.googleusercontent.com',
       callback: (response: any) => this.handleGoogleResponse(response),
     });
 
     google.accounts.id.renderButton(
-      document.getElementById('google-btn'),
-      { theme: 'outline', size: 'large', width: '100%', locale: 'ar' }
+      button,
+      { theme: 'outline', size: 'large', width: String(Math.floor(button.getBoundingClientRect().width)), locale: 'ar' }
     );
   }
 

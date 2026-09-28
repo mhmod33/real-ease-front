@@ -6,6 +6,7 @@ import {environment } from '../../environments/environment';
 import { AuthResponse } from '../models/auth-response.model';
 import { GoogleLoginPayload } from '../models/google-login-payload.model';
 import { User } from '../models/user.model';
+import { Data } from '../models/user.model';
 import { ProfileModel, Root } from '../models/profile.model';
 @Injectable({
   providedIn: 'root',
@@ -52,29 +53,39 @@ export class AuthService {
       return null;
     }
   }
-  getLoggedInUserId(): Observable<string | null> {
-    const user=this.currentUser();
-    console.log('Logged in user ID:', user?.id);
-    return of(user?.id || null);
-  }
   private setSession(response:AuthResponse){
-    if (!response?.Token || !response.UserID || !response.UserName) {
+    const token = response.token ?? response.access_token ?? response.Token;
+    const userId = response.user?.id ?? response.UserID;
+    const userName = response.user?.name ?? response.UserName;
+    const userRole = response.user?.role ?? response.UserRole;
+
+    if (!token || userId == null || !userName || !userRole) {
       this.clearSession();
       throw new Error('Invalid authentication response');
     }
 
     const user: User = {
-      id: String(response.UserID),
-      name: response.UserName,
-      type: 'وكيل عقاري',
-      email: '',
-      image: response.UserPhoto ?? '',
-      propertiesCount: 0,
-      location: '',
-      role: response.UserRole,
+      id: Number(userId),
+      name: userName,
+      email: response.user?.email ?? '',
+      email_verified_at: response.user?.email_verified_at ?? null,
+      avatar: response.user?.avatar ?? response.UserPhoto ?? null,
+      role: userRole,
+      type: response.user?.type ?? 'realestateAgent',
+      agency: response.user?.agency ?? '',
+      age: response.user?.age,
+      gender: response.user?.gender,
+      location: response.user?.location,
+      description: response.user?.description,
+      phone: response.user?.phone,
+      whatsapp_phone: response.user?.whatsapp_phone,
+      personal_website: response.user?.personal_website,
+      social_media: response.user?.social_media,
+      created_at: response.user?.created_at ?? '',
+      updated_at: response.user?.updated_at ?? '',
     };
 
-    localStorage.setItem(this.tokenKey, response.Token);
+    localStorage.setItem(this.tokenKey, token);
     localStorage.setItem(this.userKey, JSON.stringify(user));
     this.currentUser.set(user);
   }

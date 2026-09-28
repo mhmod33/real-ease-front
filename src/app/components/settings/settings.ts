@@ -53,9 +53,8 @@ export class Settings implements OnInit {
   }
 
   ngOnInit(): void {
-    this.user = this.userService.getUserById('5') || this.userService.getUsers()[0];
     this.getUser();
-    this.getUserAuth();
+    // this.getUserAuth();
     this.getUserDataAuthUser();
   }
 
@@ -70,15 +69,7 @@ export class Settings implements OnInit {
   onSubmit(){
     this.savePersonalInfo();
   }
-  getUserAuth(){
-    this.authService.getLoggedInUserId().subscribe((res)=>{
-      return res;
-    })
-    }
-  onDrop(event: DragEvent): void {
-    event.preventDefault();
-    this.dragOver = false;
-  }
+
   getUser(){}
   // savePersonalInfo(): void {
   //   if (this.user) {
@@ -184,12 +175,12 @@ export class Settings implements OnInit {
     this.showDeleteModal = false;
   }
 
-  confirmDelete(): void {
-    if (this.user) {
-      this.userService.deleteUser(this.user.id).subscribe(() => {
-        this.showDeleteModal = false;
-        this.router.navigate(['/login']);
-      });
-    }
-  }
+  // confirmDelete(): void {
+  //   if (this.user) {
+  //     this.userService.deleteUser(this.user.id).subscribe(() => {
+  //       this.showDeleteModal = false;
+  //       this.router.navigate(['/login']);
+  //     });
+  //   }
+  // }
 }

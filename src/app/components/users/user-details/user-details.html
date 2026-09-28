@@ -20,10 +20,10 @@
     <div class="profile-card">
       <!-- Banner Image with Avatar Overlay -->
       <div class="profile-banner-wrap">
-        <img [src]="user.bannerImage || 'images/image-1.png'" alt="banner" class="profile-banner-img" />
+        <img [src]="user.cover_photo || 'images/image-1.png'" alt="banner" class="profile-banner-img" />
 
         <div class="avatar-circle-wrap">
-          <img [src]="user.image" [alt]="user.name" class="avatar-circle-img" />
+          <img [src]="user.avatar || ''" [alt]="user.name" class="avatar-circle-img" />
           <button class="btn-avatar-edit" (click)="goToSettings()" title="تغيير الصورة">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12">
               <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
@@ -48,7 +48,7 @@
           <div class="info-table">
             <div class="info-row">
               <span class="info-label">العنوان:</span>
-              <span class="info-val">{{ user.address || user.location }}</span>
+              <span class="info-val">{{ user.location || 'غير متوفر' }}</span>
             </div>
 
             <div class="info-row">
@@ -63,12 +63,12 @@
 
             <div class="info-row">
               <span class="info-label">الموقع الشخصي:</span>
-              <span class="info-val font-mono">{{ user.website || 'www.abdulaziz.com' }}</span>
+              <span class="info-val font-mono">{{ user.personal_website || 'غير متوفر' }}</span>
             </div>
 
             <div class="info-row">
               <span class="info-label">رقم الهاتف:</span>
-              <span class="info-val font-mono" dir="ltr">{{ user.phone || '(+12) 1254-56-4896' }}</span>
+              <span class="info-val font-mono" dir="ltr">{{ user.phone || 'غير متوفر' }}</span>
             </div>
           </div>
         </div>
@@ -82,13 +82,8 @@
 
           <div class="bio-meta-list">
             <div class="meta-row">
-              <span class="meta-label">الخبرة:</span>
-              <span class="meta-val">{{ user.experienceYears || 8 }} أعوام</span>
-            </div>
-
-            <div class="meta-row">
               <span class="meta-label">الوكالة:</span>
-              <span class="meta-val">{{ user.agencyName || 'شركة الأفق' }}</span>
+              <span class="meta-val">{{ user.agency || 'غير متوفر' }}</span>
             </div>
           </div>
         </div>

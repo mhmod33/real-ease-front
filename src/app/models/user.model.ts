@@ -13,33 +13,67 @@ export interface UserProperty {
   image: string;
 }
 
-export interface UserSocialLinks {
+export interface SocialMedia {
   linkedin?: string;
   instagram?: string;
   facebook?: string;
   twitter?: string;
 }
+export interface Users {
+  message: string
+  data: Data[]
+  pagination: Pagination
+}
 
+export interface Data {
+  id: number
+  name: string
+  email: string
+  email_verified_at: any
+  avatar: any
+  cover_photo?: string
+  google_id?: string
+  role: string
+  type: string
+  age?: number
+  location?: string
+  gender?: string
+  agency: string
+  description?: string
+  phone?: string
+  whatsapp_phone?: string
+  personal_website?: string
+  social_media?: SocialMedia
+  properties?: UserProperty[]
+  created_at: string
+  updated_at: string
+}
 export interface User {
-  id: string;
-  name: string;
-  type: UserType;
-  email: string;
-  image: string;
-  bannerImage?: string;
-  propertiesCount: number;
-  location: string;
-  phone?: string;
-  role:string;
-  whatsapp?: string;
-  website?: string;
-  age?: number;
-  gender?: 'ذكر' | 'أنثى';
-  address?: string;
-  agencyName?: string;
-  agencyAddress?: string;
-  description?: string;
-  experienceYears?: number;
-  socialLinks?: UserSocialLinks;
-  properties?: UserProperty[];
+  id: number
+  name: string
+  email: string
+  email_verified_at: any
+  avatar: any
+  cover_photo?: string
+  google_id?: string
+  role: string
+  type: string
+  age?: number
+  gender?: string
+  agency: string
+  location?: string
+  description?: string
+  phone?: string
+  whatsapp_phone?: string
+  personal_website?: string
+  social_media?: SocialMedia
+  properties?: UserProperty[]
+  created_at: string
+  updated_at: string
+}
+export interface Pagination {
+  total: number
+  per_page: number
+  last_page: number
+  current_page: number
 }

@@ -1,12 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { UserService } from '../../services/user.service';
-import { User } from '../../models/user.model';
+import { Users as users, User,Data } from '../../models/user.model';
 import { AppModal, ModalVariant } from '../shared/app-modal/app-modal';
 import { ChatModal, ChatContact } from '../shared/chat-modal/chat-modal';
-
+import { Signal } from '@angular/core';
 @Component({
   selector: 'app-users',
   standalone: true,
@@ -15,13 +15,12 @@ import { ChatModal, ChatContact } from '../shared/chat-modal/chat-modal';
   styleUrl: './users.css',
 })
 export class Users implements OnInit {
-  users: User[] = [];
   selectedIds = new Set<string>();
 
   // Chat Modal
   showChatModal = false;
   chatContact?: ChatContact;
-
+  users=signal<Data[]|undefined>(undefined);
   // Confirmation / Info Modal
   modalOpen = false;
   modalVariant: ModalVariant = 'confirm';
@@ -36,9 +35,19 @@ export class Users implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.userService.users$.subscribe((data) => {
-      this.users = data.slice(0, 4);
-    });
+    this.getAllUsers();
+  }
+
+  getAllUsers(){
+    this.userService.getAllUsers().subscribe({
+      next:(res)=>{
+        console.log(res);
+        this.users.set(res?.data);        
+      },
+      error:(err)=>{
+        console.error(err)
+      }
+    })
   }
 
   /* ── Selection ── */
@@ -55,13 +64,13 @@ export class Users implements OnInit {
     return this.selectedIds.has(id);
   }
 
-  selectAll(): void {
-    if (this.selectedIds.size === this.users.length) {
-      this.selectedIds.clear();
-    } else {
-      this.users.forEach((u) => this.selectedIds.add(u.id));
-    }
-  }
+  // selectAll(): void {
+  //   if (this.selectedIds.size === this.users.length) {
+  //     this.selectedIds.clear();
+  //   } else {
+  //     this.users.forEach((u) => this.selectedIds.add(u.id));
+  //   }
+  // }
 
   get allSelected(): boolean {
     return this.users.length > 0 && this.selectedIds.size === this.users.length;
@@ -87,8 +96,7 @@ export class Users implements OnInit {
       'حذف المستخدم',
       `هل أنت متأكد من حذف المستخدم "${user.name}"؟`,
       () => {
-        this.selectedIds.delete(user.id);
-        this.userService.deleteUser(user.id).subscribe();
+        this.selectedIds.delete(String(user.id));
       }
     );
   }
@@ -103,9 +111,7 @@ export class Users implements OnInit {
       `هل أنت متأكد من حذف ${this.selectedIds.size} مستخدم؟`,
       () => {
         const ids = [...this.selectedIds];
-        this.userService.deleteSelectedUsers(ids).subscribe(() => {
-          this.selectedIds.clear();
-        });
+        
       }
     );
   }
@@ -146,7 +152,7 @@ export class Users implements OnInit {
     event.stopPropagation();
     this.chatContact = {
       name: user.name,
-      image: user.image,
+      image: user.avatar,
       role: user.type,
     };
     this.showChatModal = true;

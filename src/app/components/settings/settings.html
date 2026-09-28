@@ -83,7 +83,6 @@
         [class.drag-over]="dragOver"
         (dragover)="onDragOver($event)"
         (dragleave)="onDragLeave()"
-        (drop)="onDrop($event)"
       >
         <div class="upload-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="32" height="32">
@@ -176,7 +175,7 @@
 
       <div class="modal-actions">
         <button class="btn-modal-cancel" (click)="cancelDelete()">إلغاء</button>
-        <button class="btn-modal-confirm" (click)="confirmDelete()">تأكيد</button>
+        <!-- <button class="btn-modal-confirm" (click)="confirmDelete()">تأكيد</button> -->
       </div>
     </div>
   </div>

@@ -42,22 +42,22 @@ export class CreateUser {
       return;
     }
     this.nameError = false;
-    this.userService
-      .createUser({
-        name: this.name,
-        type: this.type,
-        address: this.address,
-        location: this.address || 'غير محدد',
-        age: this.age,
-        gender: this.gender,
-        email: this.email,
-        agencyName: this.agencyName,
-        agencyAddress: this.agencyAddress,
-        description: this.description,
-      })
-      .subscribe(() => {
-        this.router.navigate(['/users']);
-      });
+    // this.userService
+    //   .createUser({
+    //     name: this.name,
+    //     type: this.type,
+    //     address: this.address,
+    //     location: this.address || 'غير محدد',
+    //     age: this.age,
+    //     gender: this.gender,
+    //     email: this.email,
+    //     agencyName: this.agencyName,
+    //     agencyAddress: this.agencyAddress,
+    //     description: this.description,
+    //   })
+    //   .subscribe(() => {
+    //     this.router.navigate(['/users']);
+    //   });
   }
 
   onCancel(): void {
