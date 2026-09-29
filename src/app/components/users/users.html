@@ -48,31 +48,31 @@
 
   <!-- ── 2-Column Users Cards Grid ── -->
   <div class="users-grid">
-    @for (users of users(); track users.id) {
+    @for (user of users(); track user.id) {
       <div
         class="user-card"
       >
         <!-- Checkbox -->
-        <!-- <div class="card-checkbox-wrap" (click)="toggleSelect(user.id, $event)">
+        <div class="card-checkbox-wrap" (click)="toggleSelect(user.id, $event)">
           <span class="custom-checkbox" [class.checked]="isSelected(user.id)">
-            @if (isSelected(users.id)) {
+            @if (isSelected(user.id)) {
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" width="12" height="12">
                 <polyline points="20 6 9 17 4 12"/>
               </svg>
             }
           </span>
-        </div> -->
+        </div>
 
         <!-- Card Top: Info & Photo -->
         <div class="user-card-top">
           <div class="user-info-wrap">
-            <h3 class="user-name">{{ users.name   || "-"}}</h3>
-            <span class="user-type-subtitle">{{ users.type  || "-"}}</span>
-            <span class="user-email font-mono">{{ users.email  || "-"}}</span>
+            <h3 class="user-name">{{ user.name   || "-"}}</h3>
+            <span class="user-type-subtitle">{{ user.type  || "-"}}</span>
+            <span class="user-email font-mono">{{ user.email  || "-"}}</span>
           </div>
 
           <div class="user-photo-wrap">
-            <img [src]="users.avatar" [alt]="users.name" class="user-photo" />
+            <img [src]="user.avatar" [alt]="user.name" class="user-photo" />
           </div>
         </div>
 
@@ -84,7 +84,7 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
               <path d="M3 21h18M3 7v14M21 7v14M6 11h4M6 15h4M14 11h4M14 15h4M9 21v-4h6v4M12 3l9 4H3l9-4z"/>
             </svg>
-            <span>{{ users.properties?.length }} عقار</span>
+            <span>{{ user.properties?.length || "0"}} عقار</span>
           </div>
 
           <div class="meta-item">
@@ -92,35 +92,37 @@
               <path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 1 1 16 0z"/>
               <circle cx="12" cy="10" r="3"/>
             </svg>
-            <span>{{ users?.location || "-" }}</span>
+            <span>{{ user?.location || "-" }}</span>
           </div>
         </div>
 
         <hr class="card-divider" />
 
         <!-- Social Media Links -->
-        <div class="social-row">
-          <span class="social-label">وسائل التواصل</span>
-          <div class="social-icons">
-            <a href="javascript:void(0)" class="social-icon" (click)="$event.stopPropagation()">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
-                <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
-                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
-                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
-              </svg>
-            </a>
-            <a href="javascript:void(0)" class="social-icon" (click)="$event.stopPropagation()">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
-                <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
-              </svg>
-            </a>
-            <a href="javascript:void(0)" class="social-icon" (click)="$event.stopPropagation()">
-              <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
-                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-              </svg>
-            </a>
-          </div>
-        </div>
+         <!-- @for(social of socialMedia(); track social.facebook){} -->
+           <div class="social-row">
+             <span class="social-label">وسائل التواصل</span>
+             <div class="social-icons">
+               <a [href]="'https://'+user.social_media?.facebook" rel="noopener noreferrer" class="social-icon"  target="_blank" >
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+                   <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+                   <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+                   <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+                 </svg>
+               </a>
+               <a href="javascript:void(0)" class="social-icon" (click)="$event.stopPropagation()">
+                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+                   <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
+                 </svg>
+               </a>
+               <a href="javascript:void(0)" class="social-icon" (click)="$event.stopPropagation()">
+                 <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
+                   <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                 </svg>
+               </a>
+             </div>
+           </div>
+         
 
         <!-- Action Buttons Row (Message & Delete) -->
         <div class="user-actions-row">

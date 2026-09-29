@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { UserService } from '../../services/user.service';
-import { Users as users, User,Data } from '../../models/user.model';
+import { Users as users, User,Data, SocialMedia } from '../../models/user.model';
 import { AppModal, ModalVariant } from '../shared/app-modal/app-modal';
 import { ChatModal, ChatContact } from '../shared/chat-modal/chat-modal';
 import { Signal } from '@angular/core';
@@ -15,13 +15,13 @@ import { Signal } from '@angular/core';
   styleUrl: './users.css',
 })
 export class Users implements OnInit {
-  selectedIds = new Set<string>();
+  selectedIds = new Set<number>();
 
   // Chat Modal
   showChatModal = false;
   chatContact?: ChatContact;
   users=signal<Data[]|undefined>(undefined);
-  // Confirmation / Info Modal
+socialMedia = signal<SocialMedia[]>([]);   // Confirmation / Info Modal
   modalOpen = false;
   modalVariant: ModalVariant = 'confirm';
   modalTitle = '';
@@ -36,22 +36,37 @@ export class Users implements OnInit {
 
   ngOnInit(): void {
     this.getAllUsers();
+    this.getSocialMedia();
   }
 
   getAllUsers(){
     this.userService.getAllUsers().subscribe({
       next:(res)=>{
-        console.log(res);
         this.users.set(res?.data);        
       },
       error:(err)=>{
         console.error(err)
       }
+    
     })
+    
   }
-
+  getSocialMedia(){
+      this.userService.getAllUsers().subscribe({
+      next:(res)=>{
+      const allSocial = res?.data?.map(user => user.social_media).filter((social): social is SocialMedia => !!social) || [];
+        this.socialMedia.set(allSocial)        
+        console.log(this.socialMedia());
+      },
+      error:(err)=>{
+        console.error(err)
+      }
+    
+    })
+    
+  }
   /* ── Selection ── */
-  toggleSelect(id: string, event: MouseEvent): void {
+  toggleSelect(id: number, event: MouseEvent): void {
     event.stopPropagation();
     if (this.selectedIds.has(id)) {
       this.selectedIds.delete(id);
@@ -60,10 +75,11 @@ export class Users implements OnInit {
     }
   }
 
-  isSelected(id: string): boolean {
+  isSelected(id: number): boolean {
     return this.selectedIds.has(id);
   }
 
+ 
   // selectAll(): void {
   //   if (this.selectedIds.size === this.users.length) {
   //     this.selectedIds.clear();
@@ -96,7 +112,7 @@ export class Users implements OnInit {
       'حذف المستخدم',
       `هل أنت متأكد من حذف المستخدم "${user.name}"؟`,
       () => {
-        this.selectedIds.delete(String(user.id));
+        this.selectedIds.delete(user.id);
       }
     );
   }
