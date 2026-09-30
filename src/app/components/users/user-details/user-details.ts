@@ -1,8 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UserService } from '../../../services/user.service';
-import { User, UserProperty } from '../../../models/user.model';
+import { Data, Root, User, UserProperty } from '../../../models/user.model';
 import { AppModal, ModalVariant } from '../../shared/app-modal/app-modal';
 import { EditUserPropertyModal } from '../../shared/edit-user-property-modal/edit-user-property-modal';
 
@@ -14,7 +14,8 @@ import { EditUserPropertyModal } from '../../shared/edit-user-property-modal/edi
   styleUrl: './user-details.css',
 })
 export class UserDetails implements OnInit {
-  user?: User;
+  user=signal<Root|null>(null);
+  isLoading=signal(false);
 
   // Carousel index for properties
   carouselIndex = 0;
@@ -43,9 +44,12 @@ export class UserDetails implements OnInit {
       this.router.navigate(['/notfound']);
       return;
     }
-
+    this.isLoading.set(true)
     this.userService.getUserById(id).subscribe({
-      next: (user) => this.user = user,
+      next: (user) => {
+        console.log("user:",user);
+        this.user.set(user);
+      },
       error: () => this.router.navigate(['/notfound']),
     });
   }
@@ -59,26 +63,33 @@ export class UserDetails implements OnInit {
   }
 
   prevProperty(): void {
-    if (!this.user?.properties || this.user.properties.length === 0) return;
+    const properties = this.user()?.data.properties;
+
+    if (!properties || properties.length === 0) return;
     this.carouselIndex =
-      (this.carouselIndex - 1 + this.user.properties.length) % this.user.properties.length;
+      (this.carouselIndex - 1 + properties.length) % properties.length;
   }
 
   nextProperty(): void {
-    if (!this.user?.properties || this.user.properties.length === 0) return;
-    this.carouselIndex = (this.carouselIndex + 1) % this.user.properties.length;
+        const properties = this.user()?.data.properties;
+
+    if (!properties || properties.length === 0) return;
+    this.carouselIndex = (this.carouselIndex + 1) % properties.length;
   }
 
   deleteProperty(property: UserProperty, event: MouseEvent): void {
     event.stopPropagation();
-    if (!this.user?.properties) return;
+    if (!this.user()?.data.properties) return;
     this.openConfirm(
       'حذف العقار',
       `هل أنت متأكد من حذف العقار "${property.title}"؟`,
       () => {
-        if (this.user?.properties) {
-          this.user.properties = this.user.properties.filter((p) => p.id !== property.id);
-        }
+        if (this.user()?.data.properties) {
+        this.user.update((user) =>
+          user?.data.properties
+            ? { ...user, properties: user.data.properties.filter((p) => p.id !== property.id) }
+            : user
+        );        }
       }
     );
   }
@@ -95,8 +106,10 @@ export class UserDetails implements OnInit {
   }
 
   onEditSave(updated: UserProperty): void {
-    if (this.user?.properties) {
-      this.user.properties = this.user.properties.map((property) =>
+    var properties = this.user()?.data.properties;
+
+    if (this.user()?.data.properties) {
+      properties = properties?.map((property) =>
         property.id === updated.id ? updated : property
       );
     }

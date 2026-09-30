@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, of } from 'rxjs';
-import { Users, User } from '../models/user.model';
+import { Users, User, Root } from '../models/user.model';
 import {environment } from '../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
@@ -22,8 +22,8 @@ export class UserService {
     return this.http.get<Users|null>(`${this.apiUrl}users`)
   };
 
-  getUserById(id: string): Observable<User> {
-    return this.http.get<User>(`${this.apiUrl}users/${encodeURIComponent(id)}`);
+  getUserById(id: string): Observable<Root> {
+    return this.http.get<Root>(`${this.apiUrl}users/${encodeURIComponent(id)}`);
   }
 
 

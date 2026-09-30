@@ -16,12 +16,13 @@ import { Signal } from '@angular/core';
 })
 export class Users implements OnInit {
   selectedIds = new Set<number>();
+  isLoading=signal(false);
 
   // Chat Modal
   showChatModal = false;
   chatContact?: ChatContact;
   users=signal<Data[]|undefined>(undefined);
-socialMedia = signal<SocialMedia[]>([]);   // Confirmation / Info Modal
+  socialMedia = signal<SocialMedia[]>([]);  
   modalOpen = false;
   modalVariant: ModalVariant = 'confirm';
   modalTitle = '';
@@ -35,6 +36,7 @@ socialMedia = signal<SocialMedia[]>([]);   // Confirmation / Info Modal
   ) {}
 
   ngOnInit(): void {
+    this.isLoading.set(true)
     this.getAllUsers();
     this.getSocialMedia();
   }
@@ -42,9 +44,12 @@ socialMedia = signal<SocialMedia[]>([]);   // Confirmation / Info Modal
   getAllUsers(){
     this.userService.getAllUsers().subscribe({
       next:(res)=>{
-        this.users.set(res?.data);        
+        this.users.set(res?.data);
+        this.isLoading.set(false)
+
       },
       error:(err)=>{
+        this.isLoading.set(false)
         console.error(err)
       }
     
@@ -56,7 +61,6 @@ socialMedia = signal<SocialMedia[]>([]);   // Confirmation / Info Modal
       next:(res)=>{
       const allSocial = res?.data?.map(user => user.social_media).filter((social): social is SocialMedia => !!social) || [];
         this.socialMedia.set(allSocial)        
-        console.log(this.socialMedia());
       },
       error:(err)=>{
         console.error(err)
@@ -101,7 +105,7 @@ socialMedia = signal<SocialMedia[]>([]);   // Confirmation / Info Modal
     this.router.navigate(['/users/create']);
   }
 
-  goToDetails(id: string): void {
+  goToDetails(id: number): void {
     this.router.navigate(['/users', id]);
   }
 

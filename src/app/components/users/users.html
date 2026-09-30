@@ -47,104 +47,136 @@
   </div>
 
   <!-- ── 2-Column Users Cards Grid ── -->
-  <div class="users-grid">
-    @for (user of users(); track user.id) {
-      <div
-        class="user-card"
-      >
-        <!-- Checkbox -->
-        <div class="card-checkbox-wrap" (click)="toggleSelect(user.id, $event)">
-          <span class="custom-checkbox" [class.checked]="isSelected(user.id)">
-            @if (isSelected(user.id)) {
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" width="12" height="12">
-                <polyline points="20 6 9 17 4 12"/>
-              </svg>
-            }
-          </span>
-        </div>
-
-        <!-- Card Top: Info & Photo -->
-        <div class="user-card-top">
-          <div class="user-info-wrap">
-            <h3 class="user-name">{{ user.name   || "-"}}</h3>
-            <span class="user-type-subtitle">{{ user.type  || "-"}}</span>
-            <span class="user-email font-mono">{{ user.email  || "-"}}</span>
-          </div>
-
-          <div class="user-photo-wrap">
-            <img [src]="user.avatar" [alt]="user.name" class="user-photo" />
-          </div>
-        </div>
-
-        <hr class="card-divider" />
-
-        <!-- Card Meta Row: Properties & Location -->
-        <div class="user-card-meta">
-          <div class="meta-item">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
-              <path d="M3 21h18M3 7v14M21 7v14M6 11h4M6 15h4M14 11h4M14 15h4M9 21v-4h6v4M12 3l9 4H3l9-4z"/>
-            </svg>
-            <span>{{ user.properties?.length || "0"}} عقار</span>
-          </div>
-
-          <div class="meta-item">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
-              <path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 1 1 16 0z"/>
-              <circle cx="12" cy="10" r="3"/>
-            </svg>
-            <span>{{ user?.location || "-" }}</span>
-          </div>
-        </div>
-
-        <hr class="card-divider" />
-
-        <!-- Social Media Links -->
-         <!-- @for(social of socialMedia(); track social.facebook){} -->
-           <div class="social-row">
-             <span class="social-label">وسائل التواصل</span>
-             <div class="social-icons">
-               <a [href]="'https://'+user.social_media?.facebook" rel="noopener noreferrer" class="social-icon"  target="_blank" >
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
-                   <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
-                   <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
-                   <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+   @if(users()){
+     <div class="users-grid">
+       @for (user of users(); track user.id) {
+         <div
+           class="user-card"
+           (click)="goToDetails(user.id)"
+         >
+           <!-- Checkbox -->
+           <div class="card-checkbox-wrap" (click)="toggleSelect(user.id, $event)">
+             <span class="custom-checkbox" [class.checked]="isSelected(user.id)">
+               @if (isSelected(user.id)) {
+                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" width="12" height="12">
+                   <polyline points="20 6 9 17 4 12"/>
                  </svg>
-               </a>
-               <a href="javascript:void(0)" class="social-icon" (click)="$event.stopPropagation()">
-                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
-                   <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
-                 </svg>
-               </a>
-               <a href="javascript:void(0)" class="social-icon" (click)="$event.stopPropagation()">
-                 <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
-                   <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-                 </svg>
-               </a>
+               }
+             </span>
+           </div>
+   
+           <!-- Card Top: Info & Photo -->
+           <div class="user-card-top">
+             <div class="user-info-wrap">
+               <h3 class="user-name">{{ user.name   || "-"}}</h3>
+               <span class="user-type-subtitle">{{ user.type  || "-"}}</span>
+               <span class="user-email font-mono">{{ user.email  || "-"}}</span>
+             </div>
+   
+             <div class="user-photo-wrap">
+               <img [src]="user.avatar" [alt]="user.name" class="user-photo" />
              </div>
            </div>
-         
+   
+           <hr class="card-divider" />
+   
+           <!-- Card Meta Row: Properties & Location -->
+           <div class="user-card-meta">
+             <div class="meta-item">
+               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                 <path d="M3 21h18M3 7v14M21 7v14M6 11h4M6 15h4M14 11h4M14 15h4M9 21v-4h6v4M12 3l9 4H3l9-4z"/>
+               </svg>
+               <span>{{ user.properties?.length || "0"}} عقار</span>
+             </div>
+   
+             <div class="meta-item">
+               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                 <path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 1 1 16 0z"/>
+                 <circle cx="12" cy="10" r="3"/>
+               </svg>
+               <span>{{ user?.location || "-" }}</span>
+             </div>
+           </div>
+   
+           <hr class="card-divider" />
+   
+           <!-- Social Media Links -->
+            <!-- @for(social of socialMedia(); track social.facebook){} -->
+              <div class="social-row">
+                <span class="social-label">وسائل التواصل</span>
+                <div class="social-icons">
+                  <a [href]="'https://'+user.social_media?.facebook" rel="noopener noreferrer" class="social-icon"  target="_blank" >
+                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+                      <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+                      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+                      <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+                    </svg>
+                  </a>
+                  <a [href]="'https://'+user.social_media?.twitter" rel="noopener noreferrer" class="social-icon"  target="_blank" >
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+                      <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
+                    </svg>
+                  </a>
+                  <a [href]="'https://'+user.social_media?.instagram" rel="noopener noreferrer" class="social-icon"  target="_blank" >
+                    <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
+                      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                    </svg>
+                  </a>
+                </div>
+              </div>
+            
+   
+           <!-- Action Buttons Row (Message & Delete) -->
+           <div class="user-actions-row">
+            
+   
+             <button class="btn-message" (click)="goToDetails(user.id)">
+               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+               <g clip-path="url(#clip0_4418_7081)">
+               <path d="M11.9999 16.3299C9.60992 16.3299 7.66992 14.3899 7.66992 11.9999C7.66992 9.60992 9.60992 7.66992 11.9999 7.66992C14.3899 7.66992 16.3299 9.60992 16.3299 11.9999C16.3299 14.3899 14.3899 16.3299 11.9999 16.3299ZM11.9999 9.16992C10.4399 9.16992 9.16992 10.4399 9.16992 11.9999C9.16992 13.5599 10.4399 14.8299 11.9999 14.8299C13.5599 14.8299 14.8299 13.5599 14.8299 11.9999C14.8299 10.4399 13.5599 9.16992 11.9999 9.16992Z" fill="white" style="fill: var(--fillg);"/>
+               <path d="M12.0001 21.0205C8.24008 21.0205 4.69008 18.8205 2.25008 15.0005C1.19008 13.3505 1.19008 10.6605 2.25008 9.00047C4.70008 5.18047 8.25008 2.98047 12.0001 2.98047C15.7501 2.98047 19.3001 5.18047 21.7401 9.00047C22.8001 10.6505 22.8001 13.3405 21.7401 15.0005C19.3001 18.8205 15.7501 21.0205 12.0001 21.0205ZM12.0001 4.48047C8.77008 4.48047 5.68008 6.42047 3.52008 9.81047C2.77008 10.9805 2.77008 13.0205 3.52008 14.1905C5.68008 17.5805 8.77008 19.5205 12.0001 19.5205C15.2301 19.5205 18.3201 17.5805 20.4801 14.1905C21.2301 13.0205 21.2301 10.9805 20.4801 9.81047C18.3201 6.42047 15.2301 4.48047 12.0001 4.48047Z" fill="white" style="fill: var(--fillg);"/>
+               </g>
+               <defs>
+               <clipPath id="clip0_4418_7081">
+               <rect width="24" height="24" fill="white"/>
+               </clipPath>
+               </defs>
+               </svg>
+               التفاصيل
+             </button>
+              <button class="btn-message btn-chat-message" (click)="openChat(user, $event)">
+               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                 <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+               </svg>
+               مراسلة
+             </button>
+             
+             <button class="btn-card-delete" (click)="deleteUser(user, $event)">
+               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                 <polyline points="3 6 5 6 21 6"/>
+                 <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+               </svg>
+               حذف
+             </button>
+           </div>
+   
+         </div>
+       }
+     </div>
 
-        <!-- Action Buttons Row (Message & Delete) -->
-        <div class="user-actions-row">
-          <!-- <button class="btn-message" (click)="openChat(user, $event)">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
-              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-            </svg>
-            مراسلة
-          </button> -->
-
-          <!-- <button class="btn-card-delete" (click)="deleteUser(user, $event)">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
-              <polyline points="3 6 5 6 21 6"/>
-              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
-            </svg>
-            حذف
-          </button> -->
-        </div>
-
-      </div>
-    }
-  </div>
+   }
+   @else if(isLoading())  {
+  <p class="users-state users-state-loading" role="status" aria-live="polite">
+    <span class="users-state-spinner" aria-hidden="true"></span>
+    <span>جاري تحميل البيانات...</span>
+  </p>
+}
+@else {
+  <p class="users-state users-state-error" role="alert">
+    <span class="users-state-error-icon" aria-hidden="true">!</span>
+    <span>حدث خطأ أثناء جلب البيانات، يرجى المحاولة لاحقاً.</span>
+  </p>
+}
 
 </div>
 

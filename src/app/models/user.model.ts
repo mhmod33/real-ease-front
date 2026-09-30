@@ -24,7 +24,10 @@ export interface Users {
   data: Data[]
   pagination: Pagination
 }
-
+export interface Root {
+  message: string
+  data: Data
+}
 export interface Data {
   id: number
   name: string
@@ -44,7 +47,9 @@ export interface Data {
   whatsapp_phone?: string
   personal_website?: string
   social_media?: SocialMedia
-  properties?: UserProperty[]
+  image:string
+  images:string[]
+  properties?: any[]
   created_at: string
   updated_at: string
 }
@@ -77,3 +82,4 @@ export interface Pagination {
   last_page: number
   current_page: number
 }
+
