@@ -39,7 +39,10 @@ export class AuthService {
   getCurrentUser(): Observable<User> {
     return this.http.get<User>(`${this.apiUrl}user`);
   }
-  
+  getUserRole():string|null{
+    const user=this.getStoredUser();
+    return user?.role ?? null;
+  }
   private getStoredUser():User |null{
     const stored=localStorage.getItem(this.userKey);
     if (!stored) {

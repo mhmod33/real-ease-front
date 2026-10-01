@@ -1,1 +1,60 @@
-<p>unauthorized works!</p>
+<main class="access-page" dir="rtl">
+	<header class="access-header">
+		<a class="brand" routerLink="/dashboard" aria-label="RealEase، الصفحة الرئيسية">
+			<img src="/images/logo2.png" alt="RealEase" />
+			<span>مساحة العمل</span>
+		</a>
+		<span class="header-note">مركز الصلاحيات</span>
+	</header>
+
+	<section class="access-layout" aria-labelledby="access-title">
+		<div class="access-copy">
+			<p class="eyebrow"><span aria-hidden="true"></span> خطأ 403 <span class="eyebrow-divider">/</span> وصول مقيّد</p>
+			<h1 id="access-title">هذه الصفحة خارج نطاق صلاحياتك</h1>
+			<p class="description">
+				حسابك يعمل بشكل طبيعي، لكن لا يملك الإذن اللازم لعرض هذا المحتوى. يمكنك العودة إلى لوحة التحكم أو تسجيل الدخول بحساب آخر.
+			</p>
+
+			<div class="actions">
+				<a class="primary-action" routerLink="/dashboard">
+					<span>العودة إلى لوحة التحكم</span>
+					<svg viewBox="0 0 24 24" aria-hidden="true">
+						<path d="M19 12H5m0 0 6 6m-6-6 6-6" />
+					</svg>
+				</a>
+				<a class="secondary-action" routerLink="/login">تبديل الحساب</a>
+			</div>
+
+			<p class="help-note">
+				<svg viewBox="0 0 24 24" aria-hidden="true">
+					<circle cx="12" cy="12" r="9" />
+					<path d="M12 11v5m0-8h.01" />
+				</svg>
+				إذا كنت تعتقد أن هذا غير صحيح، تواصل مع مسؤول النظام.
+			</p>
+		</div>
+
+		<div class="access-art" aria-hidden="true">
+			<div class="art-topline"><span>REAL EASE</span><span>ACCESS CONTROL</span></div>
+			<div class="art-grid"></div>
+			<div class="art-orbit art-orbit--outer"></div>
+			<div class="art-orbit art-orbit--inner"></div>
+			<div class="art-lock">
+				<svg viewBox="0 0 64 64" fill="none">
+					<path d="M19 28v-8a13 13 0 0 1 26 0v8" />
+					<rect x="13" y="27" width="38" height="29" rx="5" />
+					<circle cx="32" cy="40" r="3" />
+					<path d="M32 43v5" />
+				</svg>
+			</div>
+			<p class="art-code">403</p>
+			<div class="art-caption"><span></span> لا يمكن فتح هذه المساحة</div>
+			<div class="art-index">01 <i></i> 03</div>
+		</div>
+	</section>
+
+	<footer class="access-footer">
+		<span>RealEase <i></i> إدارة عقارية بوضوح</span>
+		<span>وصول آمن، تجربة أفضل</span>
+	</footer>
+</main>

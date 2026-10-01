@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { authorizationGuard } from './guards/authorization-guard';
 import { guestGuard } from './guards/guest-guard';
 
 export const routes: Routes = [
@@ -33,17 +34,20 @@ export const routes: Routes = [
     path: '',
     loadComponent: () =>
       import('./components/layout/layout').then((m) => m.Layout),
+    canActivateChild: [authorizationGuard],
     children: [
       {
         path: '',
         loadComponent: () =>
           import('./components/dashboard/dashboard').then((m) => m.Dashboard),
+        canActivate:[authorizationGuard],
         pathMatch: 'full',
       },
       {
         path: 'dashboard',
         loadComponent: () =>
           import('./components/dashboard/dashboard').then((m) => m.Dashboard),
+        canActivate:[authorizationGuard],
       },
       {
         path: 'user/profile',
@@ -54,6 +58,7 @@ export const routes: Routes = [
         path: 'agents',
         loadComponent: () =>
           import('./components/agents/agents').then((m) => m.Agents),
+        canActivate:[authorizationGuard],
       },
       {
         path: 'agents/create',
@@ -61,6 +66,7 @@ export const routes: Routes = [
           import('./components/agents/create-agent/create-agent').then(
             (m) => m.CreateAgent,
           ),
+        canActivate:[authorizationGuard],
       },
       {
         path: 'agents/:id',
@@ -73,11 +79,13 @@ export const routes: Routes = [
         path: 'orders',
         loadComponent: () =>
           import('./components/orders/orders').then((m) => m.Orders),
+        canActivate:[authorizationGuard],
       },
       {
         path: 'properties',
         loadComponent: () =>
           import('./components/properties/properties').then((m) => m.Properties),
+        canActivate:[authorizationGuard],
       },
       {
         path: 'properties/create',
@@ -92,6 +100,7 @@ export const routes: Routes = [
           import('./components/properties/property-details/property-details').then(
             (m) => m.PropertyDetails,
           ),
+          canActivate:[authorizationGuard],
       },
       {
         path: 'settings',
@@ -102,6 +111,8 @@ export const routes: Routes = [
         path: 'users',
         loadComponent: () =>
           import('./components/users/users').then((m) => m.Users),
+        canActivate:[authorizationGuard],
+
       },
       {
         path: 'users/create',
@@ -109,6 +120,7 @@ export const routes: Routes = [
           import('./components/users/create-user/create-user').then(
             (m) => m.CreateUser,
           ),
+        canActivate:[authorizationGuard],
       },
       {
         path: 'users/:id',
@@ -118,6 +130,10 @@ export const routes: Routes = [
           ),
       }
     ],
+  },
+  {
+    path: 'unauthorized',
+    loadComponent:()=>import('./components/unauthorized/unauthorized').then((m)=>m.Unauthorized)
   },
   {
     path: '**',

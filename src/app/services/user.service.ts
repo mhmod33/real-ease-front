@@ -32,11 +32,9 @@ export class UserService {
   // }
 
 
-  // deleteUser(id: string): Observable<boolean> {
-  //   const filtered = this.usersSubject.value.filter((u) => u.id !== id);
-  //   this.usersSubject.next(filtered);
-  //   return of(true);
-  // }
+  deleteUser(id: number): Observable<any> {
+    return this.http.delete<boolean>(`${this.apiUrl}users/${id}`);
+  }
 
   // deleteSelectedUsers(ids: string[]): Observable<boolean> {
   //   const filtered = this.usersSubject.value.filter((u) => !ids.includes(u.id));

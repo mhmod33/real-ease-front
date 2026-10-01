@@ -8,7 +8,33 @@
   color: #1e293b;
   box-sizing: border-box;
 }
-
+.toast-message {
+  position: fixed;
+  gap: 8px;
+  top: 20px;
+  right: 20px;
+  background-color: #003366;
+  color: #ffffff;
+  padding: 12px 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(43, 66, 96, 0.25);
+  font-size: 14px;
+  font-weight: 600;
+  z-index: 1001;
+}
+.toast-content{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.x-mark {
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+.x-mark:hover {
+  transform: scale(1.1);
+  fill: #e93507;
+}
 /* ── Header Row ── */
 .users-header-row {
   display: flex;

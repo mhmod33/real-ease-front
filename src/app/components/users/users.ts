@@ -17,7 +17,7 @@ import { Signal } from '@angular/core';
 export class Users implements OnInit {
   selectedIds = new Set<number>();
   isLoading=signal(false);
-
+  toastMessage=signal<string | null>(null);
   // Chat Modal
   showChatModal = false;
   chatContact?: ChatContact;
@@ -108,7 +108,9 @@ export class Users implements OnInit {
   goToDetails(id: number): void {
     this.router.navigate(['/users', id]);
   }
-
+  dismissToast(): void {
+    this.toastMessage.set(null);
+  }
   /* ── Delete ── */
   deleteUser(user: User, event: MouseEvent): void {
     event.stopPropagation();
@@ -116,7 +118,16 @@ export class Users implements OnInit {
       'حذف المستخدم',
       `هل أنت متأكد من حذف المستخدم "${user.name}"؟`,
       () => {
-        this.selectedIds.delete(user.id);
+        this.userService.deleteUser(user.id).subscribe({
+          next:()=>{
+            //  alert('deleted successfully');
+            this.toastMessage.set(`تم حذف المستخدم "${user.name}" بنجاح`);
+            this.users.update(users => users?.filter(u => u.id !== user.id));
+          },
+          error:(err)=>{
+            console.error(err);
+          }
+        })
       }
     );
   }
