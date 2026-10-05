@@ -25,7 +25,9 @@ export class UserService {
   getUserById(id: string): Observable<Root> {
     return this.http.get<Root>(`${this.apiUrl}users/${encodeURIComponent(id)}`);
   }
-
+  createNewUser(data:any):Observable<User|null>{
+    return this.http.post<User|null>(`${this.apiUrl}users`,data)
+  }
 
   // getUserById(id: string): User | undefined {
   //   return this.usersSubject.value.find((u) => u.id === id);

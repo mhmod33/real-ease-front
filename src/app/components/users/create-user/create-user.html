@@ -10,7 +10,7 @@
 
   <!-- ── Form Container Card ── -->
   <div class="form-container-card">
-    <form (ngSubmit)="onSubmit()" class="user-form">
+    <form [formGroup]="addForm"    class="user-form">
 
       <!-- Form Grid (2 Columns) -->
       <div class="form-grid">
@@ -20,15 +20,29 @@
           <input
             type="text"
             class="form-control"
-            [class.input-error]="nameError"
-            [(ngModel)]="name"
-            (ngModelChange)="nameError = false"
-            name="name"
+            formControlName="name"
             placeholder="الاسم"
-            required
           />
-          @if (nameError) {
+          @if (addForm.get('name')?.touched && addForm.get('name')?.hasError('required')) {
             <span class="field-error">يرجى إدخال اسم المستخدم</span>
+          }
+          @if (addForm.get('name')?.touched && addForm.get('name')?.hasError('minlength')) {
+            <span class="field-error">يجب أن يكون الاسم على الأقل حرفين</span>
+          }
+        </div>
+        <!-- Column 1: Name (Right) -->
+        <div class="form-group">
+          <input
+            type="text"
+            class="form-control"
+            formControlName="password"
+            placeholder="كلمة المرور  "
+          />
+          @if (addForm.get('password')?.touched && addForm.get('password')?.hasError('required')) {
+            <span class="field-error">يرجى إدخال كلمة المرور</span>
+          }
+          @if (addForm.get('password')?.touched && addForm.get('password')?.hasError('minlength')) {
+            <span class="field-error">يجب أن يكون الاسم على الأقل حرفين</span>
           }
         </div>
 
@@ -36,8 +50,7 @@
         <div class="form-group select-group">
           <select
             class="form-control select-control"
-            [(ngModel)]="type"
-            name="type"
+            formControlName="type"
           >
             <option value="" disabled selected>نوع المستخدم</option>
             @for (t of userTypes; track t) {
@@ -56,8 +69,7 @@
           <input
             type="text"
             class="form-control"
-            [(ngModel)]="address"
-            name="address"
+            formControlName="location"
             placeholder="العنوان"
           />
         </div>
@@ -67,8 +79,7 @@
           <input
             type="number"
             class="form-control"
-            [(ngModel)]="age"
-            name="age"
+            formControlName="age"
             placeholder="السن"
           />
         </div>
@@ -77,8 +88,7 @@
         <div class="form-group select-group">
           <select
             class="form-control select-control"
-            [(ngModel)]="gender"
-            name="gender"
+            formControlName="gender"
           >
             <option value="" disabled selected>الجنس</option>
             <option value="ذكر">ذكر</option>
@@ -96,10 +106,15 @@
           <input
             type="email"
             class="form-control"
-            [(ngModel)]="email"
-            name="email"
+            formControlName="email"
             placeholder="الايميل"
           />
+          @if (addForm.get('email')?.touched && addForm.get('email')?.hasError('required')) {
+            <span class="field-error">يرجى إدخال البريد الإلكتروني</span>
+          }
+          @if (addForm.get('email')?.touched && addForm.get('email')?.hasError('email')) {
+            <span class="field-error">البريد الإلكتروني غير صالح</span>
+          }
         </div>
 
         <!-- Column 7: Agency Name -->
@@ -107,20 +122,8 @@
           <input
             type="text"
             class="form-control"
-            [(ngModel)]="agencyName"
-            name="agencyName"
+            formControlName="agency"
             placeholder="الوكالة"
-          />
-        </div>
-
-        <!-- Column 8: Agency Address -->
-        <div class="form-group">
-          <input
-            type="text"
-            class="form-control"
-            [(ngModel)]="agencyAddress"
-            name="agencyAddress"
-            placeholder="عنوان الوكالة"
           />
         </div>
 
@@ -128,8 +131,7 @@
         <div class="form-group full-width textarea-group">
           <textarea
             class="form-control textarea-control"
-            [(ngModel)]="description"
-            name="description"
+            formControlName="description"
             rows="5"
             placeholder="الوصف"
           ></textarea>
@@ -151,8 +153,9 @@
           إلغاء
         </button>
         
-        <button type="submit" class="btn-submit">
-          إضافه
+        <button type="submit" class="btn-submit" (click)="onSubmit()" [disabled]="isLoading()">
+          {{isLoading() ? 'جارٍ الإضافة...' : 'إضافه'}}
+          
         </button>
 
       

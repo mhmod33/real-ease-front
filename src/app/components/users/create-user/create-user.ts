@@ -1,6 +1,6 @@
-import { Component } from '@angular/core';
+import { Component,signal} from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { UserService } from '../../../services/user.service';
 import { UserType } from '../../../models/user.model';
@@ -8,56 +8,71 @@ import { UserType } from '../../../models/user.model';
 @Component({
   selector: 'app-create-user',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule,ReactiveFormsModule],
   templateUrl: './create-user.html',
   styleUrl: './create-user.css',
 })
 export class CreateUser {
-  name = '';
-  nameError = false;
-  type: UserType = 'وكيل عقاري';
-  address = '';
-  age?: number;
-  gender: 'ذكر' | 'أنثى' = 'ذكر';
-  email = '';
-  agencyName = '';
-  agencyAddress = '';
-  description = '';
 
+  addForm: FormGroup;
   userTypes: UserType[] = [
     'وكيل عقاري',
     'وكيل عقاري مستقل',
     'شركة عقارية',
     'وكيل تجاري',
-    ];
-
+  ];
+  isLoading=signal(false);
   constructor(
     private userService: UserService,
-    private router: Router
-  ) {}
+    private router: Router,
+    private fb: FormBuilder,
+  ) {
+    this.addForm = this.fb.group({
+      name: ['', [Validators.required, Validators.minLength(2)]],
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', [Validators.required, Validators.minLength(6)]],
+      role: ['', [Validators.minLength(2), Validators.maxLength(15)]],
+      type: ['', Validators.required],
+      age: ['', [Validators.min(18), Validators.max(120)]],
+      gender: [''],
+      agency: [''],
+      location: [''],
+      description: ['', [Validators.minLength(10)]],
+      social_media: this.fb.group({
+        facebook: [''],
+        instagram: [''],
+        twitter: [''],
+      }),
+      phone: ['', [Validators.pattern(/^\d{0,11}$/)]],
+      whatsapp_phone: ['', [Validators.pattern(/^\d{0,11}$/)]],
+      personal_website: ['', [Validators.pattern(/^https?:\/\/.+/)]],
+    });
+  }
 
   onSubmit(): void {
-    if (!this.name.trim()) {
-      this.nameError = true;
+    console.log('Form submitted:', this.addForm.value);
+    this.isLoading.set(true);
+    if (this.addForm.invalid) {
+      this.addForm.markAllAsTouched();
+      this.isLoading.set(false)
       return;
     }
-    this.nameError = false;
-    // this.userService
-    //   .createUser({
-    //     name: this.name,
-    //     type: this.type,
-    //     address: this.address,
-    //     location: this.address || 'غير محدد',
-    //     age: this.age,
-    //     gender: this.gender,
-    //     email: this.email,
-    //     agencyName: this.agencyName,
-    //     agencyAddress: this.agencyAddress,
-    //     description: this.description,
-    //   })
-    //   .subscribe(() => {
-    //     this.router.navigate(['/users']);
-    //   });
+    else{
+      this.isLoading.set(true);
+      const data=this.addForm.value;
+      this.userService.createNewUser(data).subscribe({
+        next:()=>{
+          console.log(data);
+          this.isLoading.set(false);
+          this.router.navigate(['/users']);
+        },
+        error:(error)=>{
+          console.error('Error creating user:', error);
+          this.isLoading.set(false);
+        }
+      })
+    }
+
   }
 
   onCancel(): void {
