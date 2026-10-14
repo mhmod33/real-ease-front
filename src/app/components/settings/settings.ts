@@ -111,7 +111,6 @@ export class Settings implements OnInit {
 
   getUserDataAuthUser(){
     this.authService.getUserProfile().subscribe( (res)=>{
-      console.log(res);
       this.ProfileData.set(res);
       this.editForm.patchValue({
         name: res.data.name,
@@ -129,7 +128,6 @@ export class Settings implements OnInit {
     })
   }
   savePersonalInfo():void{
-    console.log('clicked')
     this.isLoading.set(true)
     if (this.editForm.invalid) {
       this.editForm.markAllAsTouched();
@@ -139,15 +137,11 @@ export class Settings implements OnInit {
     }
 
     const data={...this.editForm.getRawValue()};
-    console.log(data);
     
     // data.append("_method",'PUT')
     // if(this.editForm.valid){
       this.authService.editProfile(data).subscribe({
         next: (res)=>{
-        console.log(res);
-        console.log("updated successfully");
-        
         this.isLoading.set(false);
         this.showInfo('تم تحديث المعلومات بنجاح');
         },
