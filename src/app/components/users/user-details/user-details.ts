@@ -16,7 +16,6 @@ import { EditUserPropertyModal } from '../../shared/edit-user-property-modal/edi
 export class UserDetails implements OnInit {
   user=signal<Root|null>(null);
   isLoading=signal(false);
-
   // Carousel index for properties
   carouselIndex = 0;
 
@@ -47,7 +46,6 @@ export class UserDetails implements OnInit {
     this.isLoading.set(true)
     this.userService.getUserById(id).subscribe({
       next: (user) => {
-        console.log("user:",user);
         this.user.set(user);
       },
       error: () => this.router.navigate(['/notfound']),

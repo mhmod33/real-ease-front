@@ -1,8 +1,13 @@
 export type UserType =
-  | 'وكيل عقاري مستقل'
-  | 'وكيل عقاري'
-  | 'شركة عقارية'
-  | 'وكيل تجاري';
+  | 'realEstateAgent'
+  | 'independentRealEstateAgent'
+  | 'realEstateCompany'
+  | 'commercialAgent';
+  
+export type userRole =
+  | 'Admin'
+  | 'Agent'
+  | 'User';
 
 export interface UserProperty {
   id: string;
@@ -82,4 +87,3 @@ export interface Pagination {
   last_page: number
   current_page: number
 }
-

@@ -12,6 +12,16 @@
   <div class="form-container-card">
     <form [formGroup]="addForm"    class="user-form">
 
+      @if (serverErrors().length > 0) {
+        <div class="server-error-summary" role="alert" aria-live="assertive">
+          <ul>
+            @for (error of serverErrors(); track $index) {
+              <li>{{ error }}</li>
+            }
+          </ul>
+        </div>
+      }
+
       <!-- Form Grid (2 Columns) -->
       <div class="form-grid">
 
@@ -30,19 +40,53 @@
             <span class="field-error">يجب أن يكون الاسم على الأقل حرفين</span>
           }
         </div>
+          <!-- Column 6: Email -->
+        <div class="form-group">
+          <input
+            type="email"
+            class="form-control"
+            formControlName="email"
+            placeholder="الايميل"
+          />
+          @if (addForm.get('email')?.touched && addForm.get('email')?.hasError('required')) {
+            <span class="field-error">يرجى إدخال البريد الإلكتروني</span>
+          }
+          @if (addForm.get('email')?.touched && addForm.get('email')?.hasError('email')) {
+            <span class="field-error">البريد الإلكتروني غير صالح</span>
+          }
+        </div>
         <!-- Column 1: Name (Right) -->
         <div class="form-group">
           <input
-            type="text"
-            class="form-control"
+            [type]="showPassword() ? 'text' : 'password'"
+            class="form-control password-control"
             formControlName="password"
+            autocomplete="new-password"
             placeholder="كلمة المرور  "
           />
+          <button
+            type="button"
+            class="password-toggle"
+            (click)="togglePassword()"
+            [attr.aria-label]="showPassword() ? 'إخفاء كلمة المرور' : 'إظهار كلمة المرور'"
+            [attr.aria-pressed]="showPassword()"
+          >
+            @if (!showPassword()) {
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M2.4 12C3.6 7.5 7.4 4.2 12 4.2s8.4 3.3 9.6 7.8C20.4 16.5 16.6 19.8 12 19.8S3.6 16.5 2.4 12z" />
+                <circle cx="12" cy="12" r="3" />
+              </svg>
+            } @else {
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M10.6 10.7a2.1 2.1 0 0 0 2.7 2.7" />
+                <path d="M8.4 5.4A10.8 10.8 0 0 1 12 4.8c5 0 8.2 4.4 9.2 6.2a1.9 1.9 0 0 1 0 2c-.4.7-1.3 2-2.6 3.2" />
+                <path d="M15.6 18.6a10.6 10.6 0 0 1-3.6.6c-5 0-8.2-4.4-9.2-6.2a1.9 1.9 0 0 1 0-2c.4-.8 1.6-2.4 3.2-3.7" />
+                <path d="M3 3l18 18" />
+              </svg>
+            }
+          </button>
           @if (addForm.get('password')?.touched && addForm.get('password')?.hasError('required')) {
             <span class="field-error">يرجى إدخال كلمة المرور</span>
-          }
-          @if (addForm.get('password')?.touched && addForm.get('password')?.hasError('minlength')) {
-            <span class="field-error">يجب أن يكون الاسم على الأقل حرفين</span>
           }
         </div>
 
@@ -53,8 +97,27 @@
             formControlName="type"
           >
             <option value="" disabled selected>نوع المستخدم</option>
-            @for (t of userTypes; track t) {
-              <option [value]="t">{{ t }}</option>
+            @for (type of userTypes; track type) {
+              <option [value]="type">
+                {{ type === 'realEstateAgent' ? 'وكيل عقاري' : type === 'independentRealEstateAgent' ? 'وكيل عقاري مستقل' : type === 'realEstateCompany' ? 'شركة عقارية' : 'وكيل تجاري' }}
+              </option>
+            }
+          </select>
+          <span class="select-chevron">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+              <polyline points="6 9 12 15 18 9"/>
+            </svg>
+          </span>
+        </div>
+        <!-- Column 2: User Type Dropdown (Left) -->
+        <div class="form-group select-group">
+          <select
+            class="form-control select-control"
+            formControlName="role"
+          >
+            <option value="" disabled selected>الدور</option>
+            @for (role of roles; track role) {
+              <option [value]="role">{{ role=='Admin' ? 'مدير' : role=='Agent' ? 'وكيل' : 'مستخدم' }}</option>
             }
           </select>
           <span class="select-chevron">
@@ -91,8 +154,9 @@
             formControlName="gender"
           >
             <option value="" disabled selected>الجنس</option>
-            <option value="ذكر">ذكر</option>
-            <option value="أنثى">أنثى</option>
+            
+            <option value="male">ذكر</option>
+            <option value="female">أنثى</option>
           </select>
           <span class="select-chevron">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
@@ -101,21 +165,7 @@
           </span>
         </div>
 
-        <!-- Column 6: Email -->
-        <div class="form-group">
-          <input
-            type="email"
-            class="form-control"
-            formControlName="email"
-            placeholder="الايميل"
-          />
-          @if (addForm.get('email')?.touched && addForm.get('email')?.hasError('required')) {
-            <span class="field-error">يرجى إدخال البريد الإلكتروني</span>
-          }
-          @if (addForm.get('email')?.touched && addForm.get('email')?.hasError('email')) {
-            <span class="field-error">البريد الإلكتروني غير صالح</span>
-          }
-        </div>
+      
 
         <!-- Column 7: Agency Name -->
         <div class="form-group">
@@ -126,6 +176,99 @@
             placeholder="الوكالة"
           />
         </div>
+        <!-- Column 7: Agency Name -->
+        <div class="form-group">
+          <input
+            type="text"
+            class="form-control"
+            formControlName="phone"
+            placeholder="رقم الهاتف"
+          />
+          @if(addForm.get('phone')?.hasError('pattern')) {
+            <div class="invalid-feedback">
+              Please enter a valid Phone number.
+            </div>
+          }
+        </div>
+        <!-- Column 7: Agency Name -->
+        <div class="form-group">
+          <input
+            type="text"
+            class="form-control"
+            formControlName="whatsapp_phone"
+            placeholder="رقم الواتساب"
+          />
+          @if(addForm.get('whatsapp_phone')?.hasError('pattern')) {
+            <div class="invalid-feedback">
+              Please enter a valid WhatsApp number.
+            </div>
+          }
+        </div>
+
+        
+          <!-- Column 7: Agency Name -->
+          <div class="form-group">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="agency"
+              placeholder="اسم الوكالة"
+            />
+          </div>
+        
+
+        
+        <!-- Column 7: Agency Name -->
+        <div class="form-group">
+          <input
+            type="text"
+            class="form-control"
+            formControlName="personal_website"
+            placeholder="الموقع الشخصي"
+          />
+        </div>
+
+        <section class="form-group full-width social-media-section" formGroupName="social_media">
+          <h2 class="social-media-title">روابط التواصل الاجتماعي</h2>
+          <div class="form-grid">
+            <div class="form-group">
+              <input
+                type="url"
+                class="form-control"
+                formControlName="facebook"
+                placeholder="رابط فيسبوك"
+                aria-label="رابط فيسبوك"
+              />
+            </div>
+            <div class="form-group">
+              <input
+                type="url"
+                class="form-control"
+                formControlName="instagram"
+                placeholder="رابط إنستغرام"
+                aria-label="رابط إنستغرام"
+              />
+            </div>
+            <div class="form-group">
+              <input
+                type="url"
+                class="form-control"
+                formControlName="twitter"
+                placeholder="رابط تويتر أو X"
+                aria-label="رابط تويتر أو X"
+              />
+            </div>
+            <div class="form-group">
+              <input
+                type="url"
+                class="form-control"
+                formControlName="linkedin"
+                placeholder="رابط لينكدإن"
+                aria-label="رابط لينكدإن"
+              />
+            </div>
+          </div>
+        </section>
 
         <!-- Column 9: Description (Full Width) -->
         <div class="form-group full-width textarea-group">

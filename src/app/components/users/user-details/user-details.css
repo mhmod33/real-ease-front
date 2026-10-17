@@ -71,7 +71,16 @@
     animation-duration: 2s;
   }
 }
-
+.badge-role{
+  display: inline-block;
+  background-color: #e0e7ff;
+  color: #1e3a8a;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 12px;
+  margin-top: 4px;
+}
 /* ── Top Header Bar ── */
 .details-header-row {
   display: flex;
