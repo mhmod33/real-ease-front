@@ -29,6 +29,19 @@ export class Profile {
     })
   }
   navigateToEditPage():void{
-    this.router.navigate(['/settings']);
+    const url = this.router.url;
+    if(url.includes('/user/profile')){
+      this.router.navigate(['/settings']);
+    }else if(url.includes('/users/')){
+      this.router.navigate(['/settings']);
+      const id=url.split('/users/')[2];
+      if(id){
+        console.log('Navigating to edit page for user ID:', id);
+        this.router.navigate(['/users/edit',id]);
+      }
+      else{
+        console.log('User ID not found in the URL');
+      }
+    }
   }
 }

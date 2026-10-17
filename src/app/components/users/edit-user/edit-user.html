@@ -1,0 +1,184 @@
+<!-- ===== CREATE USER PAGE ===== -->
+<div class="create-user-page" dir="rtl">
+
+  <!-- ── Page Header ── -->
+  <div class="create-header-row">
+    <h1 class="create-title">
+      تعديل <span class="title-bold">,مستخدم</span>
+    </h1>
+  </div>
+
+  <!-- ── Form Container Card ── -->
+  <div class="form-container-card">
+    <form [formGroup]="addForm"    class="user-form">
+
+      <!-- Form Grid (2 Columns) -->
+      <div class="form-grid">
+
+        <!-- Column 1: Name (Right) -->
+        <div class="form-group">
+          <input
+            type="text"
+            class="form-control"
+            formControlName="name"
+            placeholder="الاسم"
+          />
+          @if (addForm.get('name')?.touched && addForm.get('name')?.hasError('required')) {
+            <span class="field-error">يرجى إدخال اسم المستخدم</span>
+          }
+          @if (addForm.get('name')?.touched && addForm.get('name')?.hasError('minlength')) {
+            <span class="field-error">يجب أن يكون الاسم على الأقل حرفين</span>
+          }
+        </div>
+        <!-- Column 1: Name (Right) -->
+        <div class="form-group">
+          <input
+            type="text"
+            class="form-control"
+            formControlName="password"
+            placeholder="كلمة المرور  "
+          />
+          @if (addForm.get('password')?.touched && addForm.get('password')?.hasError('required')) {
+            <span class="field-error">يرجى إدخال كلمة المرور</span>
+          }
+          @if (addForm.get('password')?.touched && addForm.get('password')?.hasError('minlength')) {
+            <span class="field-error">يجب أن يكون الاسم على الأقل حرفين</span>
+          }
+        </div>
+
+        <!-- Column 2: User Type Dropdown (Left) -->
+        <div class="form-group select-group">
+          <select
+            class="form-control select-control"
+            formControlName="type"
+          >
+            <option value="" disabled selected>نوع المستخدم</option>
+            @for (t of userTypes; track t) {
+              <option [value]="t">{{ t }}</option>
+            }
+          </select>
+          <span class="select-chevron">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+              <polyline points="6 9 12 15 18 9"/>
+            </svg>
+          </span>
+        </div>
+        <!-- Column 2: User Type Dropdown (Left) -->
+        <div class="form-group select-group">
+          <select
+            class="form-control select-control"
+            formControlName="type"
+          >
+            <option value="" disabled selected>دور المستخدم</option>
+            @for (t of roles; track t) {
+              <option [value]="t">{{ t }}</option>
+            }
+          </select>
+          <span class="select-chevron">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+              <polyline points="6 9 12 15 18 9"/>
+            </svg>
+          </span>
+        </div>
+
+        <!-- Column 3: Address -->
+        <div class="form-group">
+          <input
+            type="text"
+            class="form-control"
+            formControlName="location"
+            placeholder="العنوان"
+          />
+        </div>
+
+        <!-- Column 4: Age -->
+        <div class="form-group">
+          <input
+            type="number"
+            class="form-control"
+            formControlName="age"
+            placeholder="السن"
+          />
+        </div>
+
+        <!-- Column 5: Gender Dropdown -->
+        <div class="form-group select-group">
+          <select
+            class="form-control select-control"
+            formControlName="gender"
+          >
+            <option value="" disabled selected>الجنس</option>
+            <option value="ذكر">ذكر</option>
+            <option value="أنثى">أنثى</option>
+          </select>
+          <span class="select-chevron">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+              <polyline points="6 9 12 15 18 9"/>
+            </svg>
+          </span>
+        </div>
+
+        <!-- Column 6: Email -->
+        <div class="form-group">
+          <input
+            type="email"
+            class="form-control"
+            formControlName="email"
+            placeholder="الايميل"
+          />
+          @if (addForm.get('email')?.touched && addForm.get('email')?.hasError('required')) {
+            <span class="field-error">يرجى إدخال البريد الإلكتروني</span>
+          }
+          @if (addForm.get('email')?.touched && addForm.get('email')?.hasError('email')) {
+            <span class="field-error">البريد الإلكتروني غير صالح</span>
+          }
+        </div>
+
+        <!-- Column 7: Agency Name -->
+        <div class="form-group">
+          <input
+            type="text"
+            class="form-control"
+            formControlName="agency"
+            placeholder="الوكالة"
+          />
+        </div>
+
+        <!-- Column 9: Description (Full Width) -->
+        <div class="form-group full-width textarea-group">
+          <textarea
+            class="form-control textarea-control"
+            formControlName="description"
+            rows="5"
+            placeholder="الوصف"
+          ></textarea>
+          <span class="textarea-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+              <line x1="21" y1="10" x2="3" y2="10"/>
+              <line x1="21" y1="6" x2="3" y2="6"/>
+              <line x1="21" y1="14" x2="3" y2="14"/>
+              <line x1="21" y1="18" x2="3" y2="18"/>
+            </svg>
+          </span>
+        </div>
+
+      </div>
+
+      <!-- Form Action Buttons -->
+      <div class="form-actions-row">
+        <button type="button" class="btn-cancel" (click)="onCancel()">
+          إلغاء
+        </button>
+        
+        <button type="submit" class="btn-submit" (click)="onSubmit()" [disabled]="isLoading()">
+          {{isLoading() ? 'جارٍ الإضافة...' : 'إضافه'}}
+          
+        </button>
+
+      
+      </div>
+
+    </form>
+  </div>
+
+</div>

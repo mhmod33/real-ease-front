@@ -28,6 +28,9 @@ export class UserService {
   createNewUser(data:any):Observable<User|null>{
     return this.http.post<User|null>(`${this.apiUrl}users`,data)
   }
+  editUser(data:any):Observable<User|null>{
+    return this.http.put<User|null>(`${this.apiUrl}users`,data)
+  }
 
   // getUserById(id: string): User | undefined {
   //   return this.usersSubject.value.find((u) => u.id === id);

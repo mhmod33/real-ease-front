@@ -128,6 +128,13 @@ export const routes: Routes = [
           import('./components/users/user-details/user-details').then(
             (m) => m.UserDetails,
           ),
+      },
+      {
+        path: 'users/edit/:id',
+        loadComponent: () =>
+          import('./components/users/edit-user/edit-user').then(
+            (m) => m.EditUser,
+          ),
       }
     ],
   },
