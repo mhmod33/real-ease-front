@@ -117,7 +117,7 @@
           >
             <option value="" disabled selected>الدور</option>
             @for (role of roles; track role) {
-              <option [value]="role">{{ role=='Admin' ? 'مدير' : role=='Agent' ? 'وكيل' : 'مستخدم' }}</option>
+              <option [value]="role">{{ role=='admin' ? 'مدير' : role=='agent' ? 'وكيل' : 'مستخدم' }}</option>
             }
           </select>
           <span class="select-chevron">
@@ -176,7 +176,7 @@
             placeholder="الوكالة"
           />
         </div>
-        <!-- Column 7: Agency Name -->
+        <!-- Column 7: phone -->
         <div class="form-group">
           <input
             type="text"
@@ -190,7 +190,7 @@
             </div>
           }
         </div>
-        <!-- Column 7: Agency Name -->
+        <!-- Column 7: WhatsApp Phone -->
         <div class="form-group">
           <input
             type="text"

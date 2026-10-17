@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { UserService } from '../../../services/user.service';
-import { UserType } from '../../../models/user.model';
+import { User, UserType } from '../../../models/user.model';
 
 @Component({
   selector: 'app-edit-user',
@@ -14,12 +14,18 @@ import { UserType } from '../../../models/user.model';
 })
 export class EditUser {
 
-  addForm: FormGroup;
+  editForm:FormGroup;
   userTypes: UserType[] = [
-    'وكيل عقاري',
-    'وكيل عقاري مستقل',
-    'شركة عقارية',
-    'وكيل تجاري',
+    'realEstateAgent',
+    'independentRealEstateAgent',
+    'realEstateCompany',
+    'commercialAgent',
+  ];
+  userData=signal<User|null>(null);
+  roles: string[] = [
+    'admin',
+    'user',
+    'agent',
   ];
   isLoading=signal(false);
   constructor(
@@ -27,40 +33,69 @@ export class EditUser {
     private router: Router,
     private fb: FormBuilder,
   ) {
-    this.addForm = this.fb.group({
+    this.editForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(2)]],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
-      role: ['', [Validators.minLength(2), Validators.maxLength(15)]],
+      role: [''],
       type: ['', Validators.required],
       age: ['', [Validators.min(18), Validators.max(120)]],
       gender: [''],
       agency: [''],
       location: [''],
       description: ['', [Validators.minLength(10)]],
-      social_media: this.fb.group({
+     social_media: this.fb.group({
         facebook: [''],
         instagram: [''],
         twitter: [''],
+        linkedin: [''],
       }),
       phone: ['', [Validators.pattern(/^\d{0,11}$/)]],
       whatsapp_phone: ['', [Validators.pattern(/^\d{0,11}$/)]],
       personal_website: ['', [Validators.pattern(/^https?:\/\/.+/)]],
     });
-  }
 
+    
+  }
+  ngOnInit():void{
+    this.getUserData();
+  }
+  getUserData(){
+    const url=this.router.url;
+    const id = url.split('/')[3]; 
+    this.userService.getUserById(id).subscribe({
+      next:(res)=>{
+        console.log('User data retrieved:', res);
+        this.userData.set(res.data);
+        this.editForm.patchValue({
+        name: res.data.name,
+        type: res.data.type,
+        role: res.data.role,
+        location: res.data.location,
+        agency: res.data.agency,
+        password: res.data.password,
+        email: res.data.email,
+        gender: res.data.gender,
+        age: res.data.age,
+        description: res.data.description,
+        phone: res.data.phone,
+        personal_website: res.data.personal_website,
+        social_media: res.data.social_media,
+        whatsapp_phone: res.data.whatsapp_phone,
+        })
+      },
+      error:(err)=>{
+        console.log('Error retrieving user data:', err);
+      }
+    })
+  }
   onSubmit(): void {
-    console.log('Form submitted:', this.addForm.value);
-    this.isLoading.set(true);
-    if (this.addForm.invalid) {
-      this.addForm.markAllAsTouched();
-      this.isLoading.set(false)
-      return;
-    }
-    else{
+    console.log('Form submitted:', this.editForm.value);
+      const url=this.router.url;
+      const id = url.split('/')[3];
       this.isLoading.set(true);
-      const data=this.addForm.value;
-      this.userService.createNewUser(data).subscribe({
+      const data=this.editForm.value;
+      this.userService.editUser(data, id).subscribe({
         next:()=>{
           console.log(data);
           this.isLoading.set(false);
@@ -71,7 +106,7 @@ export class EditUser {
           this.isLoading.set(false);
         }
       })
-    }
+    
 
   }
 

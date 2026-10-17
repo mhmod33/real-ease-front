@@ -28,8 +28,8 @@ export class UserService {
   createNewUser(data:any):Observable<User|null>{
     return this.http.post<User|null>(`${this.apiUrl}users`,data)
   }
-  editUser(data:any):Observable<User|null>{
-    return this.http.put<User|null>(`${this.apiUrl}users`,data)
+  editUser(data:any,id:string):Observable<User|null>{
+    return this.http.put<User|null>(`${this.apiUrl}users/${encodeURIComponent(id)}`,data)
   }
 
   // getUserById(id: string): User | undefined {

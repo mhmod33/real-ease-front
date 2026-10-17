@@ -24,9 +24,9 @@ export class CreateUser {
     'commercialAgent',
   ];
   roles: userRole[] = [
-    'Admin',
-    'Agent',
-    'User',
+    'admin',
+    'agent',
+    'user',
   ];
 
   isLoading=signal(false);

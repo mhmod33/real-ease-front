@@ -5,9 +5,9 @@ export type UserType =
   | 'commercialAgent';
   
 export type userRole =
-  | 'Admin'
-  | 'Agent'
-  | 'User';
+  | 'admin'
+  | 'agent'
+  | 'user';
 
 export interface UserProperty {
   id: string;
@@ -49,6 +49,7 @@ export interface Data {
   agency: string
   description?: string
   phone?: string
+  password?:string
   whatsapp_phone?: string
   personal_website?: string
   social_media?: SocialMedia

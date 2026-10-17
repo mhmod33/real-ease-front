@@ -2,7 +2,7 @@
   @if (profile(); as profile) {
     <div class="profile-heading">
       <h1>الملف الشخصي، {{ profile.data.name }}</h1>
-      <button type="button" class="edit-button" ><span aria-hidden="true">&#9998;</span> تعديل</button>
+      <button type="button" class="edit-button" (click)="navigateToEditPage()"><span aria-hidden="true">&#9998;</span> تعديل</button>
     </div>
     <section class="profile-card" aria-label="الملف الشخصي">
       <div class="profile-cover">

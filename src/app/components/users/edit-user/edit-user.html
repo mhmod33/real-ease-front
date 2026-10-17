@@ -10,7 +10,7 @@
 
   <!-- ── Form Container Card ── -->
   <div class="form-container-card">
-    <form [formGroup]="addForm"    class="user-form">
+    <form [formGroup]="editForm"    class="user-form">
 
       <!-- Form Grid (2 Columns) -->
       <div class="form-grid">
@@ -21,12 +21,13 @@
             type="text"
             class="form-control"
             formControlName="name"
+            [value]="userData()?.name"
             placeholder="الاسم"
           />
-          @if (addForm.get('name')?.touched && addForm.get('name')?.hasError('required')) {
+          @if (editForm.get('name')?.touched && editForm.get('name')?.hasError('required')) {
             <span class="field-error">يرجى إدخال اسم المستخدم</span>
           }
-          @if (addForm.get('name')?.touched && addForm.get('name')?.hasError('minlength')) {
+          @if (editForm.get('name')?.touched && editForm.get('name')?.hasError('minlength')) {
             <span class="field-error">يجب أن يكون الاسم على الأقل حرفين</span>
           }
         </div>
@@ -38,21 +39,18 @@
             formControlName="password"
             placeholder="كلمة المرور  "
           />
-          @if (addForm.get('password')?.touched && addForm.get('password')?.hasError('required')) {
+          @if (editForm.get('password')?.touched && editForm.get('password')?.hasError('required')) {
             <span class="field-error">يرجى إدخال كلمة المرور</span>
           }
-          @if (addForm.get('password')?.touched && addForm.get('password')?.hasError('minlength')) {
+          @if (editForm.get('password')?.touched && editForm.get('password')?.hasError('minlength')) {
             <span class="field-error">يجب أن يكون الاسم على الأقل حرفين</span>
           }
         </div>
 
         <!-- Column 2: User Type Dropdown (Left) -->
-        <div class="form-group select-group">
-          <select
-            class="form-control select-control"
-            formControlName="type"
-          >
-            <option value="" disabled selected>نوع المستخدم</option>
+         <div class="form-group select-group">
+          <select class="form-control select-control" formControlName="type">
+            <option value="" disabled>نوع الوكيل</option>
             @for (t of userTypes; track t) {
               <option [value]="t">{{ t }}</option>
             }
@@ -67,11 +65,11 @@
         <div class="form-group select-group">
           <select
             class="form-control select-control"
-            formControlName="type"
+            formControlName="role"
           >
-            <option value="" disabled selected>دور المستخدم</option>
-            @for (t of roles; track t) {
-              <option [value]="t">{{ t }}</option>
+            <option value="" disabled>دور المستخدم</option>
+            @for (r of roles; track r) {
+              <option [value]="r">{{ r }}</option>
             }
           </select>
           <span class="select-chevron">
@@ -108,8 +106,8 @@
             formControlName="gender"
           >
             <option value="" disabled selected>الجنس</option>
-            <option value="ذكر">ذكر</option>
-            <option value="أنثى">أنثى</option>
+            <option value="male">ذكر</option>
+            <option value="female">أنثى</option>
           </select>
           <span class="select-chevron">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
@@ -126,11 +124,53 @@
             formControlName="email"
             placeholder="الايميل"
           />
-          @if (addForm.get('email')?.touched && addForm.get('email')?.hasError('required')) {
+          @if (editForm.get('email')?.touched && editForm.get('email')?.hasError('required')) {
             <span class="field-error">يرجى إدخال البريد الإلكتروني</span>
           }
-          @if (addForm.get('email')?.touched && addForm.get('email')?.hasError('email')) {
+          @if (editForm.get('email')?.touched && editForm.get('email')?.hasError('email')) {
             <span class="field-error">البريد الإلكتروني غير صالح</span>
+          }
+        </div>
+       <!-- Column 7: phone -->
+        <div class="form-group">
+          <input
+            type="text"
+            class="form-control"
+            formControlName="phone"
+            placeholder="رقم الهاتف"
+          />
+          @if(editForm.get('phone')?.hasError('pattern')) {
+            <div class="invalid-feedback">
+              Please enter a valid Phone number.
+            </div>
+          }
+        </div>
+        <!-- Column 7: WhatsApp Phone -->
+        <div class="form-group">
+          <input
+            type="text"
+            class="form-control"
+            formControlName="whatsapp_phone"
+            placeholder="رقم الواتساب"
+          />
+          @if(editForm.get('whatsapp_phone')?.hasError('pattern')) {
+            <div class="invalid-feedback">
+              Please enter a valid WhatsApp number.
+            </div>
+          }
+        </div>
+        <!-- Column 7: WhatsApp Phone -->
+        <div class="form-group">
+          <input
+            type="text"
+            class="form-control"
+            formControlName="personal_website"
+            placeholder="الموقع الشخصي"
+          />
+          @if(editForm.get('personal_website')?.hasError('pattern')) {
+            <div class="invalid-feedback">
+              Please enter a valid Url.
+            </div>
           }
         </div>
 
@@ -143,7 +183,47 @@
             placeholder="الوكالة"
           />
         </div>
-
+         <section class="form-group full-width social-media-section" formGroupName="social_media">
+          <h2 class="social-media-title">روابط التواصل الاجتماعي</h2>
+          <div class="form-grid">
+            <div class="form-group">
+              <input
+                type="url"
+                class="form-control"
+                formControlName="facebook"
+                placeholder="رابط فيسبوك"
+                aria-label="رابط فيسبوك"
+              />
+            </div>
+            <div class="form-group">
+              <input
+                type="url"
+                class="form-control"
+                formControlName="instagram"
+                placeholder="رابط إنستغرام"
+                aria-label="رابط إنستغرام"
+              />
+            </div>
+            <div class="form-group">
+              <input
+                type="url"
+                class="form-control"
+                formControlName="twitter"
+                placeholder="رابط تويتر أو X"
+                aria-label="رابط تويتر أو X"
+              />
+            </div>
+            <div class="form-group">
+              <input
+                type="url"
+                class="form-control"
+                formControlName="linkedin"
+                placeholder="رابط لينكدإن"
+                aria-label="رابط لينكدإن"
+              />
+            </div>
+          </div>
+        </section>
         <!-- Column 9: Description (Full Width) -->
         <div class="form-group full-width textarea-group">
           <textarea
@@ -171,7 +251,7 @@
         </button>
         
         <button type="submit" class="btn-submit" (click)="onSubmit()" [disabled]="isLoading()">
-          {{isLoading() ? 'جارٍ الإضافة...' : 'إضافه'}}
+          {{isLoading() ? 'جارٍ التعديل...' : 'تعديل'}}
           
         </button>
 
