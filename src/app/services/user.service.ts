@@ -8,10 +8,10 @@ import { Router } from '@angular/router';
   providedIn: 'root',
 })
 export class UserService {
+  private apiUrl=environment.apiUrl;
   deleteSelectedUsers(ids: string[]) {
     throw new Error('Method not implemented.');
   }
-  private apiUrl=environment.apiUrl;
   
 
   constructor(

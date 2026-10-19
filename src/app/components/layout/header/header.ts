@@ -1,9 +1,11 @@
-import { Component, inject, HostListener } from '@angular/core';
+import { Component, inject, HostListener, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { SidebarService } from '../../../services/sidebar.service';
 import { SessionService } from '../../../services/session.service';
+import { Message } from '../../../models/message.model';
+import { MessageService } from '../../../services/message.service';
 
 export interface ChatMessage {
   id: string;
@@ -46,6 +48,7 @@ export interface Notification {
 })
 export class Header {
   readonly sidebarService = inject(SidebarService);
+  private readonly changeDetector = inject(ChangeDetectorRef);
   private readonly sessionService = inject(SessionService);
   private readonly router = inject(Router);
   readonly userName = 'مصطفى';
@@ -60,7 +63,11 @@ export class Header {
   showChatModal = false;
   newMessage = '';
   activeConv: Conversation | null = null;
+  messages: Message[] = [];
 
+  constructor(
+    private messageService:MessageService
+  ){}
   notifications: Notification[] = [
     {
       id: '1',
@@ -184,7 +191,9 @@ export class Header {
       messages: []
     },
   ];
-
+  ngOnInit(): void {
+    this.getAllMessages();
+  }
   chatConversations: ChatMessage[] = [];
 
   get unreadNotificationsCount(): number {
@@ -194,7 +203,14 @@ export class Header {
   get unreadMessagesCount(): number {
     return this.conversationList.filter((c) => c.unread).length;
   }
-
+  getAllMessages(){
+    this.messageService.getALlMessages().subscribe({
+      next:(res)=>{this.messages = res.data;
+        this.changeDetector.detectChanges();
+        console.log(res.data);
+      }
+    })
+  };
   selectConversation(conv: Conversation): void {
     this.activeConv = conv;
     this.chatConversations = conv.messages || [];
