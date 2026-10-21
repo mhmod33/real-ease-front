@@ -6,8 +6,8 @@ export interface Root {
 export interface Message {
   id: number
   property: Property
-  sender_id: SenderId
-  receiver_id: ReceiverId
+  sender: Sender
+  receiver: Receiver
   message: string
   read_at: string
 }
@@ -20,14 +20,14 @@ export interface Property {
   agent: any
 }
 
-export interface SenderId {
+export interface Sender {
   id: number
   name: string
   email: string
   phone: string
 }
 
-export interface ReceiverId {
+export interface Receiver {
   id: number
   name: string
   email: string
