@@ -37,7 +37,7 @@
             {{ user()?.data?.type === 'realEstateAgent' ? 'وكيل عقاري' : user()?.data?.type === 'independentRealEstateAgent' ? 'وكيل عقاري مستقل' : user()?.data?.type === 'realEstateCompany' ? 'شركة عقارية' : 'وكيل تجاري' }}
           </span>
           <span class="profile-role badge-role">
-            {{ user()?.data?.role === 'Admin' ? 'أدمن' : user()?.data?.role === 'agent' ? 'وكيل' : user()?.data?.role === 'user' ? 'مستخدم' : 'غير محدد' }}
+            {{ user()?.data?.role === 'admin' ? 'أدمن' : user()?.data?.role === 'agent' ? 'وكيل' : user()?.data?.role === 'user' ? 'مستخدم' : 'غير محدد' }}
           </span>
         </div>
       </div>

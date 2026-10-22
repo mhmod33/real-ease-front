@@ -26,10 +26,10 @@
               <path d="m4.5 7 7.5 6 7.5-6" />
             </svg>
           </span>
-          @if(loginForm.get('email')?.touched && loginForm.get('email')?.invalid){
-            <p class="error-message">البريد الإلكتروني غير صحيح</p>
-          }
         </label>
+        @if(loginForm.get('email')?.touched && loginForm.get('email')?.invalid){
+          <p class="error-message">البريد الإلكتروني غير صحيح</p>
+        }
 
         <!-- Password -->
         <label class="form-field" aria-label="كلمة المرور">

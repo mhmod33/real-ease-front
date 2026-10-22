@@ -383,6 +383,31 @@
   background: #f8fafc;
 }
 
+.chat-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 120px;
+  padding: 20px;
+  color: #94a3b8;
+  font-size: 13px;
+  text-align: center;
+}
+
+.chat-state-spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid #dbeafe;
+  border-top-color: #003366;
+  border-radius: 50%;
+  animation: chat-state-spin 0.8s linear infinite;
+}
+
+@keyframes chat-state-spin {
+  to { transform: rotate(360deg); }
+}
+
 .chat-msg-row {
   display: flex;
   align-items: flex-end;

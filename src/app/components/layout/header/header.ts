@@ -64,6 +64,8 @@ export class Header {
   newMessage = '';
   activeConv: Conversation | null = null;
   messages: Message[] = [];
+  isLoadingMessages = false;
+  messagesError = '';
 
   constructor(
     private messageService:MessageService
@@ -191,9 +193,6 @@ export class Header {
       messages: []
     },
   ];
-  ngOnInit(): void {
-    this.getAllMessages();
-  }
   chatConversations: ChatMessage[] = [];
 
   get unreadNotificationsCount(): number {
@@ -204,11 +203,19 @@ export class Header {
     return this.conversationList.filter((c) => c.unread).length;
   }
   getAllMessages(){
+    this.isLoadingMessages = true;
+    this.messagesError = '';
     this.messageService.getALlMessages().subscribe({
-      next:(res)=>{this.messages = res.data;
+      next:(res)=>{
+        this.messages = res.data;
+        this.isLoadingMessages = false;
         this.changeDetector.detectChanges();
-        console.log(res.data);
-      }
+      },
+      error:()=>{
+        this.isLoadingMessages = false;
+        this.messagesError = 'تعذر تحميل الرسائل';
+        this.changeDetector.detectChanges();
+      },
     })
   };
   selectConversation(conv: Conversation): void {
@@ -230,7 +237,10 @@ export class Header {
 
   toggleChat(): void {
     this.showChat = !this.showChat;
-    if (this.showChat) this.showNotifications = false;
+    if (this.showChat) {
+      this.showNotifications = false;
+      this.getAllMessages();
+    }
   }
 
   dismissNotification(id: string): void {
