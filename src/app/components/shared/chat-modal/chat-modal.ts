@@ -1,8 +1,10 @@
 import { Component, EventEmitter, Input, Output, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { MessageService } from '../../../services/message.service';
 
 export interface ChatContact {
+  id?:number;
   name: string;
   image: string;
   role?: string;
@@ -31,10 +33,11 @@ export class ChatModal implements OnChanges {
 
   newMessage = '';
   history: ChatMessage[] = [];
-
+  constructor(private messageService:MessageService){}
   ngOnChanges(changes: SimpleChanges): void {
     // Seed a fresh conversation each time the modal is opened for a contact.
     if (changes['open'] && this.open) {
+      console.log(this.contact);
       this.seedHistory();
       this.newMessage = '';
     }
@@ -56,19 +59,24 @@ export class ChatModal implements OnChanges {
 
   send(): void {
     const text = this.newMessage.trim();
-    if (!text) return;
-    this.history.push({ id: String(Date.now()), text, isMe: true, time: this.now() });
-    this.newMessage = '';
-
-    // Simulated reply
-    setTimeout(() => {
-      this.history.push({
-        id: String(Date.now() + 1),
-        text: 'شكراً لتواصلك معنا، سنرد عليك في أقرب وقت.',
-        isMe: false,
-        time: this.now(),
-      });
-    }, 800);
+    const receiverId = this.contact?.id;
+    if (!text ) {
+      console.log("No text provided for sending message");
+      return;
+    }else if(!receiverId){
+      console.log("No receiverId provided for sending message",receiverId);
+      return;
+    }
+    console.log("Sending message",text,receiverId)
+    this.messageService.sendMessage(text, receiverId).subscribe({
+      next:(res)=>{
+        console.log("Message sent",text,receiverId)
+        console.log('Message sent successfully:', res);
+      },
+      error:(err)=>{
+        console.log('error sending message:',err)
+      }
+    })
   }
 
   onEnter(event: KeyboardEvent): void {

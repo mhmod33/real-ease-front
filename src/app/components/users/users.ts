@@ -182,6 +182,7 @@ export class Users implements OnInit {
   openChat(user: User, event: MouseEvent): void {
     event.stopPropagation();
     this.chatContact = {
+      id:user.id,
       name: user.name,
       image: user.avatar,
       role: user.type,

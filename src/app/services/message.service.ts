@@ -12,4 +12,11 @@ export class MessageService {
   getALlMessages():Observable<Root>{
     return this.http.get<Root>(`${this.apiUrl}messages`)
   }
+  sendMessage(message: string, receiverId: number): Observable<Root> {
+    return this.http.post<Root>(`${this.apiUrl}messages`, {
+      message,
+      receiver_id: receiverId,
+      property_id:1
+    });
+  }
 }
