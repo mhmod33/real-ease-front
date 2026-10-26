@@ -58,6 +58,7 @@ export class ChatModal implements OnChanges {
   }
 
   send(): void {
+    console.log("send message",this.newMessage,this.contact)
     const text = this.newMessage.trim();
     const receiverId = this.contact?.id;
     if (!text ) {
