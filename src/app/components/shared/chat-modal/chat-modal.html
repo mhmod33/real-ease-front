@@ -54,24 +54,37 @@
         <span>اليوم</span>
       </div>
 
-      <!-- Messages Area -->
       <div class="chat-messages-area">
-        @for (msg of history; track msg.id) {
-          <div class="chat-msg-row" [class.chat-msg-me]="msg.isMe">
-            @if (!msg.isMe) {
-              <div class="chat-avatar-sm">
-                <img [src]="contact.image" [alt]="contact.name" />
-              </div>
-            }
-            <div class="chat-bubble-col">
-              <div class="chat-bubble" [class.chat-bubble-me]="msg.isMe">
-                {{ msg.text }}
-              </div>
-              <span class="chat-msg-time">{{ msg.time }}</span>
-            </div>
-          </div>
+        @if (messageHistory.length > 0) {
+          @if (isLoading) {
+            <p class="loading-messages">جاري تحديث الرسائل...</p>
+          }
+           @for (msg of messageHistory; track msg.id) {
+             <div class="chat-msg-row" [class.chat-msg-me]="msg.isMe">
+               @if (!msg.isMe) {
+                 <div class="chat-avatar-sm">
+                   <img [src]="contact.image" [alt]="contact.name" />
+                 </div>
+               }
+               <div class="chat-bubble-col">
+                 <div class="chat-bubble" [class.chat-bubble-me]="msg.isMe">
+                   {{ msg.message }}
+                 </div>
+                 <span class="chat-msg-time">{{ dateFormat(msg.created_at) }}</span>
+               </div>
+             </div>
+           }
+        } @else if (isLoading) {
+          <p class="loading-messages">جاري تحميل الرسائل...</p>
+        } @else if (historyError) {
+           <p class="chat-error" role="alert">{{ historyError }}</p>
+        } @else {
+           <p class="no-messages">لا توجد رسائل بعد. ابدأ المحادثة!</p>
         }
       </div>
+      @if (sendError) {
+        <p class="chat-error" role="alert">{{ sendError }}</p>
+      }
 
       <!-- Input Bar -->
       <div class="chat-input-bar">
@@ -87,6 +100,7 @@
           type="text"
           [(ngModel)]="newMessage"
           (keydown)="onEnter($event)"
+          [disabled]="isSending"
           placeholder="اكتب رسالتك هنا..."
         />
 
@@ -101,7 +115,7 @@
         </button>
 
         <!-- Send -->
-        <button class="chat-send-btn" (click)="send()">
+        <button class="chat-send-btn" (click)="send()" [disabled]="isSending || !newMessage.trim()">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
             <line x1="22" y1="2" x2="11" y2="13"/>
             <polygon points="22 2 15 22 11 13 2 9 22 2"/>

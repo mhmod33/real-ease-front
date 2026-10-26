@@ -1,10 +1,14 @@
-import { Component, EventEmitter, Input, Output, OnChanges, SimpleChanges } from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, Input, Output, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MessageService } from '../../../services/message.service';
+import { AuthService } from '../../../services/auth-service';
+import { MessageHistoryEntry } from '../../../models/message.model';
+import { finalize } from 'rxjs';
 
 export interface ChatContact {
-  id?:number;
+  id?: number | string;
+  propertyId?: number;
   name: string;
   image: string;
   role?: string;
@@ -12,10 +16,10 @@ export interface ChatContact {
 }
 
 export interface ChatMessage {
-  id: string;
-  text: string;
+  id: number | string;
+  message: string;
+  created_at: string;
   isMe: boolean;
-  time: string;
 }
 
 @Component({
@@ -32,52 +36,124 @@ export class ChatModal implements OnChanges {
   @Output() closed = new EventEmitter<void>();
 
   newMessage = '';
-  history: ChatMessage[] = [];
-  constructor(private messageService:MessageService){}
-  ngOnChanges(changes: SimpleChanges): void {
-    // Seed a fresh conversation each time the modal is opened for a contact.
-    if (changes['open'] && this.open) {
-      console.log(this.contact);
-      this.seedHistory();
-      this.newMessage = '';
-    }
-  }
+  messageHistory: ChatMessage[] = [];
+  isLoading = false;
+  isSending = false;
+  historyError = '';
+  sendError = '';
+  private historyRequestId = 0;
 
-  private seedHistory(): void {
-    this.history = [
-      { id: '1', text: 'السلام عليكم! كيف يمكنني مساعدتك؟', isMe: false, time: '10:00 ص' },
-      { id: '2', text: 'أريد الاستفسار عن عقار', isMe: true, time: '10:02 ص' },
-      { id: '3', text: 'بكل سرور، أنا في خدمتك', isMe: false, time: '10:04 ص' },
-    ];
+  constructor(
+    private messageService: MessageService,
+    private authService: AuthService,
+    private changeDetector: ChangeDetectorRef
+  ) {}
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if ((changes['open'] || changes['contact']) && this.open) {
+      this.newMessage = '';
+      this.sendError = '';
+      this.getUserHistory();
+    }
   }
 
   close(): void {
     this.open = false;
+    this.historyRequestId++;
+    this.isLoading = false;
     this.newMessage = '';
     this.closed.emit();
   }
 
-  send(): void {
-    console.log("send message",this.newMessage,this.contact)
-    const text = this.newMessage.trim();
-    const receiverId = this.contact?.id;
-    if (!text ) {
-      console.log("No text provided for sending message");
-      return;
-    }else if(!receiverId){
-      console.log("No receiverId provided for sending message",receiverId);
+  getUserHistory(): void {
+    const receiverId = this.receiverId;
+    const requestId = ++this.historyRequestId;
+    this.historyError = '';
+    if (receiverId === null) {
+      this.messageHistory = [];
+      this.isLoading = false;
+      this.historyError = 'تعذر تحديد المستخدم لعرض المحادثة';
+      this.changeDetector.markForCheck();
       return;
     }
-    console.log("Sending message",text,receiverId)
-    this.messageService.sendMessage(text, receiverId).subscribe({
-      next:(res)=>{
-        console.log("Message sent",text,receiverId)
-        console.log('Message sent successfully:', res);
+
+    this.isLoading = true;
+    this.messageService.getMessageHistory(receiverId).pipe(
+      finalize(() => {
+        if (requestId === this.historyRequestId) {
+          this.isLoading = false;
+          this.changeDetector.markForCheck();
+        }
+      })
+    ).subscribe({
+      next: (response) => {
+        if (requestId !== this.historyRequestId) {
+          return;
+        }
+        if (!Array.isArray(response.data)) {
+          this.messageHistory = [];
+          this.historyError = 'تعذر تحميل الرسائل';
+          this.changeDetector.markForCheck();
+          return;
+        }
+        const currentUserId = this.authService.currentUser()?.id;
+        this.messageHistory = response.data.map((message) => this.toChatMessage(
+          message,
+          currentUserId !== undefined && message.sender_id === currentUserId
+        ));
+        this.changeDetector.markForCheck();
       },
-      error:(err)=>{
-        console.log('error sending message:',err)
+      error: () => {
+        if (requestId === this.historyRequestId) {
+          this.historyError = 'تعذر تحميل الرسائل';
+          this.changeDetector.markForCheck();
+        }
+      },
+    });
+  }
+
+  send(): void {
+    const text = this.newMessage.trim();
+    const receiverId = this.receiverId;
+    if (!text || this.isSending) {
+      return;
+    }
+    if (receiverId === null) {
+      this.sendError = 'تعذر تحديد المستخدم لإرسال الرسالة';
+      this.changeDetector.markForCheck();
+      return;
+    }
+
+    this.sendError = '';
+    this.isSending = true;
+    this.messageService.sendMessage(text, receiverId, this.contact?.propertyId).subscribe({
+      next: (response) => {
+        const sentMessage = response.data;
+        const displayedMessage = sentMessage
+          && Number.isSafeInteger(sentMessage.id)
+          && typeof sentMessage.message === 'string'
+          && typeof sentMessage.created_at === 'string'
+          ? this.toChatMessage(sentMessage, true)
+          : {
+              id: `local-${Date.now()}`,
+              message: text,
+              created_at: new Date().toISOString(),
+              isMe: true,
+            };
+        this.messageHistory = [
+          ...this.messageHistory,
+          displayedMessage,
+        ];
+        this.newMessage = '';
+        this.isSending = false;
+        this.changeDetector.markForCheck();
+      },
+      error: () => {
+        this.isSending = false;
+        this.sendError = 'تعذر إرسال الرسالة. حاول مرة أخرى';
+        this.changeDetector.markForCheck();
       }
-    })
+    });
   }
 
   onEnter(event: KeyboardEvent): void {
@@ -87,7 +163,29 @@ export class ChatModal implements OnChanges {
     }
   }
 
-  private now(): string {
-    return new Date().toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
+  dateFormat(dateString: string): string {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('ar-EG', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+    });
+  }
+
+  private get receiverId(): number | null {
+    const id = Number(this.contact?.id);
+    return Number.isSafeInteger(id) && id > 0 ? id : null;
+  }
+
+  private toChatMessage(message: MessageHistoryEntry, isMe: boolean): ChatMessage {
+    return {
+      id: message.id,
+      message: message.message,
+      created_at: message.created_at,
+      isMe,
+    };
   }
 }

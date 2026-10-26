@@ -248,6 +248,14 @@
   align-self: flex-end;
 }
 
+.chat-error {
+  margin: 0;
+  padding: 8px 16px;
+  color: #b91c1c;
+  font-size: 12px;
+  text-align: center;
+}
+
 /* Input Bar */
 .chat-input-bar {
   display: flex;
@@ -322,4 +330,9 @@
 .chat-send-btn:hover {
   transform: scale(1.08);
   box-shadow: 0 5px 16px rgba(0, 51, 102, 0.45);
+}
+
+.chat-send-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
 }

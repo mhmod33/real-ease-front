@@ -147,6 +147,7 @@ export class AgentDetails implements OnInit, AfterViewInit {
   openChat(): void {
     if (this.agent) {
       this.chatContact = {
+        id: this.agent.id,
         name: this.agent.name,
         image: this.agent.image,
         role: this.agent.type,

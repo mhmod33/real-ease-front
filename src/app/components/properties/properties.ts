@@ -145,6 +145,7 @@ export class Properties {
   openChat(p: Property, e: Event) {
     e.stopPropagation();
     this.chatContact = {
+      propertyId: p.id,
       name: p.agentName,
       image: p.agentImage,
       role: 'وكيل عقارات',

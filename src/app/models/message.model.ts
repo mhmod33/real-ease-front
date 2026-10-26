@@ -12,6 +12,27 @@ export interface Message {
   read_at: string
 }
 
+export interface MessageHistoryEntry {
+  id: number
+  created_at: string
+  updated_at: string
+  message: string
+  property_id: number
+  receiver_id: number
+  read_at: string | null
+  sender_id: number
+}
+
+export interface MessageHistoryResponse {
+  message: string
+  data: MessageHistoryEntry[]
+}
+
+export interface SentMessageResponse {
+  message?: string
+  data?: MessageHistoryEntry
+}
+
 export interface Property {
   id: number
   name: string

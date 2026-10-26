@@ -99,6 +99,7 @@ export class Agents implements OnInit, AfterViewInit {
   onMessage(agent: Agent, event: MouseEvent): void {
     event.stopPropagation();
     this.chatContact = {
+      id: agent.id,
       name: agent.name,
       image: agent.image,
       role: agent.type,

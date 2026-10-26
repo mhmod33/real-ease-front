@@ -238,6 +238,7 @@ export class PropertyDetails implements OnInit {
   // ── Chat / Negotiate ──────────────────────────────────────────
   openChat() {
     this.chatContact = {
+      propertyId: this.property.id,
       name: this.property.agent.name,
       image: this.property.agent.image,
       role: this.property.agent.title,
