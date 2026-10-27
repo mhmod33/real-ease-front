@@ -111,10 +111,19 @@ export class ChatModal implements OnChanges {
       },
     });
   }
-
+  geCurrentUserId(): number | null {
+    const currentUser = this.authService.currentUser();
+    return currentUser?.id ?? null;
+  }
   send(): void {
     const text = this.newMessage.trim();
     const receiverId = this.receiverId;
+    const currentUserId = this.geCurrentUserId();
+    if(receiverId === currentUserId) {
+      this.sendError = 'لا يمكنك إرسال رسالة لنفسك';
+      this.changeDetector.markForCheck();
+      return;
+    }
     if (!text || this.isSending) {
       return;
     }
@@ -129,6 +138,7 @@ export class ChatModal implements OnChanges {
     this.messageService.sendMessage(text, receiverId, this.contact?.propertyId).subscribe({
       next: (response) => {
         const sentMessage = response.data;
+        const receiverId = this.receiverId;
         const displayedMessage = sentMessage
           && Number.isSafeInteger(sentMessage.id)
           && typeof sentMessage.message === 'string'
