@@ -644,9 +644,17 @@
   border-left: 3px solid #3b82f6;
   padding-left: 11px;
 }
-
+.conv-item.conv-read {
+  background: #f8fafc;
+  cursor: default;
+  pointer-events: none;
+}
 .conv-item.conv-unread:hover {
   background: #dbeafe;
+}
+.conv-item.loading {
+  opacity: 0.6;
+  pointer-events: none;
 }
 
 .conv-avatar {

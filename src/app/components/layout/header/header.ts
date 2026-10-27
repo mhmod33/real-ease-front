@@ -66,7 +66,7 @@ export class Header {
   messages: Message[] = [];
   chatConversations: ChatMessage[] = [];
   isLoadingMessages = false;
-  isLoadingMarkAsRead = false;
+  loadingMessageId: number | null = null;
   messagesError = '';
   unreadMessagesCount = 0;
   constructor(
@@ -217,17 +217,20 @@ export class Header {
     this.showChat = false;
   }
   markAsRead(messageId: number){
-    this.isLoadingMarkAsRead = true;
+    if (this.loadingMessageId !== null) return;
+    const message = this.messages.find(m => m.id === messageId);
+    if (!message || message.read_at) return;
+
+    this.loadingMessageId = messageId;
     this.messageService.markMessageAsRead(messageId).subscribe({
       next:()=>{
-        this.isLoadingMarkAsRead = false;
-        const message = this.messages.find(m => m.id === messageId);
-        if (message) {
-          message.read_at = new Date().toString();
-        }
+        this.loadingMessageId = null;
+        message.read_at = new Date().toString();
+        this.changeDetector.detectChanges();
       },error:()=>{        
-        this.isLoadingMarkAsRead = false;
+        this.loadingMessageId = null;
         console.error('Failed to mark message as read');
+        this.changeDetector.detectChanges();
       }
     });
   }
