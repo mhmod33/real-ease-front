@@ -22,4 +22,7 @@ export class MessageService {
   getMessageHistory(userId: number): Observable<MessageHistoryResponse> {
     return this.http.get<MessageHistoryResponse>(`${this.apiUrl}messages/history/${userId}`)
   }
+  markMessageAsRead(messageId:number):Observable<any>{
+    return this.http.patch(`${this.apiUrl}messages/${messageId}/read`, {})
+  }
 }

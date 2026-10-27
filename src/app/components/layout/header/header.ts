@@ -64,12 +64,17 @@ export class Header {
   newMessage = '';
   activeConv: Conversation | null = null;
   messages: Message[] = [];
+  chatConversations: ChatMessage[] = [];
   isLoadingMessages = false;
+  isLoadingMarkAsRead = false;
   messagesError = '';
-
+  unreadMessagesCount = 0;
   constructor(
     private messageService:MessageService
   ){}
+  ngOnInit(): void {
+    this.getAllMessages();
+  }
   notifications: Notification[] = [
     {
       id: '1',
@@ -105,103 +110,14 @@ export class Header {
     },
   ];
 
-  conversationList: Conversation[] = [
-    {
-      id: 'conv-1',
-      name: 'أحمد الصالح',
-      initials: 'أ',
-      avatarColor: '#3b82f6',
-      lastMessage: 'نعم، أريد معاينة العقار يوم السبت',
-      lastTime: '10:35 ص',
-      unread: true,
-      status: 'online',
-      totalMessages: 8,
-      messages: [
-        {
-          id: '1',
-          sender: 'أحمد الصالح',
-          avatar: 'أ',
-          message: 'مرحبا! هل العقار لا يزال متاحاً؟',
-          time: '10:30 ص',
-          isMe: false,
-          unread: true,
-        },
-        {
-          id: '2',
-          sender: 'أنت',
-          avatar: 'م',
-          message: 'نعم، العقار متاح. هل تريد موعد للمعاينة؟',
-          time: '10:32 ص',
-          isMe: true,
-          unread: false,
-        },
-        {
-          id: '3',
-          sender: 'أحمد الصالح',
-          avatar: 'أ',
-          message: 'نعم، أريد معاينة العقار يوم السبت',
-          time: '10:35 ص',
-          isMe: false,
-          unread: true,
-        },
-      ]
-    },
-    {
-      id: 'conv-2',
-      name: 'محمد علي',
-      initials: 'م',
-      avatarColor: '#10b981',
-      lastMessage: 'ما هو السعر النهائي للشقة؟',
-      lastTime: '11:10 ص',
-      unread: true,
-      status: 'offline',
-      totalMessages: 12,
-      messages: [
-        {
-          id: '4',
-          sender: 'محمد علي',
-          avatar: 'م',
-          message: 'السلام عليكم، ما هو السعر النهائي للشقة؟',
-          time: '11:10 ص',
-          isMe: false,
-          unread: true,
-        },
-      ]
-    },
-    {
-      id: 'conv-3',
-      name: 'فاطمة السويدي',
-      initials: 'ف',
-      avatarColor: '#f59e0b',
-      lastMessage: 'شكراً على المعلومات الإضافية',
-      lastTime: 'أمس 3:45 م',
-      unread: false,
-      status: 'online',
-      totalMessages: 15,
-      messages: []
-    },
-    {
-      id: 'conv-4',
-      name: 'سارة الخليل',
-      initials: 'س',
-      avatarColor: '#ec4899',
-      lastMessage: 'هل يمكن تأجيل الاجتماع؟',
-      lastTime: 'أمس 1:20 م',
-      unread: false,
-      status: 'offline',
-      totalMessages: 6,
-      messages: []
-    },
-  ];
-  chatConversations: ChatMessage[] = [];
-
   get unreadNotificationsCount(): number {
     return this.notifications.filter((n) => !n.read).length;
   }
-
-  get unreadMessagesCount(): number {
-    return this.conversationList.filter((c) => c.unread).length;
+  getUnreadMessagesCount(): number {
+    console.log('Calculating unread messages count...');
+    return this.unreadMessagesCount = this.messages.filter((m) => !m.read_at).length;
   }
+  
   getAllMessages(){
     this.isLoadingMessages = true;
     this.messagesError = '';
@@ -270,13 +186,7 @@ export class Header {
       unread: false,
     };
     this.chatConversations.push(newMsg);
-    
-    // Update conversation in list
-    const convIndex = this.conversationList.findIndex(c => c.id === this.activeConv?.id);
-    if (convIndex !== -1) {
-      this.conversationList[convIndex].lastMessage = this.newMessage.trim();
-      this.conversationList[convIndex].lastTime = newMsg.time;
-    }
+  
     
     this.newMessage = '';
   }
@@ -306,4 +216,20 @@ export class Header {
   closeChat(): void {
     this.showChat = false;
   }
+  markAsRead(messageId: number){
+    this.isLoadingMarkAsRead = true;
+    this.messageService.markMessageAsRead(messageId).subscribe({
+      next:()=>{
+        this.isLoadingMarkAsRead = false;
+        const message = this.messages.find(m => m.id === messageId);
+        if (message) {
+          message.read_at = new Date().toString();
+        }
+      },error:()=>{        
+        this.isLoadingMarkAsRead = false;
+        console.error('Failed to mark message as read');
+      }
+    });
+  }
+  openChatModal(m:any){}
 }

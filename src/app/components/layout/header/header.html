@@ -50,8 +50,8 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
         </svg>
-        @if (unreadMessagesCount > 0) {
-          <span class="header__badge">{{ unreadMessagesCount }}</span>
+        @if (getUnreadMessagesCount() > 0) {
+          <span class="header__badge">{{ getUnreadMessagesCount() }}</span>
         }
       </button>
 
@@ -81,22 +81,24 @@
               <div class="chat-state">لا توجد رسائل</div>
             } @else {
               @for (m of messages; track m.id) {
-                <div class="conv-item">
-                  <div class="conv-info">
-                    <div class="conv-name-row">
-                      <span class="conv-name">{{ m.sender.name }}</span>
+                  <div class="conv-item" [class.conv-unread]="!m.read_at" (click)="markAsRead(m.id)">
+                    <div class="conv-info">
+                      <div class="conv-name-row">
+                        <span class="conv-name">{{ m.sender.name }}</span>
+                      </div>
+                      <p class="conv-last-msg">{{ m.message }}</p>
+                      <!-- <div class="conv-meta">
+                        @if (m.message.length > 0) {
+                          <span class="conv-msg-count">{{ messages.length }} رسالة</span>
+                        }
+                      </div> -->
                     </div>
-                    <p class="conv-last-msg">{{ m.message }}</p>
-                    <!-- <div class="conv-meta">
-                      @if (m.message.length > 0) {
-                        <span class="conv-msg-count">{{ messages.length }} رسالة</span>
-                      }
-                    </div> -->
+                    @if (!m.read_at) {
+                      <span class="conv-unread-dot"></span>
+                    }
                   </div>
-                  @if (m.read_at) {
-                    <span class="conv-unread-dot"></span>
-                  }
-                </div>
+                
+                
               }
             }
           </div>
