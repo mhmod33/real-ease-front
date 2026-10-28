@@ -18,6 +18,7 @@ export class Orders {
   totalClients = 245;
   totalTransactions = 524;
 
+  isLoading = true;
   selectAll = false;
   activeMenuId: number | null = null;
 
@@ -231,9 +232,11 @@ export class Orders {
           selected: false,
         }));
         this.changeDetector.detectChanges();
+        this.isLoading = false;
 
       },error:(err)=>{
         console.error(err);
+        this.isLoading = false;
       }
     })
   }

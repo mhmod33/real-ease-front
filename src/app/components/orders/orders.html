@@ -239,8 +239,12 @@
 
         </div>
       }
-
-      @if (orders.length === 0) {
+      @if(isLoading){
+        <div class="loading">
+           <span class="loader"></span><p>جاري تحميل الطلبات...</p>
+        </div>
+      }
+      @if (!isLoading && orders.length === 0) {
         <div class="orders-empty">
           <p>لا توجد طلبات لعرضها</p>
         </div>
