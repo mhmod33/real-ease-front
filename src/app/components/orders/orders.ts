@@ -16,8 +16,8 @@ type SelectableOrder = Order & { selected: boolean };
 })
 export class Orders {
 
-  totalClients = 245;
-  totalTransactions = 524;
+  totalClients = 0;
+  totalTransactions = 0;
 
   isLoading = true;
   isDeleting = false;
@@ -44,6 +44,7 @@ export class Orders {
   ) {}
   ngOnInit() {
     this.getAllOrders();
+    this.getTotalCLientsCount();
   }
   // Computed properties
   get selectedCount(): number {
@@ -265,6 +266,18 @@ export class Orders {
       },error:(err)=>{
         console.error(err);
         this.isLoading = false;
+        this.changeDetector.markForCheck();
+      }
+    })
+  }
+  getTotalCLientsCount(){
+    return this.orderService.getTotalCLientsCount().subscribe({
+      next:(res)=>{
+        this.totalClients = res.totalClients;
+        this.totalTransactions = res.totalRevenue;
+        this.changeDetector.markForCheck();
+      },error:(err)=>{
+        console.error(err);
         this.changeDetector.markForCheck();
       }
     })
