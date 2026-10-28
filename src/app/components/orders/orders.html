@@ -72,14 +72,17 @@
         <!-- Change status group -->
         <div class="bulk-status-group">
           <span class="bulk-label">تغيير الحالة:</span>
-          <button class="btn-bulk-status btn-status-pending" (click)="bulkChangeStatus('قيد الانتظار')">
+          <button class="btn-bulk-status btn-status-pending" (click)="bulkChangeStatus('pending')">
             قيد الانتظار
           </button>
-          <button class="btn-bulk-status btn-status-agreed" (click)="bulkChangeStatus('تم الاتفاق')">
+          <button class="btn-bulk-status btn-status-completed" (click)="bulkChangeStatus('completed')">
             تم الاتفاق
           </button>
-          <button class="btn-bulk-status btn-status-negotiating" (click)="bulkChangeStatus('يتم التفاوض')">
+          <button class="btn-bulk-status btn-status-negotiating" (click)="bulkChangeStatus('negotiating')">
             يتم التفاوض
+          </button>
+          <button class="btn-bulk-status btn-status-cancelled" (click)="bulkChangeStatus('cancelled')">
+            تم الإلغاء
           </button>
         </div>
 
@@ -130,14 +133,13 @@
       <div class="col-address">العنوان</div>
       <div class="col-price">السعر</div>
       <div class="col-agent">الوكيل العقاري</div>
-      <div class="col-prop-status">حالة العقار</div>
       <div class="col-status">الحالة</div>
       <div class="col-actions">الاجراء</div>
     </div>
 
     <!-- ── Table Rows List ── -->
     <div class="orders-list">
-      @for (order of paginatedOrders; track order.id) {
+      @for (order of orders; track order.id) {
         <div class="order-card-row" [class.selected]="order.selected">
 
           <!-- Checkbox -->
@@ -152,53 +154,51 @@
 
           <!-- Order ID -->
           <div class="col-id font-mono">
-            {{ order.orderNumber }}
+            {{ order.order_number }}
           </div>
 
           <!-- Date -->
           <div class="col-date">
-            {{ order.date }}
+            {{ order.created_at | date:'dd/MM/yyyy' }}
           </div>
 
           <!-- Client Name -->
           <div class="col-client font-semibold">
-            {{ order.clientName }}
+            {{ order.client.name }}
           </div>
 
           <!-- Property Name -->
           <div class="col-property">
-            {{ order.propertyName }}
+            {{ order.property.name }}
           </div>
 
           <!-- Address -->
           <div class="col-address text-muted">
-            {{ order.address }}
+            {{ order.property.location }}
           </div>
 
           <!-- Price -->
           <div class="col-price font-semibold">
-            {{ order.price }}
+            {{ order.property.price }}
           </div>
 
           <!-- Agent -->
           <div class="col-agent">
-            {{ order.agentName }}
+            {{ order.owner }}
           </div>
 
-          <!-- Property Status -->
-          <div class="col-prop-status">
-            {{ order.propertyStatus }}
-          </div>
+         
 
           <!-- Order Status Badge -->
           <div class="col-status">
             <span
               class="status-badge"
-              [class.status-pending]="order.status === 'قيد الانتظار'"
-              [class.status-agreed]="order.status === 'تم الاتفاق'"
-              [class.status-negotiating]="order.status === 'يتم التفاوض'"
+              [class.status-pending]="order.status === 'pending'"
+              [class.status-completed]="order.status === 'completed'"
+              [class.status-negotiating]="order.status === 'negotiating'"
+              [class.status-cancelled]="order.status === 'cancelled'"
             >
-              {{ order.status }}
+              {{ order.status === 'pending' ? 'قيد الانتظار' : order.status === 'completed' ? 'تم الاتفاق' : order.status === 'negotiating' ? 'يتم التفاوض' : order.status === 'cancelled' ? 'تم الإلغاء' : '' }}
             </span>
           </div>
 

@@ -218,12 +218,15 @@
   background-color: #e75a29;
 }
 
-.btn-status-agreed {
+.btn-status-completed {
   background-color: #27a868;
 }
 
 .btn-status-negotiating {
   background-color: #4361ee;
+}
+.btn-status-cancelled {
+  background-color: #ef4444;
 }
 
 .btn-bulk-action {
@@ -380,13 +383,17 @@
 }
 
 /* Agreed (Green) */
-.status-agreed {
+.status-completed {
   background-color: #27a868;
 }
 
 /* Negotiating (Blue) */
 .status-negotiating {
   background-color: #4361ee;
+}
+/* Cancelled (Red) */
+.status-cancelled {
+  background-color: #ef4444;
 }
 
 /* ── Action Column & Dropdown ── */

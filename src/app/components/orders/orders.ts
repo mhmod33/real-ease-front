@@ -1,8 +1,10 @@
-import { Component, HostListener } from '@angular/core';
+import { Component, HostListener,ChangeDetectorRef} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Order, OrderStatus } from '../../models/order.model';
 import { AppModal, ModalVariant } from '../shared/app-modal/app-modal';
+import { OrderService } from '../../services/order.service';
+type SelectableOrder = Order & { selected: boolean };
 
 @Component({
   selector: 'app-orders',
@@ -12,11 +14,12 @@ import { AppModal, ModalVariant } from '../shared/app-modal/app-modal';
   styleUrl: './orders.css',
 })
 export class Orders {
+
   totalClients = 245;
   totalTransactions = 524;
 
   selectAll = false;
-  activeMenuId: string | null = null;
+  activeMenuId: number | null = null;
 
   // Confirmation / Info Modal
   modalOpen = false;
@@ -24,119 +27,18 @@ export class Orders {
   modalTitle = '';
   modalMessage = '';
   modalConfirmText = 'تأكيد';
+  
   private pendingAction?: () => void;
 
   // Pagination state
   currentPage = 1;
   pageSize = 5;
-
-  orders: Order[] = [
-    {
-      id: '1',
-      orderNumber: '#0001234',
-      date: '2025-01-03',
-      clientName: 'أحمد محمد الامام',
-      propertyName: 'فيلا باطلالة مميزة',
-      address: 'لبنان،مدينة لبنان الجديدة',
-      price: '$521k',
-      agentName: 'مؤسسة الريادة',
-      propertyStatus: 'مستأجر',
-      status: 'قيد الانتظار',
-      selected: false,
-    },
-    {
-      id: '2',
-      orderNumber: '#0001234',
-      date: '2025-01-20',
-      clientName: 'ناصر بن علي',
-      propertyName: 'بنتهاوس مرموق',
-      address: 'الإمارات،دبي، مارينا',
-      price: '$921k',
-      agentName: 'شركة الأفق',
-      propertyStatus: 'مستأجر',
-      status: 'تم الاتفاق',
-      selected: false,
-    },
-    {
-      id: '3',
-      orderNumber: '#0001234',
-      date: '2024-11-03',
-      clientName: 'يوسف الكيلاني',
-      propertyName: 'شقة دوبلكس',
-      address: 'الأردن،عمان، شارع مكة',
-      price: '$521k',
-      agentName: 'دار العمران',
-      propertyStatus: 'مستأجر',
-      status: 'يتم التفاوض',
-      selected: false,
-    },
-    {
-      id: '4',
-      orderNumber: '#0001234',
-      date: '2023-4-14',
-      clientName: 'عبد الله المنصوري',
-      propertyName: 'فيلا حديقة التصميم',
-      address: 'قطر،الدوحة',
-      price: '$7821k',
-      agentName: 'مؤسسة رؤية',
-      propertyStatus: 'مباع',
-      status: 'تم الاتفاق',
-      selected: false,
-    },
-    {
-      id: '5',
-      orderNumber: '#0001234',
-      date: '2022-12-03',
-      clientName: 'خالد مبارك',
-      propertyName: 'فيلا بمساحة واسعة',
-      address: 'عمان،مدينة عمان',
-      price: '$5421k',
-      agentName: 'مكتب العروبة',
-      propertyStatus: 'مستأجر',
-      status: 'يتم التفاوض',
-      selected: false,
-    },
-    {
-      id: '6',
-      orderNumber: '#0001234',
-      date: '2023-07-07',
-      clientName: 'سميرة مصطفي',
-      propertyName: 'برج في وسط المدينة',
-      address: 'فلسطين، نابلس',
-      price: '$990000',
-      agentName: 'شركة التميز',
-      propertyStatus: 'مباع',
-      status: 'قيد الانتظار',
-      selected: false,
-    },
-    {
-      id: '7',
-      orderNumber: '#0001234',
-      date: '2022-12-23',
-      clientName: 'أحمد الصافي',
-      propertyName: 'شقة على البحر',
-      address: 'البحرين،شرق البحر',
-      price: '$521k',
-      agentName: 'شركة مشروعك',
-      propertyStatus: 'مستأجر',
-      status: 'يتم التفاوض',
-      selected: false,
-    },
-    {
-      id: '8',
-      orderNumber: '#0001234',
-      date: '2021-9-03',
-      clientName: 'عمر الحسن',
-      propertyName: 'منزل عي البحر',
-      address: 'مصر،الساحل الشمالي',
-      price: '$641k',
-      agentName: 'مؤسسة النخبة',
-      propertyStatus: 'مباع',
-      status: 'قيد الانتظار',
-      selected: false,
-    },
-  ];
-
+  
+  orders: Order[] = [];
+  constructor(private orderService:OrderService,private changeDetector:ChangeDetectorRef) {}
+  ngOnInit() {
+    this.getAllOrders();
+  }
   // Computed properties
   get selectedCount(): number {
     return this.orders.filter((o) => o.selected).length;
@@ -146,7 +48,7 @@ export class Orders {
     return Math.ceil(this.orders.length / this.pageSize) || 1;
   }
 
-  get paginatedOrders(): Order[] {
+  get paginatedOrders(): SelectableOrder[] {
     const startIndex = (this.currentPage - 1) * this.pageSize;
     return this.orders.slice(startIndex, startIndex + this.pageSize);
   }
@@ -227,7 +129,7 @@ export class Orders {
     this.selectAll = false;
   }
 
-  toggleMenu(orderId: string, event: MouseEvent): void {
+  toggleMenu(orderId: number, event: MouseEvent): void {
     event.stopPropagation();
     this.activeMenuId = this.activeMenuId === orderId ? null : orderId;
   }
@@ -249,19 +151,17 @@ export class Orders {
       'العنوان',
       'السعر',
       'الوكيل العقاري',
-      'حالة العقار',
       'الحالة',
     ];
 
     const rows = dataToExport.map((o) => [
-      o.orderNumber,
-      o.date,
-      o.clientName,
-      o.propertyName,
-      o.address,
-      o.price,
-      o.agentName,
-      o.propertyStatus,
+      o.order_number,
+      o.created_at,
+      o.client.name,
+      o.property.name,
+      o.property.location,
+      o.property.price,
+      o.owner,
       o.status,
     ]);
 
@@ -279,16 +179,16 @@ export class Orders {
     document.body.removeChild(link);
   }
 
-  deleteOrder(id: string): void {
+  deleteOrder(id: number): void {
     this.orders = this.orders.filter((o) => o.id !== id);
     this.checkSelectAllState();
     this.activeMenuId = null;
   }
 
-  viewOrder(order: Order): void {
+  viewOrder(order: SelectableOrder): void {
     this.openInfo(
-      `تفاصيل الطلب ${order.orderNumber}`,
-      `العميل: ${order.clientName}`
+      `تفاصيل الطلب ${order.order_number}`,
+      `العميل: ${order.client.name}`
     );
     this.activeMenuId = null;
   }
@@ -322,5 +222,19 @@ export class Orders {
   onModalCancel(): void {
     this.modalOpen = false;
     this.pendingAction = undefined;
+  }
+  getAllOrders(){
+    return this.orderService.getAllOrders().subscribe({
+      next:(res)=>{
+        this.orders = res.data.map(order => ({
+          ...order,
+          selected: false,
+        }));
+        this.changeDetector.detectChanges();
+
+      },error:(err)=>{
+        console.error(err);
+      }
+    })
   }
 }

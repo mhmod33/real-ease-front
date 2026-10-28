@@ -114,7 +114,6 @@ export class Header {
     return this.notifications.filter((n) => !n.read).length;
   }
   getUnreadMessagesCount(): number {
-    console.log('Calculating unread messages count...');
     return this.unreadMessagesCount = this.messages.filter((m) => !m.read_at).length;
   }
   
