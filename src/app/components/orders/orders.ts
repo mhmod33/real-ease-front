@@ -1,9 +1,10 @@
-import { Component, HostListener,ChangeDetectorRef} from '@angular/core';
+import { ChangeDetectorRef, Component, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Order, OrderStatus } from '../../models/order.model';
 import { AppModal, ModalVariant } from '../shared/app-modal/app-modal';
 import { OrderService } from '../../services/order.service';
+import { finalize } from 'rxjs';
 type SelectableOrder = Order & { selected: boolean };
 
 @Component({
@@ -19,6 +20,7 @@ export class Orders {
   totalTransactions = 524;
 
   isLoading = true;
+  isDeleting = false;
   selectAll = false;
   activeMenuId: number | null = null;
 
@@ -36,7 +38,10 @@ export class Orders {
   pageSize = 5;
   
   orders: Order[] = [];
-  constructor(private orderService:OrderService,private changeDetector:ChangeDetectorRef) {}
+  constructor(
+    private orderService: OrderService,
+    private changeDetector: ChangeDetectorRef,
+  ) {}
   ngOnInit() {
     this.getAllOrders();
   }
@@ -181,8 +186,31 @@ export class Orders {
   }
 
   deleteOrder(id: number): void {
-    this.orders = this.orders.filter((o) => o.id !== id);
-    this.checkSelectAllState();
+    this.openConfirm(
+      'حذف الطلب',
+      'هل أنت متأكد من حذف هذا الطلب؟',
+      () => {
+        this.isDeleting = true;
+        this.orderService.deleteOrder(id).pipe(
+          finalize(() => {
+            this.isDeleting = false;
+            this.changeDetector.markForCheck();
+          })
+        ).subscribe({
+          next: () => {
+            this.orders = this.orders.filter((o) => o.id !== id);
+            this.checkSelectAllState();
+            this.openInfo('تم الحذف', 'تم حذف الطلب بنجاح');
+            this.changeDetector.markForCheck();
+          },
+          error: (err) => {
+            console.error(err);
+            this.openInfo('تعذر الحذف', 'لم يتم حذف الطلب. يرجى المحاولة مرة أخرى.');
+            this.changeDetector.markForCheck();
+          }
+        });
+      }
+    );
     this.activeMenuId = null;
   }
 
@@ -231,12 +259,13 @@ export class Orders {
           ...order,
           selected: false,
         }));
-        this.changeDetector.detectChanges();
         this.isLoading = false;
+        this.changeDetector.markForCheck();
 
       },error:(err)=>{
         console.error(err);
         this.isLoading = false;
+        this.changeDetector.markForCheck();
       }
     })
   }

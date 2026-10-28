@@ -239,12 +239,13 @@
 
         </div>
       }
-      @if(isLoading){
+      @if (isLoading || isDeleting) {
         <div class="loading">
-           <span class="loader"></span><p>جاري تحميل الطلبات...</p>
+          <span class="loader"></span>
+          <p>{{ isDeleting ? 'جاري حذف الطلب...' : 'جاري تحميل الطلبات...' }}</p>
         </div>
       }
-      @if (!isLoading && orders.length === 0) {
+      @if (!isLoading && !isDeleting && orders.length === 0) {
         <div class="orders-empty">
           <p>لا توجد طلبات لعرضها</p>
         </div>
