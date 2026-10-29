@@ -20,6 +20,7 @@ export class Orders {
   totalTransactions = 0;
 
   isLoading = true;
+  isLoadingAfterChangeStatus = false;
   isDeleting = false;
   selectAll = false;
   activeMenuId: number | null = null;
@@ -44,7 +45,8 @@ export class Orders {
   ) {}
   ngOnInit() {
     this.getAllOrders();
-    this.getTotalCLientsCount();
+    this.getTotalTransactions();
+    this.getTotalClientsCount();
   }
   // Computed properties
   get selectedCount(): number {
@@ -114,7 +116,19 @@ export class Orders {
       'حذف الطلبات',
       `هل أنت متأكد من حذف ${this.selectedCount} طلبات مجهزة؟`,
       () => {
-        this.orders = this.orders.filter((o) => !o.selected);
+        const ids=this.orders.filter((o)=>o.selected).map((o)=>o.id);
+        if(ids.length===0){return;}
+
+        this.isDeleting = true;
+        this.orderService.deleteMultipleOrders(ids).subscribe({
+          next: () => {
+            this.orders = this.orders.filter((o) => !o.selected);
+            this.checkSelectAllState();
+            this.openInfo('تم الحذف', 'تم حذف الطلبات المحددة بنجاح');
+            this.isDeleting = false;
+            this.changeDetector.markForCheck();
+          }
+        })
         this.selectAll = false;
         if (this.currentPage > this.totalPages) {
           this.currentPage = this.totalPages;
@@ -122,13 +136,31 @@ export class Orders {
       }
     );
   }
-
+  refreshOrders(): void {
+    this.getAllOrders();
+  }
   bulkChangeStatus(newStatus: OrderStatus): void {
-    this.orders.forEach((o) => {
-      if (o.selected) {
+    this.isLoadingAfterChangeStatus = true;
+    const ids = this.orders.filter(o => o.selected).map(o => o.id);
+    if(ids.length===0){return;}
+    
+    this.orderService.changeStatus(ids,newStatus).subscribe({
+      next:(res)=>{
+        this.orders.forEach((o) => {
+        if (o.selected) {
         o.status = newStatus;
+        o.selected = false;
       }
-    });
+      });
+        console.log(res);
+        this.isLoadingAfterChangeStatus = false;
+        this.selectAll = false;
+        this.changeDetector.markForCheck();
+      },
+      error:(err)=>{
+        console.error(err);
+      }
+    })
   }
 
   clearSelection(): void {
@@ -270,15 +302,35 @@ export class Orders {
       }
     })
   }
-  getTotalCLientsCount(){
-    return this.orderService.getTotalCLientsCount().subscribe({
+  getTotalTransactions(){
+    return this.orderService.getTotalTransactions().subscribe({
       next:(res)=>{
-        this.totalClients = res.totalClients;
-        this.totalTransactions = res.totalRevenue;
+        this.totalTransactions = res.data;
         this.changeDetector.markForCheck();
       },error:(err)=>{
         console.error(err);
         this.changeDetector.markForCheck();
+      }
+    })
+  }
+  getTotalClientsCount(){
+    return this.orderService.getTotalCLientsCount().subscribe({
+      next:(res)=>{
+        this.totalClients = res.data;
+        this.changeDetector.markForCheck();
+      },error:(err)=>{
+        console.error(err);
+        this.changeDetector.markForCheck();
+      }
+    })
+  }
+  changeStatus(id:number[],status:string){
+    this.orderService.changeStatus(id,status).subscribe({
+      next:(res)=>{
+        console.log(res);
+      },
+      error:(err)=>{
+        console.error(err);
       }
     })
   }

@@ -61,7 +61,7 @@
   </div>
 
   <!-- ── Bulk Actions Floating / Alert Bar ── -->
-  @if (selectedCount > 0) {
+  @if (selectedCount > 0 && !isLoading && !isDeleting && !isLoadingAfterChangeStatus) {
     <div class="bulk-actions-bar">
       <div class="bulk-info">
         <span class="bulk-count-badge">{{ selectedCount }}</span>
@@ -109,6 +109,13 @@
         <button class="btn-clear-selection" (click)="clearSelection()" title="إلغاء التحديد">
           ✕
         </button>
+      </div>
+    </div>
+  }
+  @if (isLoadingAfterChangeStatus) {
+    <div class="bulk-actions-bar">
+      <div>
+        <p>جاري تغيير حالة الطلبات المحددة...</p>
       </div>
     </div>
   }

@@ -485,6 +485,18 @@
   justify-content: center;
   gap: 12px;
 }
+.loading-change-status {
+  text-align: center;
+  padding: 40px;
+  background: #ffffff;
+  border-radius: 12px;
+  color: #419941;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
 .loader {
   --color-1: #2BC13C;
   --color-2: #307C1A;
