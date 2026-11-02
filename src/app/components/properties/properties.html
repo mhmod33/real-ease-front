@@ -145,13 +145,13 @@
               <path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 1 1 16 0z"/>
               <circle cx="12" cy="10" r="3"/>
             </svg>
-            {{ prop.city }}
+            {{ prop.location }}
           </div>
 
           <!-- Status badge (top-left in RTL = end) -->
           <div class="prop-badge-status"
-            [class.status-sale]="prop.status === 'للبيع'"
-            [class.status-rent]="prop.status === 'للإيجار'">
+            [class.status-sale]="prop.status === 'available'"
+            [class.status-rent]="prop.status === 'rented'">
             {{ prop.status }}
           </div>
         </div>
@@ -167,9 +167,9 @@
 
           <!-- Agent row -->
           <div class="prop-agent-row">
-            <img [src]="prop.agentImage" [alt]="prop.agentName" class="prop-agent-avatar" />
+            <img [src]="prop.user.avatar" [alt]="prop.user.name" class="prop-agent-avatar" />
             <div class="prop-agent-meta">
-              <span class="prop-agent-name">{{ prop.agentName }}</span>
+              <span class="prop-agent-name">{{ prop.user.name }}</span>
               <span class="prop-agent-label">صاحب عقارات</span>
             </div>
           </div>

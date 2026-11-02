@@ -5,7 +5,7 @@ import { ChatModal, ChatContact } from '../../shared/chat-modal/chat-modal';
 import { EditPropertyModal } from '../edit-property-modal/edit-property-modal';
 import { PropertyService } from '../../../services/property.service';
 import { SessionService } from '../../../services/session.service';
-import { Property } from '../../../models/property.model';
+import { Property,Properties } from '../../../models/property.model';
 
 export interface PropertyDetail {
   id: number;
@@ -173,35 +173,20 @@ export class PropertyDetails implements OnInit {
   ngOnInit() {
     const id = Number(this.route.snapshot.paramMap.get('id')) || 2;
     this.property = this.propertiesDb.find((p) => p.id === id) ?? this.propertiesDb[1];
-    this.syncFromPropertyService();
   }
 
-  /** Overlay the locally-mocked display data with the live, editable Property record. */
-  private syncFromPropertyService(): void {
-    const live = this.propertyService.getPropertyById(this.property.id);
-    if (!live) return;
-    this.property = {
-      ...this.property,
-      name: live.name,
-      city: live.city,
-      status: live.status,
-      price: live.price,
-      description: live.description,
-      mainImage: live.image,
-    };
-  }
+
 
   /* ── Edit Property ── */
   openEditModal(): void {
-    this.editingProperty = this.propertyService.getPropertyById(this.property.id) ?? null;
-    if (this.editingProperty) {
-      this.editModalOpen = true;
-    }
+    this.propertyService.getPropertyById(this.property.id).subscribe((property) => {
+      this.editingProperty = property ?? null;
+      this.editModalOpen = this.editingProperty !== null;
+    });
   }
 
   onEditSave(updated: Property): void {
     this.propertyService.updateProperty(updated.id, updated);
-    this.syncFromPropertyService();
     this.editModalOpen = false;
     this.editingProperty = null;
   }

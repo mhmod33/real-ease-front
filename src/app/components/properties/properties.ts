@@ -18,11 +18,21 @@ export type { Property };
   styleUrl: './properties.css',
 })
 export class Properties {
+
   constructor(
     private router: Router,
     public sessionService: SessionService,
     private propertyService: PropertyService
-  ) {}
+  ) {
+    this.propertyService.getProperties().subscribe({
+      next:(res)=>{
+        this.allProperties = res.data;
+      },
+      error:(err)=>{
+        console.error('Error fetching properties:', err);
+      }
+    });
+  }
 
   // Chat Modal
   showChatModal = false;
@@ -45,7 +55,7 @@ export class Properties {
   priceMin = 16;
   priceMax = 150;
 
-  propertyTypes = ['شقة', 'فيلا', 'بنتهاوس', 'مكتب', 'أرض'];
+  propertyTypes = ['apartment', 'house', 'condo', 'land', 'commercial', 'other'];
   locations = ['الدوحة', 'الرياض', 'دبي', 'القاهرة', 'عمان', 'الكويت'];
 
   get trackBackground(): string {
@@ -61,9 +71,7 @@ export class Properties {
   }
 
   // ── Data (from PropertyService) ───────────────────────────────
-  get allProperties(): Property[] {
-    return this.propertyService.getProperties();
-  }
+  allProperties: Property[] = [];
 
   // ── Computed filtered list ─────────────────────────────────────
   get filteredProperties(): Property[] {
@@ -74,11 +82,11 @@ export class Properties {
         p.description.includes(this.searchKeyword);
       const matchType = !this.selectedType || p.type === this.selectedType;
       const matchLocation =
-        !this.selectedLocation || p.city === this.selectedLocation;
+        !this.selectedLocation || p.location === this.selectedLocation;
       const isDefaultPrice = this.priceMin === 16 && this.priceMax === 150;
       const matchPrice =
         isDefaultPrice ||
-        (p.priceNum >= this.priceMin && p.priceNum <= this.priceMax);
+        (p.price >= this.priceMin && p.price <= this.priceMax);
       return matchKeyword && matchType && matchLocation && matchPrice;
     });
   }
@@ -146,9 +154,9 @@ export class Properties {
     e.stopPropagation();
     this.chatContact = {
       propertyId: p.id,
-      name: p.agentName,
-      image: p.agentImage,
-      role: 'وكيل عقارات',
+      name: p.user.name,
+      image: p.image,
+      role: p.user.role,
     };
     this.showChatModal = true;
   }

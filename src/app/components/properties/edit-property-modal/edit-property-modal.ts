@@ -18,12 +18,12 @@ export class EditPropertyModal implements OnChanges {
   @Output() cancel = new EventEmitter<void>();
 
   propertyTypes = ['شقة', 'فيلا', 'بنتهاوس', 'مكتب', 'أرض', 'مستودع'];
-  propertyStatuses: Array<'للبيع' | 'للإيجار'> = ['للبيع', 'للإيجار'];
+  propertyStatuses: Array<'available' | 'sold' | 'pending' | 'rented'> = ['available', 'sold', 'pending', 'rented'];
 
   draft = {
     name: '',
     type: '',
-    status: 'للبيع' as 'للبيع' | 'للإيجار',
+    status: 'available' as 'available' | 'sold' | 'pending' | 'rented',
     priceNum: 0,
     city: '',
     description: '',
@@ -36,8 +36,8 @@ export class EditPropertyModal implements OnChanges {
         name: this.property.name,
         type: this.property.type,
         status: this.property.status,
-        priceNum: this.property.priceNum,
-        city: this.property.city,
+        priceNum: this.property.price ? parseFloat(this.property.price.toString()) : 0,
+        city: this.property.location,
         description: this.property.description,
         image: this.property.image,
       };
@@ -51,9 +51,7 @@ export class EditPropertyModal implements OnChanges {
       name: this.draft.name,
       type: this.draft.type,
       status: this.draft.status,
-      priceNum: this.draft.priceNum,
-      price: `$${this.draft.priceNum}k`,
-      city: this.draft.city,
+      location: this.draft.city,
       description: this.draft.description,
       image: this.draft.image,
     };

@@ -10,7 +10,7 @@ export interface ChatContact {
   id?: number | string;
   propertyId?: number;
   name: string;
-  image: string;
+  image?: string;
   role?: string;
   phone?: string;
 }
