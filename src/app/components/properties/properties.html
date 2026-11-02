@@ -38,6 +38,7 @@
         <input
           type="text"
           [(ngModel)]="searchKeyword"
+          (keyup.enter)="onSearch()"
           placeholder="كلمة مفتاحية"
           class="filter-input"
         />
@@ -127,12 +128,24 @@
 
   <!-- ── Results Count ── -->
   <div class="props-results-count">
-    عرض 1-{{ filteredProperties.length }} من {{ filteredProperties.length }} النتائج
+    عرض 1-{{ propertiesResponse?.data?.length }} من {{ selectedLocation ? propertiesResponse?.data?.length : (propertiesResponse?.pagination?.total ?? propertiesResponse?.data?.length) }} النتائج
   </div>
 
   <!-- ── Property Cards Grid ── -->
   <div class="props-grid">
-    @for (prop of filteredProperties; track prop.id) {
+    @if (isLoading) {
+      <div class="props-empty">
+        <p>جاري تحميل العقارات...</p>
+      </div>
+    }
+
+    @if (loadError) {
+      <div class="props-empty">
+        <p>تعذر تحميل العقارات. يرجى المحاولة مرة أخرى.</p>
+      </div>
+    }
+
+    @for (prop of propertiesResponse?.data ?? []; track prop.id) {
       <div class="prop-card" (click)="goToDetails(prop.id)">
 
         <!-- Card Image -->
@@ -228,7 +241,7 @@
     }
 
     <!-- Empty state -->
-    @if (filteredProperties.length === 0) {
+    @if (!isLoading && !loadError && propertiesResponse?.data?.length === 0) {
       <div class="props-empty">
         <svg viewBox="0 0 24 24" fill="none" stroke="#b0bec5" stroke-width="1.5" width="56" height="56">
           <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>

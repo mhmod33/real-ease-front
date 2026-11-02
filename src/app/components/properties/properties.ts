@@ -6,9 +6,9 @@ import { ChatModal, ChatContact } from '../shared/chat-modal/chat-modal';
 import { AppModal } from '../shared/app-modal/app-modal';
 import { EditPropertyModal } from './edit-property-modal/edit-property-modal';
 import { SessionService } from '../../services/session.service';
-import { PropertyService } from '../../services/property.service';
-import { Property } from '../../models/property.model';
-
+import { PropertyFilters, PropertyService } from '../../services/property.service';
+import { Properties as PropertiesResponse, Property } from '../../models/property.model';
+import { ChangeDetectorRef } from '@angular/core';
 export type { Property };
 
 @Component({
@@ -22,16 +22,11 @@ export class Properties {
   constructor(
     private router: Router,
     public sessionService: SessionService,
-    private propertyService: PropertyService
+    private propertyService: PropertyService,
+    private changeDetector: ChangeDetectorRef,
+
   ) {
-    this.propertyService.getProperties().subscribe({
-      next:(res)=>{
-        this.allProperties = res.data;
-      },
-      error:(err)=>{
-        console.error('Error fetching properties:', err);
-      }
-    });
+    this.loadProperties();
   }
 
   // Chat Modal
@@ -71,29 +66,41 @@ export class Properties {
   }
 
   // ── Data (from PropertyService) ───────────────────────────────
-  allProperties: Property[] = [];
+  propertiesResponse: PropertiesResponse | null = null;
+  isLoading = false;
+  loadError = false;
 
-  // ── Computed filtered list ─────────────────────────────────────
-  get filteredProperties(): Property[] {
-    return this.allProperties.filter((p) => {
-      const matchKeyword =
-        !this.searchKeyword ||
-        p.name.includes(this.searchKeyword) ||
-        p.description.includes(this.searchKeyword);
-      const matchType = !this.selectedType || p.type === this.selectedType;
-      const matchLocation =
-        !this.selectedLocation || p.location === this.selectedLocation;
-      const isDefaultPrice = this.priceMin === 16 && this.priceMax === 150;
-      const matchPrice =
-        isDefaultPrice ||
-        (p.price >= this.priceMin && p.price <= this.priceMax);
-      return matchKeyword && matchType && matchLocation && matchPrice;
-    });
-  }
 
   // ── Actions ───────────────────────────────────────────────────
   onSearch() {
-    // Trigger re-render (already reactive via getter)
+    const filters: PropertyFilters = {};
+    const search = this.searchKeyword.trim();
+
+    if (this.selectedType) filters.type = this.selectedType;
+    if (search) filters.search = search;
+    if (this.priceMin !== 16 || this.priceMax !== 150) {
+      filters.min_price = this.priceMin;
+      filters.max_price = this.priceMax;
+    }
+
+    this.loadProperties(filters);
+  }
+
+  private loadProperties(filters: PropertyFilters = {}) {
+    this.isLoading = true;
+    this.loadError = false;
+    this.propertyService.getProperties(filters).subscribe({
+      next: (res) => {
+        this.propertiesResponse = res;
+        this.isLoading = false;
+        this.changeDetector.markForCheck();
+      },
+      error: (err) => {
+        console.error('Error fetching properties:', err);
+        this.loadError = true;
+        this.isLoading = false;
+      },
+    });
   }
 
   toggleSave(p: Property, e: Event) {
@@ -186,5 +193,6 @@ export class Properties {
     this.selectedLocation = '';
     this.priceMin = 16;
     this.priceMax = 150;
+    this.loadProperties();
   }
 }
