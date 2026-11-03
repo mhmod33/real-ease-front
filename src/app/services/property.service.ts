@@ -45,4 +45,7 @@ export class PropertyService {
   deleteProperty(id: number): Observable<boolean> {
     return this.http.delete<boolean>(`${this.apiUrl}properties/${id}`);
   }
+  createProperty(data:any):Observable<any>{
+    return this.http.post<any>(`${this.apiUrl}properties`,data)
+  }
 }

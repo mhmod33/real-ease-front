@@ -110,6 +110,19 @@ select.cp-input {
 }
 
 /* ── Upload Zone ── */
+.cp-upload-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cp-upload-heading {
+  margin: 0;
+  color: #3d4f6a;
+  font-size: 14px;
+  font-weight: 600;
+}
+
 .cp-upload-zone {
   border: 2px dashed #c8d8ee;
   border-radius: 16px;
@@ -141,7 +154,6 @@ select.cp-input {
   align-items: center;
   gap: 12px;
   padding: 24px;
-  pointer-events: none;
 }
 
 .cp-upload-icon {
@@ -151,6 +163,23 @@ select.cp-input {
 
 .cp-upload-zone:hover .cp-upload-icon {
   color: #003366;
+}
+
+.cp-upload-button {
+  padding: 9px 18px;
+  border: none;
+  border-radius: 8px;
+  background: #003366;
+  color: #fff;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.cp-upload-button:hover {
+  background: #163b78;
 }
 
 .cp-upload-text {
@@ -210,24 +239,51 @@ select.cp-input {
 }
 
 .cp-preview-add {
-  width: 90px;
+  width: 110px;
   height: 70px;
   border-radius: 10px;
   border: 2px dashed #c8d8ee;
-  display: grid;
-  place-items: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
   color: #8fa3bb;
   cursor: pointer;
   transition: all 0.2s;
   flex-shrink: 0;
+  background: transparent;
+  font: inherit;
+  font-size: 12px;
 }
-
+.cp-preview-add svg {
+  width: 20px;
+  height: 20px;
+  fill: currentColor;
+}
 .cp-preview-add:hover {
   border-color: #003366;
   color: #003366;
   background: #eef3fb;
 }
-
+.cp-amenity-remove {
+  background: #fff;
+  border: 1px solid #dc2626;
+  border-radius: 50%;
+  width: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 20px;
+  color: #dc2626;
+  font-size: 14px;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.cp-amenity-remove:hover {
+  background: #dc2626 !important;
+  color: #fff !important;
+}
 /* ── Amenities ── */
 .cp-amenities-section {
   display: flex;
@@ -303,6 +359,40 @@ select.cp-input {
   padding-top: 8px;
   border-top: 1px solid #eef2fb;
   margin-top: 4px;
+}
+.cp-amenities-input {
+  display: none;
+}
+.cp-amenity-input {
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 1px solid #c8d8ee;
+  background: #eef2fb;
+  color: #003366;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: inherit;
+}
+.cp-amenities-add {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  background: #eef2fb;
+  color: #003366;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  overflow: hidden;
+  border: 1px solid #c8d8ee;
+  font-family: inherit;
+}
+
+.cp-amenities-add:hover {
+  background: #e0eaf7;
+  color: #001f4d;
 }
 /* 
 .btn-cancel {

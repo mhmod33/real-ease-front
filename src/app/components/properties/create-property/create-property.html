@@ -9,7 +9,7 @@
   </div>
 
   <!-- ── Form ── -->
-  <form class="cp-form" (ngSubmit)="onSubmit()" #propertyForm="ngForm">
+  <form class="cp-form" (ngSubmit)="onSubmit()"[formGroup]="createForm">
 
     <!-- Row 1: نوع العقار | حالة العقار -->
     <div class="cp-form-row">
@@ -21,7 +21,7 @@
             <polyline points="9 22 9 12 15 12 15 22"/>
           </svg>
         </div>
-        <select [(ngModel)]="propertyType" name="propertyType" class="cp-input" required>
+        <select name="propertyType" class="cp-input" required formControlName="type">
           <option value="" disabled selected>نوع العقار</option>
           @for (t of propertyTypes; track t) {
             <option [value]="t">{{ t }}</option>
@@ -36,10 +36,24 @@
             <polyline points="6 9 12 15 18 9"/>
           </svg>
         </div>
-        <select [(ngModel)]="propertyStatus" name="propertyStatus" class="cp-input" required>
+        <select name="propertyStatus" class="cp-input" required formControlName="status">
           <option value="" disabled selected>حالة العقار</option>
           @for (s of propertyStatuses; track s) {
             <option [value]="s">{{ s }}</option>
+          }
+        </select>
+      </div>
+      <!-- المستخدم -->
+      <div class="cp-form-field cp-field-with-dropdown">
+        <div class="cp-field-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16">
+            <polyline points="6 9 12 15 18 9"/>
+          </svg>
+        </div>
+        <select name="user_id" class="cp-input" required formControlName="user_id">
+          <option value="" disabled selected>المستخدم</option>
+          @for (s of users; track s) {
+            <option [value]="s.id">{{ s.name }}</option>
           }
         </select>
       </div>
@@ -57,11 +71,11 @@
         </div>
         <input
           type="number"
-          [(ngModel)]="price"
           name="price"
           placeholder="السعر"
           class="cp-input"
           required
+          formControlName="price"
         />
       </div>
 
@@ -75,11 +89,11 @@
         </div>
         <input
           type="text"
-          [(ngModel)]="address"
-          name="address"
+          name="location"
           placeholder="العنوان"
           class="cp-input"
           required
+          formControlName="location"
         />
       </div>
     </div>
@@ -96,74 +110,139 @@
           </svg>
         </div>
         <textarea
-          [(ngModel)]="description"
           name="description"
           placeholder="وصف العقار"
           class="cp-input cp-textarea"
           rows="3"
+          formControlName="description"
         ></textarea>
       </div>
     </div>
 
-    <!-- ── File Upload Zone ── -->
-    <div
-      class="cp-upload-zone"
-      [class.dragover]="isDragOver"
-      (dragover)="onDragOver($event)"
-      (dragleave)="onDragLeave($event)"
-      (drop)="onDrop($event)"
-      (click)="fileInput.click()"
-    >
-      <input
-        #fileInput
-        type="file"
-        multiple
-        accept="image/*"
-        style="display:none"
-        (change)="onFileSelect($event)"
-      />
-
-      @if (uploadedFiles.length === 0) {
-        <div class="cp-upload-placeholder">
-          <div class="cp-upload-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="48" height="48">
-              <polyline points="16 16 12 12 8 16"/>
-              <line x1="12" y1="12" x2="12" y2="21"/>
-              <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/>
-            </svg>
-          </div>
-          <p class="cp-upload-text">قم بإسقاط الملفات هنا أو اقر لتحميل</p>
-        </div>
-      } @else {
-        <div class="cp-upload-previews" (click)="$event.stopPropagation()">
-          @for (file of uploadedFiles; track $index) {
-            <div class="cp-preview-item">
-              <img [src]="getFilePreview(file)" [alt]="file.name" class="cp-preview-img" />
-              <button type="button" class="cp-preview-remove" (click)="removeFile($index)">×</button>
+    <!-- ── Main Image Upload ── -->
+    <section class="cp-upload-group">
+      <h2 class="cp-upload-heading">الصورة الرئيسية</h2>
+      <div class="cp-upload-zone cp-main-image-zone" (click)="mainFileInput.click()">
+        <input
+          #mainFileInput
+          type="file"
+          accept="image/*"
+          hidden
+          (click)="$event.stopPropagation()"
+          (change)="onMainImageSelect($event)"
+        />
+        @if (mainImage) {
+          <div class="cp-upload-previews" (click)="$event.stopPropagation()">
+            <div class="cp-preview-item cp-main-preview-item">
+              <img [src]="getFilePreview(mainImage)" [alt]="mainImage.name" class="cp-preview-img" />
+              <button type="button" class="cp-preview-remove" aria-label="إزالة الصورة الرئيسية" (click)="removeMainImage()">×</button>
             </div>
-          }
-          <div class="cp-preview-add" (click)="fileInput.click()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="24" height="24">
-              <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
-            </svg>
+            <button type="button" class="cp-preview-add" (click)="mainFileInput.click()">
+              <span>تغيير الصورة</span>
+            </button>
           </div>
-        </div>
-      }
-    </div>
+        } @else {
+          <div class="cp-upload-placeholder">
+            <div class="cp-upload-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="48" height="48">
+                <polyline points="16 16 12 12 8 16"/>
+                <line x1="12" y1="12" x2="12" y2="21"/>
+                <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/>
+              </svg>
+            </div>
+            <p class="cp-upload-text">اختر صورة رئيسية واحدة</p>
+            <button type="button" class="cp-upload-button" (click)="$event.stopPropagation(); mainFileInput.click()">
+              اختيار الصورة الرئيسية
+            </button>
+          </div>
+        }
+      </div>
+    </section>
+
+    <!-- ── Additional Images Upload ── -->
+    <section class="cp-upload-group">
+      <h2 class="cp-upload-heading">صور إضافية</h2>
+      <div
+        class="cp-upload-zone"
+        [class.dragover]="isDragOver"
+        (dragover)="onDragOver($event)"
+        (dragleave)="onDragLeave($event)"
+        (drop)="onDrop($event)"
+        (click)="imagesFileInput.click()"
+      >
+        <input
+          #imagesFileInput
+          type="file"
+          multiple
+          accept="image/*"
+          hidden
+          (click)="$event.stopPropagation()"
+          (change)="onFileSelect($event)"
+        />
+
+        @if (uploadedFiles.length === 0) {
+          <div class="cp-upload-placeholder">
+            <div class="cp-upload-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="48" height="48">
+                <polyline points="16 16 12 12 8 16"/>
+                <line x1="12" y1="12" x2="12" y2="21"/>
+                <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/>
+              </svg>
+            </div>
+            <p class="cp-upload-text">أضف صوراً متعددة للعقار</p>
+            <button type="button" class="cp-upload-button" (click)="$event.stopPropagation(); imagesFileInput.click()">
+              اختيار صور إضافية
+            </button>
+          </div>
+        } @else {
+          <div class="cp-upload-previews" (click)="$event.stopPropagation()">
+            @for (file of uploadedFiles; track $index) {
+              <div class="cp-preview-item">
+                <img [src]="getFilePreview(file)" [alt]="file.name" class="cp-preview-img" />
+                <button type="button" class="cp-preview-remove" aria-label="إزالة الصورة" (click)="removeFile($index)">×</button>
+              </div>
+            }
+            <button type="button" class="cp-preview-add" (click)="imagesFileInput.click()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="24" height="24">
+                <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+              </svg>
+              <span>إضافة صور</span>
+            </button>
+          </div>
+        }
+      </div>
+    </section>
 
     <!-- ── Amenities ── -->
     <div class="cp-amenities-section">
-      <p class="cp-amenities-label">مزايا إضافية</p>
+      <p class="cp-amenities-label">مزايا إضافية</p> 
       <div class="cp-amenities-list">
+         <input 
+            type="text"
+            class="cp-amenity-input"
+            id="newAmenity"
+            name="newAmenity"
+            placeholder="أدخل ميزة جديدة"
+        />
+        <button type="button" class="cp-amenities-add" (click)="addAmenity()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16">
+          <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+        </svg>
+        إضافة ميزة
+        </button>
+       
         @for (amenity of amenities; track amenity.key) {
+          
           <label class="cp-amenity-item">
             <input
               type="checkbox"
-              [(ngModel)]="amenity.checked"
               [name]="amenity.key"
               class="cp-amenity-check"
+              [checked]="amenity.checked"
+              (change)="onFeatureChange(amenity, $event)"
             />
             <span class="cp-amenity-text">{{ amenity.label }}</span>
+            <button type="button" class="cp-amenity-remove" aria-label="إزالة الميزة" (click)="removeAmenity(amenity.key)">×</button>
           </label>
         }
       </div>
