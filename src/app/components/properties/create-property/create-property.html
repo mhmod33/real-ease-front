@@ -10,58 +10,78 @@
 
   <!-- ── Form ── -->
   <form class="cp-form" (ngSubmit)="onSubmit()"[formGroup]="createForm">
+      
+      <div class="cp-form-row">
+        <div class="cp-form-error-message-and-input">
+         <!-- العنوان -->
+        <div class="cp-form-field">
+          <input
+            type="text"
+            name="name"
+            placeholder="عنوان العقار"
+            class="cp-input"
+            required
+            formControlName="name"
+          />
+          
+        </div>
+        <div *ngIf="createForm.get('name')?.invalid && createForm.get('name')?.touched" class="error-message">
+            يرجى إدخال عنوان العقار.
+          </div>
 
-    <!-- Row 1: نوع العقار | حالة العقار -->
-    <div class="cp-form-row">
-      <!-- نوع العقار -->
-      <div class="cp-form-field">
-        <div class="cp-field-icon-wrap">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16">
-            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-            <polyline points="9 22 9 12 15 12 15 22"/>
-          </svg>
         </div>
-        <select name="propertyType" class="cp-input" required formControlName="type">
-          <option value="" disabled selected>نوع العقار</option>
-          @for (t of propertyTypes; track t) {
-            <option [value]="t">{{ t }}</option>
-          }
-        </select>
-      </div>
-
-      <!-- حالة العقار -->
-      <div class="cp-form-field cp-field-with-dropdown">
-        <div class="cp-field-icon-wrap">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16">
-            <polyline points="6 9 12 15 18 9"/>
-          </svg>
+        
+        <!-- نوع العقار -->
+        <div class="cp-form-field">
+          <div class="cp-field-icon-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+              <polyline points="9 22 9 12 15 12 15 22"/>
+            </svg>
+          </div>
+          <select name="propertyType" class="cp-input" required formControlName="type">
+            <option value="" selected>نوع العقار</option>
+            @for (t of propertyTypes; track t) {
+              <option [value]="t">{{ t }}</option>
+            }
+          </select>
         </div>
-        <select name="propertyStatus" class="cp-input" required formControlName="status">
-          <option value="" disabled selected>حالة العقار</option>
-          @for (s of propertyStatuses; track s) {
-            <option [value]="s">{{ s }}</option>
-          }
-        </select>
-      </div>
-      <!-- المستخدم -->
-      <div class="cp-form-field cp-field-with-dropdown">
-        <div class="cp-field-icon-wrap">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16">
-            <polyline points="6 9 12 15 18 9"/>
-          </svg>
+  
+        <!-- حالة العقار -->
+        <div class="cp-form-field cp-field-with-dropdown">
+          <div class="cp-field-icon-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16">
+              <polyline points="6 9 12 15 18 9"/>
+            </svg>
+          </div>
+          <select name="propertyStatus" class="cp-input" required formControlName="status">
+            <option value="" disabled selected>حالة العقار</option>
+            <option value="available" selected>متاح</option>
+            <!-- @for (s of propertyStatuses; track s) {
+              <option [value]="s">{{ s }}</option>
+            } -->
+          </select>
         </div>
-        <select name="user_id" class="cp-input" required formControlName="user_id">
-          <option value="" disabled selected>المستخدم</option>
-          @for (s of users; track s) {
-            <option [value]="s.id">{{ s.name }}</option>
-          }
-        </select>
+        <!-- المستخدم -->
+        <div class="cp-form-field cp-field-with-dropdown">
+          <div class="cp-field-icon-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16">
+              <polyline points="6 9 12 15 18 9"/>
+            </svg>
+          </div>
+          <select name="user_id" class="cp-input" required formControlName="user_id">
+            <option value="" disabled selected>المستخدم</option>
+            @for (s of users; track s) {
+              <option [value]="s.id">{{ s.name }}</option>
+            }
+          </select>
+        </div>
       </div>
-    </div>
 
     <!-- Row 2: السعر | العنوان -->
     <div class="cp-form-row">
       <!-- السعر -->
+       <div class="cp-form-error-message-and-input">
       <div class="cp-form-field">
         <div class="cp-field-icon-wrap">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16">
@@ -77,6 +97,10 @@
           required
           formControlName="price"
         />
+      </div>
+      <div *ngIf="createForm.get('price')?.touched && createForm.get('price')?.hasError('required')" class="error-message">
+        يجب ألا يكون السعر فارغًا.
+        </div>
       </div>
 
       <!-- العنوان -->
@@ -100,6 +124,7 @@
 
     <!-- Row 3: وصف العقار (full width) -->
     <div class="cp-form-row cp-row-full">
+
       <div class="cp-form-field cp-field-full">
         <div class="cp-field-icon-wrap">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16">
@@ -116,6 +141,12 @@
           rows="3"
           formControlName="description"
         ></textarea>
+      </div>
+      <div *ngIf="createForm.get('description')?.touched && createForm.get('description')?.hasError('required')" class="error-message">
+        يجب ألا يكون الوصف فارغًا.
+      </div>
+      <div *ngIf="createForm.get('description')?.touched && createForm.get('description')?.hasError('minlength')" class="error-message">
+        يجب ألا يقل الوصف عن 5 أحرف.
       </div>
     </div>
 
@@ -217,6 +248,12 @@
     <div class="cp-amenities-section">
       <p class="cp-amenities-label">مزايا إضافية</p> 
       <div class="cp-amenities-list">
+        <button type="button" class="cp-amenities-add" (click)="addAmenity()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16">
+          <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+        </svg>
+        إضافة ميزة
+        </button>
          <input 
             type="text"
             class="cp-amenity-input"
@@ -224,12 +261,7 @@
             name="newAmenity"
             placeholder="أدخل ميزة جديدة"
         />
-        <button type="button" class="cp-amenities-add" (click)="addAmenity()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16">
-          <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
-        </svg>
-        إضافة ميزة
-        </button>
+        
        
         @for (amenity of amenities; track amenity.key) {
           
@@ -251,7 +283,9 @@
     <!-- ── Footer Buttons ── -->
     <div class="form-actions-row">
       <button type="button" class="btn-cancel" (click)="onCancel()">إلغاء</button>
-      <button type="submit" class="btn-submit">إضافة</button>
+      <button type="submit" class="btn-submit">
+        {{ isLoading ? 'جاري الإضافة...' : 'إضافة' }}
+      </button>
     </div>
 
   </form>

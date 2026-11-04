@@ -20,6 +20,8 @@ interface AmenityOption {
 export class CreateProperty implements OnDestroy {
   createForm:FormGroup
   users:Data[] = [];
+  errorMessage = '';
+  isLoading = false;
   constructor(
     private router: Router, 
     private propertyService: PropertyService,
@@ -30,7 +32,7 @@ export class CreateProperty implements OnDestroy {
       name:['',[Validators.required,Validators.minLength(2)]],
       price:['',[Validators.required,Validators.min(0)]],
       features:[[]],
-      description:['',[Validators.minLength(10)]],
+      description:['',[Validators.minLength(5)]],
       location:[''],
       type:[''],
       status:[''],
@@ -89,7 +91,7 @@ export class CreateProperty implements OnDestroy {
     const newAmenity: AmenityOption = {
       key: `amenity_${this.amenities.length + 1}`,
       label: inputValue.value.trim(),
-      checked: false,
+      checked: true,
     };
     this.amenities.push(newAmenity);
     this.newAmenityLabel = '';
@@ -174,10 +176,33 @@ export class CreateProperty implements OnDestroy {
     this.filePreviews.forEach((preview) => URL.revokeObjectURL(preview));
     this.filePreviews.clear();
   }
-
+  getErrorMessage(controlName: string): string {
+    const control = this.createForm.get(controlName);
+    if (control?.hasError('required')) {
+      return 'This field is required.';
+    }
+    if (control?.hasError('string')) {
+      return `This field must be a string.`;
+    }
+    if (control?.hasError('minlength')) {
+      const minLength = control.getError('minlength').requiredLength;
+      return `Minimum length is ${minLength} characters.`;
+    }
+    if (control?.hasError('min')) {
+      const minValue = control.getError('min').min;
+      return `Minimum value is ${minValue}.`;
+    }
+    if (control?.touched) {
+      return '';
+    }
+    return '';
+  }
   // ── Submit / Cancel ────────────────────────────────────────────
   onSubmit() {
+    
+    this.isLoading = true;
     const data = {
+      name: this.createForm.get('name')?.value,
       type: this.createForm.get('type')?.value,
       status: this.createForm.get('status')?.value,
       price: this.createForm.get('price')?.value,
@@ -193,7 +218,15 @@ export class CreateProperty implements OnDestroy {
     this.propertyService.createProperty(data).subscribe({
       next: (property) => {
         console.log('Property created successfully:', property);
+        this.isLoading = false;
         this.router.navigate(['/properties']);
+      },
+      error: (err) => {
+        console.error('Error creating property:', err);
+        this.isLoading = false;
+      },
+      complete: () => {
+        this.isLoading = false;
       }
     });
   }

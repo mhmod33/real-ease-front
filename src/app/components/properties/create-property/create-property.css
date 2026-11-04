@@ -284,6 +284,26 @@ select.cp-input {
   background: #dc2626 !important;
   color: #fff !important;
 }
+.error-message {
+  color: #dc2626;
+  font-size: 12px;
+  margin-top: 4px;
+  margin-bottom: -4px;
+  font-weight: 500;
+}
+.cp-form-error-message-and-input {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  height: 100%;
+}
+.cp-amenity-item{
+  border: 1px solid #c8d8ee;
+  padding: 6px 12px;
+  border-radius: 8px;
+  background: #eef2fb;
+  transition: all 0.2s;
+}
 /* ── Amenities ── */
 .cp-amenities-section {
   display: flex;
