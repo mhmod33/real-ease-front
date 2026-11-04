@@ -230,6 +230,7 @@ export class CreateProperty implements OnDestroy {
       }
     });
   }
+ 
   onCancel() {
     this.router.navigate(['/properties']);
   }

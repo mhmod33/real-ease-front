@@ -68,8 +68,8 @@
         <img [src]="property.agent.image" [alt]="property.agent.name" class="pd-agent-photo" />
       </div>
       <div class="pd-agent-meta">
-        <h2 class="pd-agent-name">{{ property.agent.name }}</h2>
-        <p class="pd-agent-title">{{ property.agent.title }}</p>
+        <h2 class="pd-agent-name">{{ property.name }}</h2>
+        <p class="pd-agent-title">{{ property.name }}</p>
       </div>
       <div class="pd-agent-socials">
         <a [href]="property.agent.instagram" class="pd-social-link-outline" target="_blank" title="Instagram">
@@ -114,7 +114,7 @@
           <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 1 1 16 0z"/>
           <circle cx="12" cy="10" r="3"/>
         </svg>
-        <span>{{ property.address }}</span>
+        <span>{{ property.location }}</span>
       </div>
     </div>
 
