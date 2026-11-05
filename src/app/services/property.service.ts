@@ -4,6 +4,7 @@ import { Property, Properties } from '../models/property.model';
 import { HttpClient } from '@angular/common/http';
 import { HttpParams } from '@angular/common/http';
 import { environment } from '../../environments/environment';
+import { PropertyDetailsResponse } from '../models/property-details.model';
 
 export interface PropertyFilters {
   type?: string;
@@ -34,12 +35,12 @@ export class PropertyService {
     return this.http.get<Properties>(`${this.apiUrl}properties`, { params });
   }
 
-  getPropertyById(id: number): Observable<Property | undefined> {
-    return this.http.get<Property | undefined>(`${this.apiUrl}properties/${id}`);
+  getPropertyById(id: number): Observable<PropertyDetailsResponse | undefined> {
+    return this.http.get<PropertyDetailsResponse | undefined>(`${this.apiUrl}properties/${id}`);
   }
 
-  updateProperty(id: number, data: Partial<Property>): Observable<Property | undefined> {
-    return this.http.put<Property | undefined>(`${this.apiUrl}properties/${id}`, data);
+  updateProperty(id: number, data: Partial<Property>): Observable<PropertyDetailsResponse | undefined> {
+    return this.http.put<PropertyDetailsResponse | undefined>(`${this.apiUrl}properties/${id}`, data);
   }
 
   deleteProperty(id: number): Observable<boolean> {
@@ -48,7 +49,7 @@ export class PropertyService {
   createProperty(data:any):Observable<any>{
     return this.http.post<any>(`${this.apiUrl}properties`,data)
   }
-  getPropertyDetails(id:number):Observable<Property| undefined>{
-    return this.http.get<Property|undefined>(`${this.apiUrl}properties/${id}`)
+  getPropertyDetails(id:number):Observable<PropertyDetailsResponse>{
+    return this.http.get<PropertyDetailsResponse>(`${this.apiUrl}properties/${id}`)
   }
 }

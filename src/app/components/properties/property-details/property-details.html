@@ -1,6 +1,8 @@
 <!-- ===== PROPERTY DETAILS PAGE ===== -->
-@if (property) {
-<div class="pd-page" dir="rtl">
+
+@if(isLoading) {
+  <div class="pd-page" dir="rtl">جاري تحميل تفاصيل العقار...</div>
+}<div class="pd-page" dir="rtl">
 
   <!-- ── Page Title ── -->
   <div class="pd-page-header">
@@ -24,7 +26,7 @@
 
     <!-- Property Main Image (Right / End in RTL) -->
     <div class="pd-main-image-wrap">
-      <img [src]="property.mainImage" [alt]="property.name" class="pd-main-image" />
+      <!-- <img [src]="property.data.image" [alt]="property.data.name" class="pd-main-image" /> -->
       
       <!-- Top Right overlay action buttons -->
       <div class="pd-image-actions">
@@ -58,36 +60,43 @@
       <!-- Bottom overlay content -->
       <div class="pd-image-overlay">
         <h3 class="pd-overlay-title">الواجهة الامامية للعقار</h3>
-        <p class="pd-overlay-text">{{ property.overlayText }}</p>
+        <!-- <p class="pd-overlay-text">{{ property.data.overlayText }}</p> -->
       </div>
     </div>
 
     <!-- Agent Card (Left / Start in RTL) -->
     <div class="pd-agent-card">
       <div class="pd-agent-photo-wrap">
-        <img [src]="property.agent.image" [alt]="property.agent.name" class="pd-agent-photo" />
+        <img [src]="property?.data?.user?.avatar" [alt]="property?.data?.user?.name" class="pd-agent-photo" />
       </div>
       <div class="pd-agent-meta">
-        <h2 class="pd-agent-name">{{ property.name }}</h2>
-        <p class="pd-agent-title">{{ property.name }}</p>
+        <h2 class="pd-agent-name">{{ property?.data?.user?.name }}</h2>
+        <p class="pd-agent-title">{{ property?.data?.user?.role }}</p>
       </div>
       <div class="pd-agent-socials">
-        <a [href]="property.agent.instagram" class="pd-social-link-outline" target="_blank" title="Instagram">
+        <a [href]="property?.data?.user?.social_media?.instagram" class="pd-social-link-outline" target="_blank" title="Instagram">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
             <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
             <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
             <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
           </svg>
         </a>
-        <a [href]="property.agent.facebook" class="pd-social-link-outline" target="_blank" title="Facebook">
+        <a [href]="property?.data?.user?.social_media?.facebook" class="pd-social-link-outline" target="_blank" title="Facebook">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
             <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
           </svg>
         </a>
-        <a [href]="property.agent.twitter" class="pd-social-link-outline" target="_blank" title="X">
+        <a [href]="property?.data?.user?.social_media?.twitter" class="pd-social-link-outline" target="_blank" title="X">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="20" height="20">
             <path d="M4 4l11.733 16h4.267l-11.733 -16z"/>
             <path d="M4 20l6.768 -6.768m2.46 -2.46l6.772 -6.772"/>
+          </svg>
+        </a>
+        <a [href]="property?.data?.user?.social_media?.linkedin" class="pd-social-link-outline" target="_blank" title="LinkedIn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="20" height="20">
+            <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2H8v-4h8z"/>
+            <rect x="2" y="9" width="4" height="12"/>
+            <circle cx="4" cy="4" r="2"/>
           </svg>
         </a>
       </div>
@@ -102,19 +111,19 @@
     <!-- Left Column: Description (RTL = Start, so it sits on the left in the design) -->
     <div class="pd-desc-col">
       <h3 class="pd-details-heading">وصف العقار</h3>
-      <p class="pd-desc-text">{{ property.description }}</p>
+      <p class="pd-desc-text">{{ property?.data?.description }}</p>
     </div>
 
     <!-- Right Column: Title, price, location -->
     <div class="pd-info-col">
-      <h2 class="pd-prop-name">{{ property.name }}</h2>
-      <p class="pd-prop-price">{{ property.price }}</p>
+      <h2 class="pd-prop-name">{{ property?.data?.name }}</h2>
+      <p class="pd-prop-price">{{ property?.data?.price }}</p>
       <div class="pd-prop-location">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" width="14" height="14">
           <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 1 1 16 0z"/>
           <circle cx="12" cy="10" r="3"/>
         </svg>
-        <span>{{ property.location }}</span>
+        <span>{{ property?.data?.location }}</span>
       </div>
     </div>
 
@@ -132,7 +141,7 @@
       </button>
 
       <div class="pd-carousel-items">
-        @for (img of property.galleryImages; track $index) {
+        @for (img of property?.data?.images; track $index) {
           <div
             class="pd-carousel-item-img"
             [class.active]="currentGalleryIndex === $index"
@@ -151,14 +160,21 @@
     </div>
 
     <!-- Amenities section at bottom of the card -->
-    <div class="pd-amenities-section">
-      <p class="pd-amenities-label">مزايا اضافية</p>
-      <div class="pd-amenities-list">
-        @for (amenity of property.amenities; track amenity) {
-          <span class="pd-amenity-pill">{{ amenity }}</span>
-        }
-      </div>
-    </div>
+     @if(property?.data?.features?.length) {
+       <div class="pd-amenities-section">
+         <p class="pd-amenities-label">مزايا اضافية</p>
+         <div class="pd-amenities-list">
+           @for (amenity of property?.data?.features; track amenity) {
+             <span class="pd-amenity-pill">{{ amenity }}</span>
+           }
+         </div>
+       </div>
+     }
+     @else {
+       <div class="pd-amenities-section">
+         <p class="pd-amenities-label">لا توجد مزايا اضافية</p>
+       </div>
+     }
 
   </div>
 
@@ -174,12 +190,16 @@
       </svg>
     </button>
     <img
-      [src]="property.mainImage"
-      [alt]="property.name"
+      [src]="property?.data?.image"
+      [alt]="property?.data?.name"
       class="pd-lightbox-img"
       (click)="$event.stopPropagation()"
     />
   </div>
+}
+
+@if(!property) {
+  <div class="pd-page" dir="rtl">لم يتم العثور على تفاصيل العقار</div>
 }
 
 <!-- ── Chat Modal ── -->
@@ -196,4 +216,3 @@
   (save)="onEditSave($event)"
   (cancel)="onEditCancel()"
 ></app-edit-property-modal>
-}

@@ -1,34 +1,12 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component,ChangeDetectorRef, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import { ChatModal, ChatContact } from '../../shared/chat-modal/chat-modal';
 import { EditPropertyModal } from '../edit-property-modal/edit-property-modal';
 import { PropertyService } from '../../../services/property.service';
 import { SessionService } from '../../../services/session.service';
-import { Property,Properties } from '../../../models/property.model';
-
-export interface PropertyDetail {
-  id: number;
-  name: string;
-  city: string;
-  location: string;
-  status: 'للبيع' | 'للإيجار';
-  price: string;
-  description: string;
-  mainImage: string;
-  galleryImages: string[];
-  agent: {
-    name: string;
-    title: string;
-    image: string;
-    instagram: string;
-    facebook: string;
-    twitter: string;
-  };
-  amenities: string[];
-  overlayText: string;
-}
-
+import { PropertyDetailsResponse } from '../../../models/property-details.model';
+import { Property } from '../../../models/property.model';
 @Component({
   selector: 'app-property-details',
   imports: [CommonModule, ChatModal, EditPropertyModal],
@@ -40,11 +18,12 @@ export class PropertyDetails implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     private propertyService: PropertyService,
-    public sessionService: SessionService
+    public sessionService: SessionService,
+    private changeDetector: ChangeDetectorRef
   ) {}
 
   currentGalleryIndex = 0;
-
+  isLoading = false;
   // Chat Modal
   showChatModal = false;
   chatContact?: ChatContact;
@@ -56,23 +35,20 @@ export class PropertyDetails implements OnInit {
   editModalOpen = false;
   editingProperty: Property | null = null;
 
-  // ── Mock Properties Database ──────────────────────────────────
-  private propertiesDb: PropertyDetail[] = [];
-
-  property!: PropertyDetail;
+  property: PropertyDetailsResponse | null = null;
 
   ngOnInit() {
     const id = Number(this.route.snapshot.paramMap.get('id')) || 2;
     this.getPropertyDetails(id);
-    this.property = this.propertiesDb.find((p) => p.id === id) ?? this.propertiesDb[1];
   }
 
 
 
   /* ── Edit Property ── */
   openEditModal(): void {
-    this.propertyService.getPropertyById(this.property.id).subscribe((property) => {
-      this.editingProperty = property ?? null;
+    if (!this.property) return;
+    this.propertyService.getPropertyById(this.property.data.id).subscribe((property) => {
+      this.editingProperty = property?.data ?? null;
       this.editModalOpen = this.editingProperty !== null;
     });
   }
@@ -90,16 +66,18 @@ export class PropertyDetails implements OnInit {
 
   // ── Gallery ───────────────────────────────────────────────────
   get currentGalleryImage(): string {
-    return this.property?.galleryImages[this.currentGalleryIndex] ?? '';
+    return this.property?.data.images[this.currentGalleryIndex] ?? '';
   }
 
   prevGallery() {
+    if (!this.property?.data.images.length) return;
     if (this.currentGalleryIndex > 0) this.currentGalleryIndex--;
-    else this.currentGalleryIndex = this.property.galleryImages.length - 1;
+    else this.currentGalleryIndex = this.property.data.images.length - 1;
   }
 
   nextGallery() {
-    if (this.currentGalleryIndex < this.property.galleryImages.length - 1)
+    if (!this.property?.data.images.length) return;
+    if (this.currentGalleryIndex < this.property.data .images.length - 1)
       this.currentGalleryIndex++;
     else this.currentGalleryIndex = 0;
   }
@@ -114,11 +92,12 @@ export class PropertyDetails implements OnInit {
 
   // ── Chat / Negotiate ──────────────────────────────────────────
   openChat() {
+    if (!this.property) return;
     this.chatContact = {
-      propertyId: this.property.id,
-      name: this.property.agent.name,
-      image: this.property.agent.image,
-      role: this.property.agent.title,
+      propertyId: this.property.data.id,
+      name: this.property.data.user.name,
+      image: this.property.data.user.avatar,
+      role: this.property.data.user.role,
     };
     this.showChatModal = true;
   }
@@ -133,11 +112,16 @@ export class PropertyDetails implements OnInit {
     this.showLightbox = true;
   }
    getPropertyDetails(id:number){
+    this.isLoading = true;
     this.propertyService.getPropertyDetails(id).subscribe({
       next:(property)=>{
-        console.log('Property details:',property)
+        this.isLoading = false;
+        this.property = property;
+        console.log('Property details fetched successfully:', typeof(property),property, property.data.description);
+        this.changeDetector.markForCheck();
       },
       error:(err)=>{
+        this.isLoading = false;
         console.error('Error fetching property details:',err)
       }
     })
