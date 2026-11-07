@@ -1,7 +1,7 @@
 import { Component, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { FormsModule } from '@angular/forms';
+import { FormGroup, FormsModule } from '@angular/forms';
 import { ChatModal, ChatContact } from '../shared/chat-modal/chat-modal';
 import { AppModal } from '../shared/app-modal/app-modal';
 import { EditPropertyModal } from './edit-property-modal/edit-property-modal';
@@ -64,7 +64,6 @@ export class Properties {
       ` #f6a65b ${maxPct}%)`
     );
   }
-
   // ── Data (from PropertyService) ───────────────────────────────
   propertiesResponse: PropertiesResponse | null = null;
   isLoading = false;
@@ -125,7 +124,11 @@ export class Properties {
   }
 
   onEditSave(updated: Property) {
-    this.propertyService.updateProperty(updated.id, updated);
+    this.propertyService.updateProperty(updated.id, updated).subscribe({
+      next: (res) => {
+
+      }
+    });
     this.editModalOpen = false;
     this.editingProperty = null;
   }
@@ -135,20 +138,42 @@ export class Properties {
     this.editingProperty = null;
   }
 
-  /* ── Admin: Delete Property ── */
-  deleteProperty(p: Property, e: Event) {
-    e.stopPropagation();
-    this.pendingDeleteId = p.id;
-    this.deleteModalMessage = `هل أنت متأكد من حذف العقار "${p.name}"؟`;
-    this.deleteModalOpen = true;
-  }
 
   confirmDeleteProperty() {
     this.deleteModalOpen = false;
-    if (this.pendingDeleteId !== undefined) {
-      this.propertyService.deleteProperty(this.pendingDeleteId);
-      this.pendingDeleteId = undefined;
-    }
+    const propertyId = this.pendingDeleteId;
+    this.pendingDeleteId = undefined;
+    if (propertyId === undefined) return;
+
+    this.propertyService.deleteProperty(propertyId).subscribe({
+      next: () => {
+        if (this.propertiesResponse) {
+          this.propertiesResponse = {
+            ...this.propertiesResponse,
+            data: this.propertiesResponse.data.filter(
+              (property) => property.id !== propertyId
+            ),
+            pagination: {
+              ...this.propertiesResponse.pagination,
+              total: Math.max(0, this.propertiesResponse.pagination.total - 1),
+            },
+          };
+        }
+        this.changeDetector.markForCheck();
+        // this.loadProperties();
+
+      },
+      error: (err) => {
+        console.error('Error deleting property:', err);
+      },
+    });
+  }
+
+  deleteProperty(property: Property, event: Event) {
+    event.stopPropagation();
+    this.pendingDeleteId = property.id;
+    this.deleteModalMessage = `هل أنت متأكد من حذف العقار "${property.name}"؟`;
+    this.deleteModalOpen = true;
   }
 
   cancelDeleteProperty() {
@@ -161,9 +186,9 @@ export class Properties {
     e.stopPropagation();
     this.chatContact = {
       propertyId: p.id,
-      name: p.user.name,
+      name: p.user?.name ?? 'صاحب العقار',
       image: p.image,
-      role: p.user.role,
+      role: p.user?.role ?? '',
     };
     this.showChatModal = true;
   }

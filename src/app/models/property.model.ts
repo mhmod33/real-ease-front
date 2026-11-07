@@ -1,7 +1,7 @@
 
 export interface Properties {
   message: string
-  data: Property
+  data: Property[]
   pagination: Pagination
 }
 

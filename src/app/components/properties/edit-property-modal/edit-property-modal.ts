@@ -1,12 +1,13 @@
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule,FormGroup,ReactiveFormsModule, FormBuilder,Validators } from '@angular/forms';
 import { Property } from '../../../models/property.model';
+import { PropertyService } from '../../../services/property.service';
 
 @Component({
   selector: 'app-edit-property-modal',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule,ReactiveFormsModule],
   templateUrl: './edit-property-modal.html',
   styleUrl: './edit-property-modal.css',
 })
@@ -19,42 +20,50 @@ export class EditPropertyModal implements OnChanges {
 
   propertyTypes = ['شقة', 'فيلا', 'بنتهاوس', 'مكتب', 'أرض', 'مستودع'];
   propertyStatuses: Array<'available' | 'sold' | 'pending' | 'rented'> = ['available', 'sold', 'pending', 'rented'];
+  propertycontractType: Array<'sale' | 'rent'> = ['sale', 'rent'];
+  editForm!:FormGroup
 
-  draft = {
-    name: '',
-    type: '',
-    status: 'available' as 'available' | 'sold' | 'pending' | 'rented',
-    priceNum: 0,
-    city: '',
-    description: '',
-    image: '',
-  };
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['open'] && this.open && this.property) {
-      this.draft = {
-        name: this.property.name,
-        type: this.property.type,
-        status: this.property.status,
-        priceNum: this.property.price ? parseFloat(this.property.price.toString()) : 0,
-        city: this.property.location,
-        description: this.property.description,
-        image: this.property.image,
-      };
-    }
+  constructor(
+    private propertyService:PropertyService,
+    private fb:FormBuilder
+  ){
+    this.editForm=this.fb.group({
+      name:['',[Validators.required, Validators.minLength(2)]],
+      price:[''],
+      location:[''],
+      contract_type:[''],
+      type:[''],
+      status:[''],
+      description:[''],
+      image:[''],
+      features:[['']],
+      images:[['']],
+    })
   }
+  ngOnChanges(changes: SimpleChanges): void {
+  }
+
 
   onSave(): void {
     if (!this.property) return;
     const updated: Property = {
-      ...this.property,
-      name: this.draft.name,
-      type: this.draft.type,
-      status: this.draft.status,
-      location: this.draft.city,
-      description: this.draft.description,
-      image: this.draft.image,
+      ...this.editForm.value
     };
+    const propertyId=this.property.id
+    this.propertyService.updateProperty(propertyId,updated).subscribe({
+      next:(res)=>{
+        this.editForm.patchValue({
+        name:res?.data.name,
+        contract_type:res?.data.contract_type,
+        price:res?.data.price,
+        status:res?.data.status,
+        type:res?.data.type,
+        location:res?.data.location,
+        description:res?.data.description,
+    })
+      }
+    })
     this.save.emit(updated);
   }
 

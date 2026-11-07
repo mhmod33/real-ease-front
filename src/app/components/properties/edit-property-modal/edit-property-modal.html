@@ -4,18 +4,26 @@
 
       <h3 class="epm-title">تعديل, <span class="epm-title-bold">العقار</span></h3>
 
-      <form class="epm-form" (ngSubmit)="onSave()" #editForm="ngForm">
+      <form class="epm-form" (click)="onSave()" [formGroup]="editForm">
         <div class="epm-row">
           <div class="epm-field">
             <label class="epm-label">اسم العقار</label>
-            <input class="epm-input" type="text" [(ngModel)]="draft.name" name="name" required />
+            <input class="epm-input" type="text" name="name" formControlName="name" required />
           </div>
         </div>
 
         <div class="epm-row epm-row-2">
           <div class="epm-field">
             <label class="epm-label">نوع العقار</label>
-            <select class="epm-input" [(ngModel)]="draft.type" name="type" required>
+            <select class="epm-input" formControlName="type" required>
+              @for (t of propertyTypes; track t) {
+                <option [value]="t">{{ t }}</option>
+              }
+            </select>
+          </div>
+          <div class="epm-field">
+            <label class="epm-label">نوع التعاقد</label>
+            <select class="epm-input" formControlName="contract_type">
               @for (t of propertyTypes; track t) {
                 <option [value]="t">{{ t }}</option>
               }
@@ -24,7 +32,7 @@
 
           <div class="epm-field">
             <label class="epm-label">حالة العقار</label>
-            <select class="epm-input" [(ngModel)]="draft.status" name="status" required>
+            <select class="epm-input" formControlName="status" required>
               @for (s of propertyStatuses; track s) {
                 <option [value]="s">{{ s }}</option>
               }
@@ -35,26 +43,26 @@
         <div class="epm-row epm-row-2">
           <div class="epm-field">
             <label class="epm-label">السعر</label>
-            <input class="epm-input" type="number" [(ngModel)]="draft.priceNum" name="priceNum" required />
+            <input class="epm-input" type="number" formControlName="price" required />
           </div>
 
           <div class="epm-field">
             <label class="epm-label">المدينة</label>
-            <input class="epm-input" type="text" [(ngModel)]="draft.city" name="city" required />
+            <input class="epm-input" type="text" formControlName="city" />
           </div>
         </div>
 
         <div class="epm-row">
           <div class="epm-field">
             <label class="epm-label">رابط الصورة</label>
-            <input class="epm-input" type="text" [(ngModel)]="draft.image" name="image" />
+            <input class="epm-input" type="text"  name="image" />
           </div>
         </div>
 
         <div class="epm-row">
           <div class="epm-field">
             <label class="epm-label">الوصف</label>
-            <textarea class="epm-input epm-textarea" [(ngModel)]="draft.description" name="description" rows="4"></textarea>
+            <textarea class="epm-input epm-textarea" formControlName="description" rows="4"></textarea>
           </div>
         </div>
 
