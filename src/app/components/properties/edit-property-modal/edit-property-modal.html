@@ -1,10 +1,10 @@
 @if (open && property) {
-  <div class="epm-overlay" (click)="onCancel()">
+  <div class="epm-overlay" >
     <div class="epm-box" (click)="$event.stopPropagation()" dir="rtl">
 
       <h3 class="epm-title">تعديل, <span class="epm-title-bold">العقار</span></h3>
 
-      <form class="epm-form" (click)="onSave()" [formGroup]="editForm">
+      <form class="epm-form" (ngSubmit)="onSave()" [formGroup]="editForm">
         <div class="epm-row">
           <div class="epm-field">
             <label class="epm-label">اسم العقار</label>
@@ -24,8 +24,8 @@
           <div class="epm-field">
             <label class="epm-label">نوع التعاقد</label>
             <select class="epm-input" formControlName="contract_type">
-              @for (t of propertyTypes; track t) {
-                <option [value]="t">{{ t }}</option>
+              @for (c of propertycontractType; track c) {
+                <option [value]="c">{{ c }}</option>
               }
             </select>
           </div>
@@ -47,14 +47,14 @@
           </div>
 
           <div class="epm-field">
-            <label class="epm-label">المدينة</label>
-            <input class="epm-input" type="text" formControlName="city" />
+            <label class="epm-label">العنوان</label>
+            <input class="epm-input" type="text" formControlName="location" />
           </div>
         </div>
 
         <div class="epm-row">
           <div class="epm-field">
-            <label class="epm-label">رابط الصورة</label>
+            <label class="epm-label">الصورة</label>
             <input class="epm-input" type="text"  name="image" />
           </div>
         </div>
@@ -65,10 +65,27 @@
             <textarea class="epm-input epm-textarea" formControlName="description" rows="4"></textarea>
           </div>
         </div>
+        <div class="epm-row">
+          <div class="epm-field">
+            <label class="epm-label">المزايا</label>
+            @for (i of property.features; track i) {
+              <div class="epm-feature">
+                <input type="checkbox" [value]="i" [checked]="i" />
+                <span>{{ i }}</span>
+              </div>
+            }
+          </div>
+        </div>
+
+        @if (saveError) {
+          <p role="alert">{{ saveError }}</p>
+        }
 
         <div class="epm-actions">
-          <button type="button" class="btn-epm-cancel" (click)="onCancel()">إلغاء</button>
-          <button type="submit" class="btn-epm-save" [disabled]="editForm.invalid">حفظ</button>
+          <button type="button" class="btn-epm-cancel" (click)="onCancel()" [disabled]="isSaving">إلغاء</button>
+          <button type="submit" class="btn-epm-save" [disabled]="editForm.invalid || isSaving">
+            {{ isSaving ? 'جاري الحفظ...' : 'حفظ' }}
+          </button>
         </div>
       </form>
 

@@ -54,9 +54,9 @@ export class PropertyDetails implements OnInit {
   }
 
   onEditSave(updated: Property): void {
-    this.propertyService.updateProperty(updated.id, updated);
     this.editModalOpen = false;
     this.editingProperty = null;
+    this.getPropertyDetails(updated.id);
   }
 
   onEditCancel(): void {

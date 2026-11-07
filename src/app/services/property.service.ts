@@ -49,7 +49,7 @@ export class PropertyService {
   createProperty(data:any):Observable<any>{
     return this.http.post<any>(`${this.apiUrl}properties`,data)
   }
-  getPropertyDetails(id:number):Observable<PropertyDetailsResponse>{
+  getPropertyDetails(id:number |undefined):Observable<PropertyDetailsResponse>{
     return this.http.get<PropertyDetailsResponse>(`${this.apiUrl}properties/${id}`)
   }
 }

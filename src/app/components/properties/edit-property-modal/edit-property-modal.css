@@ -9,7 +9,12 @@
   animation: epmFadeIn 0.2s ease;
   padding: 20px;
 }
-
+.epm-feature{
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-direction: row;
+}
 @keyframes epmFadeIn {
   from { opacity: 0; }
   to { opacity: 1; }

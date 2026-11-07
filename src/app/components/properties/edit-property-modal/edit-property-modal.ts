@@ -18,15 +18,18 @@ export class EditPropertyModal implements OnChanges {
   @Output() save = new EventEmitter<Property>();
   @Output() cancel = new EventEmitter<void>();
 
-  propertyTypes = ['شقة', 'فيلا', 'بنتهاوس', 'مكتب', 'أرض', 'مستودع'];
+  isSaving = false;
+  saveError: string | null = null;
+
+  propertyTypes = ['apartment', 'house', 'condo', 'land', 'commercial', 'other'];
   propertyStatuses: Array<'available' | 'sold' | 'pending' | 'rented'> = ['available', 'sold', 'pending', 'rented'];
   propertycontractType: Array<'sale' | 'rent'> = ['sale', 'rent'];
   editForm!:FormGroup
 
 
   constructor(
-    private propertyService:PropertyService,
-    private fb:FormBuilder
+    private fb:FormBuilder,
+    private propertyService: PropertyService,
   ){
     this.editForm=this.fb.group({
       name:['',[Validators.required, Validators.minLength(2)]],
@@ -42,32 +45,32 @@ export class EditPropertyModal implements OnChanges {
     })
   }
   ngOnChanges(changes: SimpleChanges): void {
+    if (changes['property'] && this.property) {
+      this.editForm.patchValue(this.property);
+    }
   }
-
-
   onSave(): void {
-    if (!this.property) return;
+    if (!this.property || this.editForm.invalid || this.isSaving) return;
     const updated: Property = {
+      ...this.property,
       ...this.editForm.value
     };
-    const propertyId=this.property.id
-    this.propertyService.updateProperty(propertyId,updated).subscribe({
-      next:(res)=>{
-        this.editForm.patchValue({
-        name:res?.data.name,
-        contract_type:res?.data.contract_type,
-        price:res?.data.price,
-        status:res?.data.status,
-        type:res?.data.type,
-        location:res?.data.location,
-        description:res?.data.description,
-    })
-      }
-    })
-    this.save.emit(updated);
+    this.isSaving = true;
+    this.saveError = null;
+    this.propertyService.updateProperty(updated.id, updated).subscribe({
+      next: () => {
+        this.isSaving = false;
+        this.save.emit(updated);
+      },
+      error: () => {
+        this.isSaving = false;
+        this.saveError = 'تعذر حفظ التعديلات. يرجى المحاولة مرة أخرى.';
+      },
+    });
   }
 
   onCancel(): void {
+    if (this.isSaving) return;
     this.cancel.emit();
   }
 }

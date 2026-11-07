@@ -124,11 +124,8 @@ export class Properties {
   }
 
   onEditSave(updated: Property) {
-    this.propertyService.updateProperty(updated.id, updated).subscribe({
-      next: (res) => {
-
-      }
-    });
+    const property = this.propertiesResponse?.data.find((item) => item.id === updated.id);
+    if (property) Object.assign(property, updated);
     this.editModalOpen = false;
     this.editingProperty = null;
   }
