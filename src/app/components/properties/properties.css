@@ -409,6 +409,11 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+.rating-stars{
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
 
 /* Agent Row */
 .prop-agent-row {

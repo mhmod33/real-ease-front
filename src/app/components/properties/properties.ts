@@ -10,6 +10,7 @@ import { PropertyFilters, PropertyService } from '../../services/property.servic
 import { Properties as PropertiesResponse, Property } from '../../models/property.model';
 import { ChangeDetectorRef } from '@angular/core';
 import { EditPropertyStatusModal } from '../../components/properties/edit-property-status-modal/edit-property-status-modal';
+import { Ratings } from '../../models/rating.model';
 export type { Property };
 
 @Component({
@@ -29,8 +30,9 @@ export class Properties {
 
   ) {
     this.loadProperties();
+    // this.getPropertyRating(4); // Example property ID
   }
-
+  Rating: Ratings | null = null;
   // Chat Modal
   showChatModal = false;
   chatContact?: ChatContact;
@@ -247,4 +249,8 @@ export class Properties {
     this.activeFilters = {};
     this.loadProperties();
   }
+  getStarFill(rate: number, star: number): string {
+  return Number(rate) >= star ? '#ffe70d' : 'none';
+}
+ 
 }

@@ -113,6 +113,7 @@
       <h3 class="pd-details-heading">وصف العقار</h3>
       <p class="pd-desc-text">{{ property?.data?.description }}</p>
     </div>
+    
 
     <!-- Right Column: Title, price, location -->
     <div class="pd-info-col">
@@ -126,7 +127,10 @@
         <span>{{ property?.data?.location }}</span>
       </div>
     </div>
-
+    <div class="pd-desc-col">
+      <h3 class="pd-details-heading">تقييم العقار</h3>
+      <p class="pd-desc-text">{{ Rating }}</p>
+    </div>
   </div>
 
   <!-- ── Bottom Section: Gallery & Amenities Card ── -->

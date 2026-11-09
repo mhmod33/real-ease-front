@@ -7,6 +7,7 @@ import { PropertyService } from '../../../services/property.service';
 import { SessionService } from '../../../services/session.service';
 import { PropertyDetailsResponse } from '../../../models/property-details.model';
 import { Property } from '../../../models/property.model';
+import { Ratings } from '../../../models/rating.model';
 @Component({
   selector: 'app-property-details',
   imports: [CommonModule, ChatModal, EditPropertyModal],
@@ -22,6 +23,7 @@ export class PropertyDetails implements OnInit {
     private changeDetector: ChangeDetectorRef
   ) {}
 
+  Rating: Ratings | null = null;
   currentGalleryIndex = 0;
   isLoading = false;
   // Chat Modal
@@ -128,5 +130,26 @@ export class PropertyDetails implements OnInit {
   }
   closeLightbox() {
     this.showLightbox = false;
+  }
+   getPropertyRating(propertyId: number) {
+    this.propertyService.getPropertyRating(propertyId).subscribe({
+      next: (ratings) => {
+        console.log('Property Ratings:', ratings);
+        // const property = this.propertiesResponse?.data.find((p) => p.id === propertyId);
+        // if (property) {
+        //   property.rate = ratings.data.length > 0 ? ratings.data[0].rate : '0';
+        // }
+        
+        const ratingsForProperty = ratings.data.filter(rating => rating.property_id === propertyId);
+        if (ratingsForProperty.length > 0) {
+          this.Rating = { data: ratingsForProperty };
+        } else {
+          this.Rating = { data: [] };
+        }
+      },
+      error: (err) => {
+        console.error('Error fetching property ratings:', err);
+      }
+    });
   }
 }

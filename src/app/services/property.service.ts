@@ -5,6 +5,7 @@ import { HttpClient } from '@angular/common/http';
 import { HttpParams } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { PropertyDetailsResponse } from '../models/property-details.model';
+import { Ratings } from '../models/rating.model';
 
 export interface PropertyFilters {
   type?: string;
@@ -58,5 +59,8 @@ export class PropertyService {
   }
   editPropertyStatus(id:number,status:string):Observable<any>{
     return this.http.patch<any>(`${this.apiUrl}properties/change-status/${id}`,{"status":status})
+  }
+  getPropertyRating(propertyId:number):Observable<Ratings>{
+    return this.http.get<Ratings>(`${this.apiUrl}properties/${propertyId}/ratings`)
   }
 }

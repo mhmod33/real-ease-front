@@ -16,7 +16,7 @@ export interface propertyData {
   type: string
   contract_type: string
   status: 'available' | 'sold' | 'pending' | 'rented'
-  rate: string
+  rate: number
   images: string[]
   image: string
   user: User

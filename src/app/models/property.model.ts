@@ -16,8 +16,8 @@ export interface Property {
   longitude: any
   type: string
   contract_type: string
-  status: 'available' | 'sold' | 'pending' | 'rented'
-  rate: string
+  status: 'available' | 'sold' | 'pending' | 'rented';
+  rate: number;
   images: string[]
   image: string
   user: User
