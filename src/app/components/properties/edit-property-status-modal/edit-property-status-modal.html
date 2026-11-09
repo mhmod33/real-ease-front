@@ -1,0 +1,41 @@
+@if (editStatusModalOpen && property) {
+  <div class="epm-overlay" >
+    <div class="epm-box" (click)="$event.stopPropagation()" dir="rtl">
+
+      <h3 class="epm-title">تعديل, <span class="epm-title-bold">العقار</span></h3>
+
+      <form class="epm-form" (ngSubmit)="onSave()" [formGroup]="editstatusForm">
+        <div class="epm-row">
+          <div class="epm-field">
+            <label class="epm-label">اسم العقار</label>
+          
+          </div>
+        </div>
+
+        <div class="epm-row epm-row-2">
+          <div class="epm-field">
+            <label class="epm-label">حالة العقار</label>
+            <select class="epm-input" formControlName="status" required>
+              @for (s of propertyStatuses; track s) {
+                <option [value]="s">{{ s }}</option>
+              }
+            </select>
+          </div>
+        </div>
+
+    
+        @if (saveError) {
+          <p role="alert">{{ saveError }}</p>
+        }
+
+        <div class="epm-actions">
+          <button type="button" class="btn-epm-cancel" (click)="onCancel()" [disabled]="isSaving">إلغاء</button>
+          <button type="submit" class="btn-epm-save" [disabled]="editstatusForm.invalid || isSaving">
+            {{ isSaving ? 'جاري الحفظ...' : 'حفظ' }}
+          </button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+}

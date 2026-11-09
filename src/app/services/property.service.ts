@@ -56,4 +56,7 @@ export class PropertyService {
   getPropertyDetails(id:number |undefined):Observable<PropertyDetailsResponse>{
     return this.http.get<PropertyDetailsResponse>(`${this.apiUrl}properties/${id}`)
   }
+  editPropertyStatus(id:number,status:string):Observable<any>{
+    return this.http.patch<any>(`${this.apiUrl}properties/change-status/${id}`,{"status":status})
+  }
 }

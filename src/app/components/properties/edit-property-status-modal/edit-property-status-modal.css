@@ -1,0 +1,143 @@
+.epm-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 1100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: epmFadeIn 0.2s ease;
+  padding: 20px;
+}
+.epm-feature{
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-direction: row;
+}
+@keyframes epmFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.epm-box {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 28px 28px 24px;
+  max-width: 520px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: epmSlideUp 0.2s ease;
+}
+
+@keyframes epmSlideUp {
+  from { transform: translateY(12px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.epm-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 20px 0;
+}
+
+.epm-title-bold {
+  font-weight: 800;
+  color: #003366;
+}
+
+.epm-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.epm-row {
+  display: flex;
+  gap: 16px;
+}
+
+.epm-row-2 .epm-field {
+  flex: 1;
+}
+
+.epm-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+
+.epm-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #334155;
+}
+
+.epm-input {
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 14px;
+  font-family: inherit;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.epm-input:focus {
+  outline: none;
+  border-color: #003366;
+}
+
+.epm-textarea {
+  resize: vertical;
+  min-height: 90px;
+}
+
+.epm-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.btn-epm-save {
+  height: 44px;
+  background-color: #003366;
+  color: #ffffff;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.btn-epm-save:hover {
+  background-color: #163b78;
+}
+
+.btn-epm-save:disabled {
+  background-color: #94a3b8;
+  cursor: not-allowed;
+}
+
+.btn-epm-cancel {
+  height: 44px;
+  background-color: #e5e7eb;
+  color: #003366;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.btn-epm-cancel:hover {
+  background-color: #d1d5db;
+}

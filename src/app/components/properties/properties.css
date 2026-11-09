@@ -351,15 +351,21 @@
   padding: 4px 12px;
   font-size: 11px;
   font-weight: 700;
+  background: #003366;
   color: #fff;
 }
 
-.status-sale {
-  background: #003366;
+.status-sold {
+  background: #e53935;
 }
-
+.status-pending {
+  background: #f5a623;
+}
 .status-rent {
-  background: #e89c31;
+  background: #1e88e5;
+}
+.status-available {
+  background: #43a047;
 }
 
 /* Card Body */

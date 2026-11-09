@@ -9,11 +9,12 @@ import { SessionService } from '../../services/session.service';
 import { PropertyFilters, PropertyService } from '../../services/property.service';
 import { Properties as PropertiesResponse, Property } from '../../models/property.model';
 import { ChangeDetectorRef } from '@angular/core';
+import { EditPropertyStatusModal } from '../../components/properties/edit-property-status-modal/edit-property-status-modal';
 export type { Property };
 
 @Component({
   selector: 'app-properties',
-  imports: [CommonModule, FormsModule, ChatModal, AppModal, EditPropertyModal],
+  imports: [CommonModule, FormsModule, ChatModal, AppModal, EditPropertyModal,EditPropertyStatusModal],
   templateUrl: './properties.html',
   styleUrl: './properties.css',
 })
@@ -43,6 +44,7 @@ export class Properties {
   editModalOpen = false;
   editingProperty: Property | null = null;
 
+  editStatusModalOpen = false;
   // ── Filter state ─────────────────────────────────────────────
   searchKeyword = '';
   selectedType = '';
@@ -137,6 +139,11 @@ export class Properties {
   goToDetails(id: number) {
     this.router.navigate(['/properties', id]);
   }
+  editStatus(p:Property) {
+    console.log('editStatus called');
+    this.editStatusModalOpen=true;
+    this.editingProperty = p;
+  }
 
   /* ── Admin: Edit Property ── */
   editProperty(p: Property, e: Event) {
@@ -149,6 +156,7 @@ export class Properties {
     const property = this.propertiesResponse?.data.find((item) => item.id === updated.id);
     if (property) Object.assign(property, updated);
     this.editModalOpen = false;
+    this.editStatusModalOpen=false;
     this.editingProperty = null;
   }
 
