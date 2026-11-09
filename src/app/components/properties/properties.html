@@ -37,6 +37,7 @@
       <div class="filter-field">
         <input
           type="text"
+          [(ngModel)]="searchKeyword"
           (keyup.enter)="onSearch()"
           placeholder="كلمة مفتاحية"
           class="filter-input"
@@ -52,7 +53,7 @@
 
       <!-- نوع العقار -->
       <div class="filter-field">
-        <select  class="filter-input filter-select">
+        <select [(ngModel)]="selectedType" class="filter-input filter-select">
           <option value="">نوع العقار</option>
           @for (t of propertyTypes; track t) {
             <option [value]="t">{{ t }}</option>
@@ -68,7 +69,7 @@
 
       <!-- الموقع -->
       <div class="filter-field">
-        <select  class="filter-input filter-select">
+        <select [(ngModel)]="selectedLocation" class="filter-input filter-select">
           <option value="">الموقع</option>
           @for (loc of locations; track loc) {
             <option [value]="loc">{{ loc }}</option>
@@ -127,7 +128,7 @@
   @if(propertiesResponse?.data?.length){
     <!-- ── Results Count ── -->
     <div class="props-results-count">
-      عرض 1-{{ propertiesResponse?.data?.length }} من {{ selectedLocation ? propertiesResponse?.data?.length : (propertiesResponse?.pagination?.total ?? propertiesResponse?.data?.length) }} النتائج
+      عرض {{ propertiesResponse?.data?.length }} من {{ propertiesResponse?.pagination?.total }} النتائج
     </div>
   }
 
@@ -260,6 +261,38 @@
       </div>
     }
   </div>
+
+  <!-- pagination -->
+  @if (totalPages > 1) {
+    <div class="props-pagination">
+      <button
+        class="btn-page"
+        [disabled]="isLoading || currentPage === 1"
+        (click)="goToPage(currentPage - 1)"
+      >
+        السابق
+      </button>
+
+      @for (page of pagesArray; track page) {
+        <button
+          class="btn-page"
+          [class.btn-page-active]="page === currentPage"
+          [disabled]="isLoading"
+          (click)="goToPage(page)"
+        >
+          {{ page }}
+        </button>
+      }
+
+      <button
+        class="btn-page"
+        [disabled]="isLoading || currentPage === totalPages"
+        (click)="goToPage(currentPage + 1)"
+      >
+        التالي
+      </button>
+    </div>
+  }
 
 </div>
 

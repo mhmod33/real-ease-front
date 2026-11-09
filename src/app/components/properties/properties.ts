@@ -18,6 +18,7 @@ export type { Property };
   styleUrl: './properties.css',
 })
 export class Properties {
+  private activeFilters: PropertyFilters = {};
 
   constructor(
     private router: Router,
@@ -69,26 +70,46 @@ export class Properties {
   isLoading = false;
   loadError = false;
 
+  get currentPage(): number {
+    return this.propertiesResponse?.pagination.current_page ?? 1;
+  }
+
+  get totalPages(): number {
+    const pagination = this.propertiesResponse?.pagination;
+    return pagination && pagination.per_page > 0
+      ? Math.ceil(pagination.total / pagination.per_page)
+      : 0;
+  }
+
+  get pagesArray(): number[] {
+    return Array.from({ length: this.totalPages }, (_, index) => index + 1);
+  }
 
   // ── Actions ───────────────────────────────────────────────────
+  goToPage(page: number): void {
+    this.loadProperties(page);
+  }
+
   onSearch() {
     const filters: PropertyFilters = {};
     const search = this.searchKeyword.trim();
 
     if (this.selectedType) filters.type = this.selectedType;
+    if (this.selectedLocation) filters.location = this.selectedLocation;
     if (search) filters.search = search;
     if (this.priceMin !== 16 || this.priceMax !== 150) {
       filters.min_price = this.priceMin;
       filters.max_price = this.priceMax;
     }
 
-    this.loadProperties(filters);
+    this.activeFilters = filters;
+    this.loadProperties();
   }
 
-  private loadProperties(filters: PropertyFilters = {}) {
+  private loadProperties(page = 1) {
     this.isLoading = true;
     this.loadError = false;
-    this.propertyService.getProperties(filters).subscribe({
+    this.propertyService.getProperties({ ...this.activeFilters, page }).subscribe({
       next: (res) => {
         this.propertiesResponse = res;
         this.isLoading = false;
@@ -98,6 +119,7 @@ export class Properties {
         console.error('Error fetching properties:', err);
         this.loadError = true;
         this.isLoading = false;
+        this.changeDetector.markForCheck();
       },
     });
   }
@@ -215,6 +237,7 @@ export class Properties {
     this.selectedLocation = '';
     this.priceMin = 16;
     this.priceMax = 150;
+    this.activeFilters = {};
     this.loadProperties();
   }
 }

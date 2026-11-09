@@ -11,6 +11,8 @@ export interface PropertyFilters {
   max_price?: number;
   min_price?: number;
   search?: string;
+  location?: string;
+  page?: number;
 }
 
 @Injectable({
@@ -31,6 +33,8 @@ export class PropertyService {
       params = params.set('min_price', filters.min_price);
     }
     if (filters.search) params = params.set('search', filters.search);
+    if (filters.location) params = params.set('location', filters.location);
+    if (filters.page !== undefined) params = params.set('page', filters.page);
 
     return this.http.get<Properties>(`${this.apiUrl}properties`, { params });
   }
