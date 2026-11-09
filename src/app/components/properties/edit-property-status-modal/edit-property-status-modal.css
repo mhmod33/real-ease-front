@@ -19,7 +19,14 @@
   from { opacity: 0; }
   to { opacity: 1; }
 }
-
+.prop-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  background: #003366;
+  border-radius: 10px;
+  padding: 20px 12px;
+}
 .epm-box {
   background: #ffffff;
   border-radius: 16px;
