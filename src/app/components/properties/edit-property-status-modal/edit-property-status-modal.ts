@@ -44,8 +44,6 @@ export class EditPropertyStatusModal implements OnChanges {
       ...this.property,
       ...this.editstatusForm.value
     };
-    console.log('Updated property:', updated.status);
-    console.log('Form value:', this.editstatusForm.value.status);
     this.isSaving = true;
     this.saveError = null;
     this.propertyService.editPropertyStatus(updated.id, updated.status).subscribe({

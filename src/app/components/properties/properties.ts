@@ -140,7 +140,6 @@ export class Properties {
     this.router.navigate(['/properties', id]);
   }
   editStatus(p:Property) {
-    console.log('editStatus called');
     this.editStatusModalOpen=true;
     this.editingProperty = p;
   }
