@@ -107,29 +107,46 @@
 
   <!-- ── Middle Section: Description & Title Info Card ── -->
   <div class="pd-details-card">
-    
-    <!-- Left Column: Description (RTL = Start, so it sits on the left in the design) -->
-    <div class="pd-desc-col">
-      <h3 class="pd-details-heading">وصف العقار</h3>
-      <p class="pd-desc-text">{{ property?.data?.description }}</p>
-    </div>
-    
-
-    <!-- Right Column: Title, price, location -->
-    <div class="pd-info-col">
-      <h2 class="pd-prop-name">{{ property?.data?.name }}</h2>
-      <p class="pd-prop-price">{{ property?.data?.price }}</p>
-      <div class="pd-prop-location">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" width="14" height="14">
-          <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 1 1 16 0z"/>
-          <circle cx="12" cy="10" r="3"/>
-        </svg>
-        <span>{{ property?.data?.location }}</span>
+    <div class="pd-details-summary">
+      <div class="pd-info-col">
+        <span class="pd-property-label">تفاصيل العقار</span>
+        <h2 class="pd-prop-name">{{ property?.data?.name }}</h2>
+        <div class="pd-prop-location">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" width="14" height="14">
+            <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 1 1 16 0z"/>
+            <circle cx="12" cy="10" r="3"/>
+          </svg>
+          <span>{{ property?.data?.location }}</span>
+        </div>
+        <p class="pd-prop-price">{{ property?.data?.price }}</p>
+      </div>
+      <div class="pd-rating-panel">
+        <h3 class="pd-details-heading">تقييم العقار</h3>
+        @if(Rating?.data !==null){
+          <p class="pd-desc-text">{{ Rating?.data?.rate }}</p>
+          <div class="rating-stars">
+            @for (i of [1, 2, 3, 4, 5]; track i) {
+              <svg viewBox="0 0 24 24" stroke="#ffe70d" [attr.fill]="getStarFill(Rating?.data?.rate, i)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18">
+                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+              </svg>
+            }
+          </div>
+        }
+        @else {
+          <div class="rating-stars">
+            @for (i of [1, 2, 3, 4, 5]; track i) {
+              <svg viewBox="0 0 24 24" stroke="#ffe70d" [attr.fill]="getStarFill(Rating?.data?.rate, i)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18">
+                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+              </svg>
+            }
+          </div>
+          <p class="pd-desc-text">لا يوجد تقييم بعد</p>
+        }
       </div>
     </div>
-    <div class="pd-desc-col">
-      <h3 class="pd-details-heading">تقييم العقار</h3>
-      <p class="pd-desc-text">{{ Rating }}</p>
+    <div class="pd-description-section">
+      <h3 class="pd-details-heading">وصف العقار</h3>
+      <p class="pd-desc-text">{{ property?.data?.description }}</p>
     </div>
   </div>
 

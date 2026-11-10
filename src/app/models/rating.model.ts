@@ -1,12 +1,12 @@
 export interface Ratings {
-  data: rating[]
+  data: Rating
 }
 
-export interface rating {
+export interface Rating {
   id: number
   property_id: number
   user_id: number
-  rate: number
+  rate: string
   comment: string
   created_at: string
   updated_at: string

@@ -60,7 +60,7 @@ export class PropertyService {
   editPropertyStatus(id:number,status:string):Observable<any>{
     return this.http.patch<any>(`${this.apiUrl}properties/change-status/${id}`,{"status":status})
   }
-  getPropertyRating(propertyId:number):Observable<Ratings>{
+  getPropertyRating(propertyId:number|undefined):Observable<Ratings>{
     return this.http.get<Ratings>(`${this.apiUrl}properties/${propertyId}/ratings`)
   }
 }

@@ -42,6 +42,7 @@ export class PropertyDetails implements OnInit {
   ngOnInit() {
     const id = Number(this.route.snapshot.paramMap.get('id')) || 2;
     this.getPropertyDetails(id);
+    this.getPropertyRating(id);
   }
 
 
@@ -119,8 +120,6 @@ export class PropertyDetails implements OnInit {
       next:(property)=>{
         this.isLoading = false;
         this.property = property;
-        console.log('Property details fetched successfully:', typeof(property),property, property.data.description);
-        this.changeDetector.markForCheck();
       },
       error:(err)=>{
         this.isLoading = false;
@@ -131,25 +130,25 @@ export class PropertyDetails implements OnInit {
   closeLightbox() {
     this.showLightbox = false;
   }
-   getPropertyRating(propertyId: number) {
+  getPropertyRating(propertyId: number | undefined) {
+    if (propertyId === undefined) return;
+
     this.propertyService.getPropertyRating(propertyId).subscribe({
       next: (ratings) => {
-        console.log('Property Ratings:', ratings);
-        // const property = this.propertiesResponse?.data.find((p) => p.id === propertyId);
-        // if (property) {
-        //   property.rate = ratings.data.length > 0 ? ratings.data[0].rate : '0';
-        // }
-        
-        const ratingsForProperty = ratings.data.filter(rating => rating.property_id === propertyId);
-        if (ratingsForProperty.length > 0) {
-          this.Rating = { data: ratingsForProperty };
-        } else {
-          this.Rating = { data: [] };
-        }
+            if (ratings.data === null) this.Rating = null;
+
+        this.Rating = ratings;
+        this.changeDetector.markForCheck();
       },
       error: (err) => {
         console.error('Error fetching property ratings:', err);
       }
     });
+  }
+  getStarFill(rate: string | undefined, starIndex: number): string {
+    if (!rate) return 'none';
+    const numericRate = parseFloat(rate);
+    if (isNaN(numericRate)) return 'none';
+    return numericRate >= starIndex ? '#ffe70d' : 'none';
   }
 }
