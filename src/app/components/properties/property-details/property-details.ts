@@ -130,6 +130,9 @@ export class PropertyDetails implements OnInit {
   closeLightbox() {
     this.showLightbox = false;
   }
+  returnToProperties() {
+    this.router.navigate(['/properties']);
+  }
   getPropertyRating(propertyId: number | undefined) {
     if (propertyId === undefined) return;
 
