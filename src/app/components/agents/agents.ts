@@ -3,10 +3,10 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import * as Highcharts from 'highcharts';
 import { AgentService } from '../../services/agent.service';
-import { Agent, AgentTypeStats } from '../../models/agent.model';
+import { Agent, AgentsResponse, stats } from '../../models/agent.model';
 import { AppModal } from '../shared/app-modal/app-modal';
 import { ChatModal, ChatContact } from '../shared/chat-modal/chat-modal';
-
+import { signal } from '@angular/core';
 @Component({
   selector: 'app-agents',
   standalone: true,
@@ -15,14 +15,10 @@ import { ChatModal, ChatContact } from '../shared/chat-modal/chat-modal';
   styleUrl: './agents.css',
 })
 export class Agents implements OnInit, AfterViewInit {
-  agents: Agent[] = [];
-  stats: AgentTypeStats = {
-    realEstateCompanyCount: 50,
-    independentAgentCount: 50,
-    exclusiveAgentCount: 30,
-    commercialAgentCount: 20,
-    total: 150,
-  };
+  agents = signal<AgentsResponse|undefined>(undefined);
+  stats=signal<stats|undefined> (undefined);
+  private donutChart?: Highcharts.Chart;
+  private viewInitialized = false;
 
   // Info Modal
   modalOpen = false;
@@ -39,18 +35,29 @@ export class Agents implements OnInit, AfterViewInit {
   ) {}
 
   ngOnInit(): void {
-    this.agentService.agents$.subscribe((data) => {
-      this.agents = data.slice(0, 4);
-    });
-    this.stats = this.agentService.getAgentTypeStats();
+    this.getAgents();
+    this.getAgentStats();
   }
 
   ngAfterViewInit(): void {
+    this.viewInitialized = true;
     this.renderDonutChart();
   }
 
   renderDonutChart(): void {
-    Highcharts.chart('agentsDonutChart', {
+    const data = [
+      { name: 'شركة عقارية', y: this.stats()?.real_estate_company ?? 0, color: '#2563eb' },
+      { name: 'وكيل عقاري', y: this.stats()?.real_estate_agents ?? 0, color: '#fa8b3c' },
+      { name: 'وكيل عقاري مستقل', y: this.stats()?.independent_real_estate_agents ?? 0, color: '#0d9488' },
+      { name: 'وكيل تجاري', y: this.stats()?.commercial_agents ?? 0, color: '#38bdf8' },
+    ];
+
+    if (this.donutChart) {
+      this.donutChart.series[0].setData(data);
+      return;
+    }
+
+    this.donutChart = Highcharts.chart('agentsDonutChart', {
       chart: {
         type: 'pie',
         backgroundColor: 'transparent',
@@ -77,22 +84,40 @@ export class Agents implements OnInit, AfterViewInit {
         {
           type: 'pie',
           name: 'الوكلاء',
-          data: [
-            { name: 'شركة عقارية', y: this.stats.realEstateCompanyCount, color: '#2563eb' },
-            { name: 'وكيل عقاري مستقل', y: this.stats.independentAgentCount, color: '#fa8b3c' },
-            { name: 'وكيل حصري', y: this.stats.exclusiveAgentCount, color: '#0d9488' },
-            { name: 'وكيل تجاري', y: this.stats.commercialAgentCount, color: '#38bdf8' },
-          ],
+          data,
         },
       ],
     });
   }
-
+  getAgents(){
+    this.agentService.getAgents().subscribe({
+      next:(res)=>{
+        this.agents.set(res);
+        console.log('Agents:', res);
+      },
+      error:(err)=>{
+        console.error(err)
+      }
+    })
+  }
+  getAgentStats(){
+    this.agentService.getAgentStats().subscribe({
+      next:(res)=>{
+        this.stats.set(res.data)
+        if (this.viewInitialized) {
+          this.renderDonutChart();
+        }
+      },
+      error:(err)=>{
+        console.error(err)
+      }
+    })
+  }
   goToCreate(): void {
     this.router.navigate(['/agents/create']);
   }
 
-  goToDetails(id: string): void {
+  goToDetails(id: number): void {
     this.router.navigate(['/agents', id]);
   }
 
@@ -101,7 +126,6 @@ export class Agents implements OnInit, AfterViewInit {
     this.chatContact = {
       id: agent.id,
       name: agent.name,
-      image: agent.image,
       role: agent.type,
       phone: agent.phone,
     };

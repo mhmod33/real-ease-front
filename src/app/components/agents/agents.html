@@ -21,7 +21,7 @@
         <div id="agentsDonutChart" class="highcharts-donut-container"></div>
 
         <div class="donut-center-text">
-          <span class="donut-number">{{ stats.total }}</span>
+          <span class="donut-number">{{ stats()?.total_agents }}</span>
         </div>
       </div>
 
@@ -29,22 +29,22 @@
       <div class="donut-legend">
         <div class="legend-item">
           <span class="dot dot-blue"></span>
-          <span class="legend-count">{{ stats.realEstateCompanyCount }}</span>
+          <span class="legend-count">{{ stats()?.real_estate_company }}</span>
           <span class="legend-label">شركة عقارية</span>
         </div>
         <div class="legend-item">
           <span class="dot dot-orange"></span>
-          <span class="legend-count">{{ stats.independentAgentCount }}</span>
+          <span class="legend-count">{{ stats()?.independent_real_estate_agents }}</span>
           <span class="legend-label">وكيل عقاري مستقل</span>
         </div>
         <div class="legend-item">
           <span class="dot dot-teal"></span>
-          <span class="legend-count">{{ stats.exclusiveAgentCount }}</span>
-          <span class="legend-label">وكيل حصري</span>
+          <span class="legend-count">{{ stats()?.real_estate_agents }}</span>
+          <span class="legend-label">وكيل عقاري</span>
         </div>
         <div class="legend-item">
           <span class="dot dot-cyan"></span>
-          <span class="legend-count">{{ stats.commercialAgentCount }}</span>
+          <span class="legend-count">{{ stats()?.commercial_agents }}</span>
           <span class="legend-label">وكيل تجاري</span>
         </div>
       </div>
@@ -52,7 +52,7 @@
 
     <!-- Agent Total Count Card -->
     <div class="total-agent-card">
-      <div class="total-agent-number">{{ stats.total }}</div>
+      <div class="total-agent-number">{{ stats()?.total_agents }}</div>
       <div class="total-agent-meta">
         <div class="total-icon-box">
           <svg viewBox="0 0 24 24" fill="currentColor" width="22" height="22">
@@ -66,12 +66,12 @@
 
   <!-- ── Results Count ── -->
   <div class="results-count-text">
-    عرض {{ agents.length }} من النتائج
+    عرض {{ agents()?.data?.length }} من النتائج
   </div>
 
   <!-- ── 2-Column Agents Cards Grid ── -->
   <div class="agents-grid">
-    @for (agent of agents; track agent.id) {
+    @for (agent of agents()?.data; track agent.id) {
       <div class="agent-card" (click)="goToDetails(agent.id)">
 
         <!-- Card Top: Info & Photo -->
@@ -83,7 +83,7 @@
           </div>
 
           <div class="agent-photo-wrap">
-            <img [src]="agent.image" [alt]="agent.name" class="agent-photo" />
+            <img [src]="agent.avatar" [alt]="agent.name" class="agent-photo" />
           </div>
         </div>
 
@@ -95,7 +95,7 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
               <path d="M3 21h18M3 7v14M21 7v14M6 11h4M6 15h4M14 11h4M14 15h4M9 21v-4h6v4M12 3l9 4H3l9-4z"/>
             </svg>
-            <span>{{ agent.propertiesCount }} عقار</span>
+            <span>{{ agent?.name }} عقار</span>
           </div>
 
           <div class="meta-item">

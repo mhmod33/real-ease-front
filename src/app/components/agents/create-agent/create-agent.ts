@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AgentService } from '../../../services/agent.service';
-import { AgentType } from '../../../models/agent.model';
+import { AgentType, SocialMedia } from '../../../models/agent.model';
 
 @Component({
   selector: 'app-create-agent',
@@ -15,7 +15,7 @@ import { AgentType } from '../../../models/agent.model';
 export class CreateAgent {
   name = '';
   nameError = false;
-  type: AgentType = 'وكيل عقاري مستقل';
+  type: string = 'وكيل عقاري مستقل';
   address = '';
   age?: number;
   gender: 'ذكر' | 'أنثى' = 'ذكر';
@@ -24,12 +24,7 @@ export class CreateAgent {
   agencyAddress = '';
   agencyDescription = '';
 
-  agentTypes: AgentType[] = [
-    'وكيل عقاري مستقل',
-    'وكيل عقاري',
-    'وكيل تجاري',
-    'شركة عقارية',
-  ];
+  agentTypes: AgentType[] = [  ];
 
   constructor(
     private agentService: AgentService,
@@ -44,16 +39,25 @@ export class CreateAgent {
     this.nameError = false;
     this.agentService
       .addAgent({
-        name: this.name,
-        type: this.type,
-        address: this.address,
-        location: this.address || 'غير محدد',
-        age: this.age,
-        gender: this.gender,
-        email: this.email,
-        agencyName: this.agencyName,
-        agencyAddress: this.agencyAddress,
-        agencyDescription: this.agencyDescription,
+          name: this.name,
+          email: this.email,
+          email_verified_at: null,
+          avatar: null,
+          cover_photo: null,
+          google_id: null,
+          role: this.type === 'وكيل عقاري مستقل' ? 'agent' : 'agency',
+          type: this.type,
+          age: this.age,
+          gender: this.gender,
+          agency: this.agencyName,
+          location: this.agencyAddress || 'غير محدد',
+          description: this.agencyDescription,
+          phone: this.email,
+          whatsapp_phone: this.email,
+          personal_website: this.agencyName,
+          social_media: {} as SocialMedia,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
       })
       .subscribe(() => {
         this.router.navigate(['/agents']);

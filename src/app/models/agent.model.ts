@@ -1,50 +1,57 @@
-import { UserProperty } from './user.model';
-
-export type AgentType =
-  | 'وكيل عقاري'
-  | 'وكيل عقاري مستقل'
-  | 'وكيل تجاري'
-  | 'شركة عقارية';
-
-export interface AgentSocialLinks {
-  instagram?: string;
-  facebook?: string;
-  twitter?: string;
-}
-
-export interface AgentStats {
-  total: number;
-  sold: number;
-  rented: number;
+export interface AgentsResponse {
+  message: string
+  data: Agent[]
 }
 
 export interface Agent {
-  id: string;
-  name: string;
-  type: AgentType;
-  email: string;
-  image: string;
-  bannerImage?: string;
-  propertiesCount: number;
-  location: string;
-  phone?: string;
-  age?: number;
-  gender?: 'ذكر' | 'أنثى';
-  address?: string;
-  agencyName?: string;
-  agencyAddress?: string;
-  agencyDescription?: string;
-  agentLicense?: string;
-  taxNumber?: string;
-  stats?: AgentStats;
-  socialLinks?: AgentSocialLinks;
-  properties?: UserProperty[];
+  id: number
+  name: string
+  email: string
+  email_verified_at: any
+  avatar: any
+  cover_photo: any
+  google_id: any
+  role: string
+  type: string
+  age: number
+  gender: string
+  agency: string
+  location: string
+  description: string
+  phone: string
+  whatsapp_phone: string
+  personal_website: string
+  social_media: SocialMedia
+  created_at: string
+  updated_at: string
 }
 
+export interface SocialMedia {
+  facebook: string
+  instagram: string
+  twitter: string
+  linkedin: string
+}
 export interface AgentTypeStats {
-  realEstateCompanyCount: number; // شركة عقارية: 50
-  independentAgentCount: number; // وكيل عقاري مستقل: 50
-  exclusiveAgentCount: number; // وكيل حصري: 30
-  commercialAgentCount: number; // وكيل تجاري: 20
-  total: number; // 150
+  realEstateCompanyCount: number
+  independentAgentCount: number
+  exclusiveAgentCount: number
+  commercialAgentCount: number
+  total: number
+}
+export interface AgentType {
+  id: number
+  name: string
+}
+
+export interface AgentStatsResponse {
+  message: string,
+  data:stats
+}
+export interface stats  {
+  total_agents: number,
+  real_estate_agents: number,
+  independent_real_estate_agents: number,
+  real_estate_company: number,
+  commercial_agents: number
 }

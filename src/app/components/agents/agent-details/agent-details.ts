@@ -10,6 +10,24 @@ import { AppModal, ModalVariant } from '../../shared/app-modal/app-modal';
 import { ChatModal, ChatContact } from '../../shared/chat-modal/chat-modal';
 import { EditUserPropertyModal } from '../../shared/edit-user-property-modal/edit-user-property-modal';
 
+interface AgentDetailsView extends Agent {
+  image?: string;
+  bannerImage?: string;
+  address?: string;
+  agencyName?: string;
+  agencyAddress?: string;
+  agencyDescription?: string;
+  agentLicense?: string;
+  taxNumber?: string;
+  propertiesCount?: number;
+  stats?: {
+    total?: number;
+    sold?: number;
+    rented?: number;
+  };
+  properties?: UserProperty[];
+}
+
 @Component({
   selector: 'app-agent-details',
   standalone: true,
@@ -18,7 +36,7 @@ import { EditUserPropertyModal } from '../../shared/edit-user-property-modal/edi
   styleUrl: './agent-details.css',
 })
 export class AgentDetails implements OnInit, AfterViewInit {
-  agent?: Agent;
+  agent?: AgentDetailsView;
 
   // Edit Property Modal
   editModalOpen = false;
@@ -49,13 +67,33 @@ export class AgentDetails implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
-    if (id) {
-      this.agent = this.agentService.getAgentById(id);
+    if (!id) {
+      console.error('Agent details route is missing an agent ID.');
+      return;
     }
 
-    if (!this.agent) {
-      this.agent = this.agentService.getAgentById('5') || this.agentService.getAgents()[0];
-    }
+    this.agentService.getAgentById(id).subscribe({
+      next: (agent) => {
+        if (!agent) {
+          console.error(`Agent ${id} was not found.`);
+          return;
+        }
+
+        this.agent = {
+          ...agent,
+          image: typeof agent.avatar === 'string' ? agent.avatar : undefined,
+          bannerImage: typeof agent.cover_photo === 'string' ? agent.cover_photo : undefined,
+          address: agent.location,
+          agencyName: agent.agency,
+          agencyAddress: agent.location,
+          agencyDescription: agent.description,
+        };
+        setTimeout(() => this.renderCharts());
+      },
+      error: (error) => {
+        console.error(`Failed to load agent ${id}.`, error);
+      },
+    });
   }
 
   ngAfterViewInit(): void {
@@ -67,7 +105,11 @@ export class AgentDetails implements OnInit, AfterViewInit {
   renderCharts(): void {
     if (!this.agent) return;
 
-    const stats = this.agent.stats || { total: 243, sold: 136, rented: 105 };
+    const stats = {
+      total: this.agent.stats?.total ?? 243,
+      sold: this.agent.stats?.sold ?? 136,
+      rented: this.agent.stats?.rented ?? 105,
+    };
 
     // Card 1: Total (Navy background, Orange Donut)
     this.renderMiniDonut('chartTotal', stats.total, 300, '#fa8b3c', '#253856');
@@ -133,11 +175,12 @@ export class AgentDetails implements OnInit, AfterViewInit {
 
   confirmDeleteAgent(): void {
     this.modalOpen = false;
-    if (this.agent) {
-      this.agentService.deleteAgent(this.agent.id).subscribe(() => {
-        this.router.navigate(['/agents']);
-      });
-    }
+    this.propertyModalVariant = 'danger';
+    this.propertyModalTitle = 'تعذر حذف الوكيل';
+    this.propertyModalMessage = 'خدمة حذف الوكيل غير متاحة حالياً.';
+    this.propertyModalConfirmText = 'حسناً';
+    this.pendingPropertyAction = undefined;
+    this.propertyModalOpen = true;
   }
 
   cancelDeleteAgent(): void {
@@ -149,7 +192,6 @@ export class AgentDetails implements OnInit, AfterViewInit {
       this.chatContact = {
         id: this.agent.id,
         name: this.agent.name,
-        image: this.agent.image,
         role: this.agent.type,
         phone: this.agent.phone,
       };
@@ -175,17 +217,16 @@ export class AgentDetails implements OnInit, AfterViewInit {
   deleteProperty(property: UserProperty, event: MouseEvent): void {
     event.stopPropagation();
     if (!this.agent) return;
-    const agentId = this.agent.id;
     this.propertyModalVariant = 'danger';
     this.propertyModalTitle = 'حذف العقار';
     this.propertyModalMessage = `هل أنت متأكد من حذف العقار "${property.title}"؟`;
     this.propertyModalConfirmText = 'تأكيد';
     this.pendingPropertyAction = () => {
-      this.agentService.deleteAgentProperty(agentId, property.id).subscribe(() => {
-        if (this.agent?.properties) {
-          this.agent.properties = this.agent.properties.filter((p) => p.id !== property.id);
-        }
-      });
+      this.propertyModalVariant = 'danger';
+      this.propertyModalTitle = 'تعذر حذف العقار';
+      this.propertyModalMessage = 'خدمة حذف العقارات غير متاحة حالياً.';
+      this.propertyModalConfirmText = 'حسناً';
+      this.propertyModalOpen = true;
     };
     this.propertyModalOpen = true;
   }
