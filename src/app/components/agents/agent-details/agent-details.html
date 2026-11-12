@@ -5,7 +5,7 @@
     <div class="details-header-row">
       <div class="details-title-wrap">
         <h1 class="details-title">
-          الملف الشخصي<span class="title-bold">, {{ agent.name }}</span>
+          الملف الشخصي<span class="title-bold">, {{ agent.data.name }}</span>
         </h1>
         <span class="details-subtitle">تفاصيل الوكالة</span>
       </div>
@@ -35,15 +35,15 @@
       <div class="profile-card">
         <!-- Banner image with circular avatar overlay -->
         <div class="profile-banner-wrap">
-          <img [src]="agent.bannerImage || 'images/image-1.png'" alt="banner" class="profile-banner-img" />
+          <img [src]="agent.data.cover_photo || 'images/image-1.png'" alt="banner" class="profile-banner-img" />
 
           <div class="avatar-circle-wrap">
-            <img [src]="agent.image" [alt]="agent.name" class="avatar-circle-img" />
+            <img [src]="agent.data.avatar" [alt]="agent.data.name" class="avatar-circle-img" />
           </div>
 
           <div class="banner-overlay-text">
-            <h2 class="profile-name">{{ agent.name }}</h2>
-            <span class="profile-role">وكيل عقاري</span>
+            <h2 class="profile-name">{{ agent.data.name }}</h2>
+            <span class="profile-role">{{ agent.data.type }}</span>
           </div>
         </div>
 
@@ -51,19 +51,19 @@
         <div class="personal-info-list">
           <div class="info-row">
             <span class="info-label">السن:</span>
-            <span class="info-val">{{ agent.age || 45 }} عام</span>
+            <span class="info-val">{{ agent.data.age || 45 }} عام</span>
           </div>
           <div class="info-row">
             <span class="info-label">الجنس:</span>
-            <span class="info-val">{{ agent.gender || 'ذكر' }}</span>
+            <span class="info-val">{{ agent.data.gender }}</span>
           </div>
           <div class="info-row">
             <span class="info-label">العنوان:</span>
-            <span class="info-val">{{ agent.address || agent.location }}</span>
+            <span class="info-val">{{ agent.data.location || agent.data.location }}</span>
           </div>
           <div class="info-row">
             <span class="info-label">الايميل:</span>
-            <span class="info-val font-mono">{{ agent.email }}</span>
+            <span class="info-val font-mono">{{ agent.data.email }}</span>
           </div>
         </div>
 
@@ -71,25 +71,27 @@
         <div class="profile-social-section">
           <span class="social-title">وسائل التواصل</span>
           <div class="social-icons">
-            <a href="javascript:void(0)" class="social-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="22" height="22">
-                <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
-                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
-                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
-              </svg>
-            </a>
-
-            <a href="javascript:void(0)" class="social-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="22" height="22">
-                <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
-              </svg>
-            </a>
-
-            <a href="javascript:void(0)" class="social-icon">
-              <svg viewBox="0 0 24 24" fill="currentColor" width="22" height="22">
-                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-              </svg>
-            </a>
+           
+              <a href="'https://'+user.social_media?.facebook" class="social-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="22" height="22">
+                  <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+                  <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+                  <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+                </svg>
+              </a>
+  
+              <a href="'https://'+user.social_media?.instagram" class="social-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="22" height="22">
+                  <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
+                </svg>
+              </a>
+  
+              <a href="'https://'+user.social_media?.twitter" class="social-icon">
+                <svg viewBox="0 0 24 24" fill="currentColor" width="22" height="22">
+                  <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                </svg>
+              </a>
+            
           </div>
         </div>
 
@@ -98,15 +100,15 @@
       <!-- Left Card: Agency Info Card -->
       <div class="agency-card">
         <div class="agency-header">
-          <h2 class="agency-name">{{ agent.agencyName || 'شركة السعداء' }}</h2>
-          <span class="agency-subtitle">شركة عقارية</span>
+          <h2 class="agency-name">{{ agent.data.agency || 'شركة السعداء' }}</h2>
+          <span class="agency-subtitle">{{ agent.data.type }}</span>
 
           <div class="agency-meta-row">
             <div class="agency-meta-item">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
                 <path d="M3 21h18M3 7v14M21 7v14M6 11h4M6 15h4M14 11h4M14 15h4M9 21v-4h6v4M12 3l9 4H3l9-4z"/>
               </svg>
-              <span>{{ agent.propertiesCount || 970 }} عقار</span>
+              <span> {{agent.data.properties.length}} عقار</span>
             </div>
 
             <div class="agency-meta-item">
@@ -114,7 +116,7 @@
                 <path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 1 1 16 0z"/>
                 <circle cx="12" cy="10" r="3"/>
               </svg>
-              <span>{{ agent.agencyAddress || 'الإمارات،دبي' }}</span>
+              <span>{{ agent.data.location || 'الإمارات،دبي' }}</span>
             </div>
           </div>
         </div>
@@ -124,7 +126,7 @@
         <div class="agency-body">
           <h3 class="section-heading">تفاصيل الوكالة</h3>
           <p class="agency-desc">
-            {{ agent.agencyDescription || 'تعد شركة السعداء العقارية واحدة من الشركات الرائدة في مجال تطوير وتسويق العقارات. تأسست الشركة بهدف تقديم حلول عقارية مبتكرة وشاملة تلبي احتياجات الأفراد والشركات. تتميز الشركة بمحفظة متنوعة تضم الوحدات السكنية الفاخرة.' }}
+            {{ agent.data.description || 'تعد شركة السعداء العقارية واحدة من الشركات الرائدة في مجال تطوير وتسويق العقارات. تأسست الشركة بهدف تقديم حلول عقارية مبتكرة وشاملة تلبي احتياجات الأفراد والشركات. تتميز الشركة بمحفظة متنوعة تضم الوحدات السكنية الفاخرة.' }}
           </p>
         </div>
 
@@ -133,12 +135,12 @@
         <div class="agency-footer">
           <div class="legal-row">
             <span class="legal-label">رخصة الوكيل :</span>
-            <span class="legal-val font-mono">{{ agent.agentLicense || '1234 5678 9101 1238' }}</span>
+            <span class="legal-val font-mono">1234 5678 9101 1238</span>
           </div>
 
           <div class="legal-row">
             <span class="legal-label">الرقم الضريبي:</span>
-            <span class="legal-val font-mono">{{ agent.taxNumber || 'TN305 985PL PQ856' }}</span>
+            <span class="legal-val font-mono"> TN305 985PL PQ856</span>
           </div>
         </div>
       </div>
@@ -154,7 +156,7 @@
           <div id="chartTotal" class="highcharts-mini-donut"></div>
         </div>
         <div class="stat-box-text">
-          <span class="stat-box-num">{{ agent.stats?.total || 243 }}</span>
+          <span class="stat-box-num"> 243</span>
           <span class="stat-box-title">الإجمالي</span>
         </div>
       </div>
@@ -165,7 +167,7 @@
           <div id="chartSold" class="highcharts-mini-donut"></div>
         </div>
         <div class="stat-box-text">
-          <span class="stat-box-num text-dark">{{ agent.stats?.sold || 136 }}</span>
+          <span class="stat-box-num text-dark"> 136 </span>
           <span class="stat-box-title text-dark">العقارات المباعة</span>
         </div>
       </div>
@@ -176,7 +178,7 @@
           <div id="chartRented" class="highcharts-mini-donut"></div>
         </div>
         <div class="stat-box-text">
-          <span class="stat-box-num text-dark">{{ agent.stats?.rented || 105 }}</span>
+          <span class="stat-box-num text-dark">105 </span>
           <span class="stat-box-title text-dark">العقارات المستأجرة</span>
         </div>
       </div>
@@ -184,15 +186,15 @@
     </div>
 
     <!-- ── Agent Properties Section ── -->
-    @if (agent.properties && agent.properties.length > 0) {
+    @if (agent.data.properties && agent.data.properties.length > 0) {
       <div class="agent-properties-section">
         <h2 class="section-title-large">عقارات الوكيل</h2>
 
         <div class="properties-grid">
-          @for (prop of agent.properties; track prop.id) {
+          @for (prop of agent.data.properties; track prop.id) {
             <div class="prop-card">
               <div class="prop-img-wrap">
-                <img [src]="prop.image" [alt]="prop.title" class="prop-img" />
+                <img [src]="prop.imag" [alt]="prop.name" class="prop-img" />
 
                 <div class="badge-city">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12">
@@ -210,7 +212,7 @@
               <div class="prop-card-body">
                 <div class="prop-title-row">
                   <span class="prop-price font-bold">{{ prop.price }}</span>
-                  <h4 class="prop-title">{{ prop.title }}</h4>
+                  <h4 class="prop-title">{{ prop.name }}</h4>
                 </div>
 
                 <div class="prop-actions-row">

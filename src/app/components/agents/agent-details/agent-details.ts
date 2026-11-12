@@ -1,33 +1,15 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit,ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as Highcharts from 'highcharts';
 import { AgentService } from '../../../services/agent.service';
 import { SessionService } from '../../../services/session.service';
-import { Agent } from '../../../models/agent.model';
+import { AgentDetailsResponse } from '../../../models/agent.model';
 import { UserProperty } from '../../../models/user.model';
 import { AppModal, ModalVariant } from '../../shared/app-modal/app-modal';
 import { ChatModal, ChatContact } from '../../shared/chat-modal/chat-modal';
 import { EditUserPropertyModal } from '../../shared/edit-user-property-modal/edit-user-property-modal';
-
-interface AgentDetailsView extends Agent {
-  image?: string;
-  bannerImage?: string;
-  address?: string;
-  agencyName?: string;
-  agencyAddress?: string;
-  agencyDescription?: string;
-  agentLicense?: string;
-  taxNumber?: string;
-  propertiesCount?: number;
-  stats?: {
-    total?: number;
-    sold?: number;
-    rented?: number;
-  };
-  properties?: UserProperty[];
-}
-
+import { Properties } from '../../../models/agent.model';
 @Component({
   selector: 'app-agent-details',
   standalone: true,
@@ -36,7 +18,7 @@ interface AgentDetailsView extends Agent {
   styleUrl: './agent-details.css',
 })
 export class AgentDetails implements OnInit, AfterViewInit {
-  agent?: AgentDetailsView;
+  agent?: AgentDetailsResponse;
 
   // Edit Property Modal
   editModalOpen = false;
@@ -62,7 +44,9 @@ export class AgentDetails implements OnInit, AfterViewInit {
     private route: ActivatedRoute,
     private router: Router,
     private agentService: AgentService,
-    public sessionService: SessionService
+    public sessionService: SessionService,
+    private changeDetector: ChangeDetectorRef,
+
   ) {}
 
   ngOnInit(): void {
@@ -78,17 +62,10 @@ export class AgentDetails implements OnInit, AfterViewInit {
           console.error(`Agent ${id} was not found.`);
           return;
         }
-
-        this.agent = {
-          ...agent,
-          image: typeof agent.avatar === 'string' ? agent.avatar : undefined,
-          bannerImage: typeof agent.cover_photo === 'string' ? agent.cover_photo : undefined,
-          address: agent.location,
-          agencyName: agent.agency,
-          agencyAddress: agent.location,
-          agencyDescription: agent.description,
-        };
+        console.log('agent details', agent.data.age)
+        this.agent=agent
         setTimeout(() => this.renderCharts());
+        this.changeDetector.markForCheck();
       },
       error: (error) => {
         console.error(`Failed to load agent ${id}.`, error);
@@ -106,9 +83,9 @@ export class AgentDetails implements OnInit, AfterViewInit {
     if (!this.agent) return;
 
     const stats = {
-      total: this.agent.stats?.total ?? 243,
-      sold: this.agent.stats?.sold ?? 136,
-      rented: this.agent.stats?.rented ?? 105,
+      total:  243,
+      sold: 136,
+      rented:  105,
     };
 
     // Card 1: Total (Navy background, Orange Donut)
@@ -168,7 +145,7 @@ export class AgentDetails implements OnInit, AfterViewInit {
 
   deleteAgent(): void {
     if (this.agent) {
-      this.modalMessage = `هل أنت متأكد من حذف الوكيل "${this.agent.name}"؟`;
+      this.modalMessage = `هل أنت متأكد من حذف الوكيل "${this.agent.data.name}"؟`;
       this.modalOpen = true;
     }
   }
@@ -190,10 +167,10 @@ export class AgentDetails implements OnInit, AfterViewInit {
   openChat(): void {
     if (this.agent) {
       this.chatContact = {
-        id: this.agent.id,
-        name: this.agent.name,
-        role: this.agent.type,
-        phone: this.agent.phone,
+        id: this.agent.data.id,
+        name: this.agent.data.name,
+        role: this.agent.data.type,
+        phone: this.agent.data.phone,
       };
       this.showChatModal = true;
     }
@@ -204,22 +181,22 @@ export class AgentDetails implements OnInit, AfterViewInit {
   }
 
   /* ── Agent Properties Actions ── */
-  shareProperty(property: UserProperty, event: MouseEvent): void {
+  shareProperty(property: Properties, event: MouseEvent): void {
     event.stopPropagation();
     this.propertyModalVariant = 'info';
     this.propertyModalTitle = 'مشاركة العقار';
-    this.propertyModalMessage = `مشاركة العقار: ${property.title}`;
+    this.propertyModalMessage = `مشاركة العقار: ${property.name}`;
     this.propertyModalConfirmText = 'حسناً';
     this.pendingPropertyAction = undefined;
     this.propertyModalOpen = true;
   }
 
-  deleteProperty(property: UserProperty, event: MouseEvent): void {
+  deleteProperty(property: Properties, event: MouseEvent): void {
     event.stopPropagation();
     if (!this.agent) return;
     this.propertyModalVariant = 'danger';
     this.propertyModalTitle = 'حذف العقار';
-    this.propertyModalMessage = `هل أنت متأكد من حذف العقار "${property.title}"؟`;
+    this.propertyModalMessage = `هل أنت متأكد من حذف العقار "${property.name}"؟`;
     this.propertyModalConfirmText = 'تأكيد';
     this.pendingPropertyAction = () => {
       this.propertyModalVariant = 'danger';
@@ -231,16 +208,29 @@ export class AgentDetails implements OnInit, AfterViewInit {
     this.propertyModalOpen = true;
   }
 
-  startEditProperty(property: UserProperty, event: MouseEvent): void {
+  startEditProperty(property: Properties, event: MouseEvent): void {
     event.stopPropagation();
-    this.editingProperty = property;
+    this.editingProperty = {
+      id: property.id,
+      title: property.name,
+      price: String(property.price),
+      location: property.location,
+      type: property.type,
+      image: property.imag,
+    };
     this.editModalOpen = true;
   }
 
   onEditSave(updated: UserProperty): void {
-    const target = this.agent?.properties?.find((p) => p.id === updated.id);
+    const target = this.agent?.data.properties?.find((p) => p.id === updated.id);
     if (target) {
-      Object.assign(target, updated);
+      Object.assign(target, {
+        name: updated.title,
+        price: Number(updated.price),
+        location: updated.location,
+        type: updated.type,
+        imag: updated.image,
+      });
     }
     this.editModalOpen = false;
     this.editingProperty = null;

@@ -1,6 +1,6 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router,ActivatedRoute} from '@angular/router';
 import * as Highcharts from 'highcharts';
 import { AgentService } from '../../services/agent.service';
 import { Agent, AgentsResponse, stats } from '../../models/agent.model';
@@ -31,7 +31,9 @@ export class Agents implements OnInit, AfterViewInit {
 
   constructor(
     private agentService: AgentService,
-    private router: Router
+    private router: Router,
+    private changeDetector:ChangeDetectorRef
+
   ) {}
 
   ngOnInit(): void {
@@ -153,5 +155,20 @@ export class Agents implements OnInit, AfterViewInit {
 
   closeModal(): void {
     this.modalOpen = false;
+  }
+  deleteAgent(id:number, event: MouseEvent){
+    // id = Number(this.route.snapshot.paramMap.get('id'));
+    event.stopPropagation();
+    window.alert('are u shure u want to delete this user?')
+    if (id === undefined) return;
+    this.agentService.deleteAgent(id).subscribe({
+      next:()=>{
+      this.getAgents();
+      this.changeDetector.markForCheck();
+      },
+      error:(err)=>{
+        console.error(err);
+      },
+    })
   }
 }

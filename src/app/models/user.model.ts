@@ -10,7 +10,7 @@ export type userRole =
   | 'user';
 
 export interface UserProperty {
-  id: string;
+  id: number;
   title: string;
   price: string;
   location: string;

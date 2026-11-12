@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, of } from 'rxjs';
-import { Agent, AgentsResponse, AgentStatsResponse } from '../models/agent.model';
+import { Agent, AgentDetailsResponse, AgentsResponse, AgentStatsResponse } from '../models/agent.model';
 import { environment } from '../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 @Injectable({
@@ -20,8 +20,8 @@ export class AgentService {
     return this.http.get<AgentsResponse>(`${this.apiUrl}users/agents`);
   }
 
-  getAgentById(id: string): Observable<Agent | undefined> {
-    return this.http.get<Agent | undefined>(`${this.apiUrl}users/${id}`);
+  getAgentById(id: string): Observable<AgentDetailsResponse | undefined> {
+    return this.http.get<AgentDetailsResponse | undefined>(`${this.apiUrl}users/${id}`);
   }
 
   getAgentStats():Observable<AgentStatsResponse> {
@@ -32,8 +32,8 @@ export class AgentService {
     return this.http.post<Agent>(`${this.apiUrl}users/agents`, newAgentData);
   }
 
-  deleteAgent(id: string) {
-  
+  deleteAgent(id: number|undefined) :Observable<any>{
+   return this.http.delete<any>(`${this.apiUrl}users/agents/${id}`)
   }
 
   deleteAgentProperty(agentId: string, propertyId: string) {
