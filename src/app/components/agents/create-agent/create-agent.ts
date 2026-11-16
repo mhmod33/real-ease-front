@@ -24,7 +24,7 @@ export class CreateAgent {
   agencyAddress = '';
   agencyDescription = '';
 
-  agentTypes: AgentType[] = [  ];
+  agentTypes: string[] = ['realEstateAgent', 'independentRealEstateAgent', 'realEstateCompany', 'commercialAgent'];
 
   constructor(
     private agentService: AgentService,
@@ -54,7 +54,6 @@ export class CreateAgent {
           description: this.agencyDescription,
           phone: this.email,
           whatsapp_phone: this.email,
-          personal_website: this.agencyName,
           social_media: {} as SocialMedia,
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString()

@@ -65,10 +65,17 @@
   </div>
 
   <!-- ── Results Count ── -->
-  <div class="results-count-text">
-    عرض {{ agents()?.data?.length }} من النتائج
+   @if(agents()?.data?.length) {
+    <div class="results-count-text">
+      عرض {{ agents()?.data?.length }} من النتائج
+    </div>
+  } @else {
+  
+  <!-- ── Results Count ── -->
+  <div class="empty-state">
+   لا يوجد وكلاء بعد. اضغط على زر "اضافة وكيل" لإضافة وكيل جديد.
   </div>
-
+  }
   <!-- ── 2-Column Agents Cards Grid ── -->
   <div class="agents-grid">
     @for (agent of agents()?.data; track agent.id) {

@@ -41,7 +41,7 @@
           >
             <option value="" disabled selected>نوع الوكيل</option>
             @for (t of agentTypes; track t) {
-              <option [value]="t">{{ t }}</option>
+              <option [value]="t">{{ t== 'realEstateAgent' ? 'وكيل عقاري' : t== 'independentRealEstateAgent' ? 'وكيل عقاري مستقل' : t== 'realEstateCompany' ? 'شركة عقارية' : 'وكيل تجاري' }}</option>
             }
           </select>
           <span class="select-chevron">
@@ -81,8 +81,8 @@
             name="gender"
           >
             <option value="" disabled selected>الجنس</option>
-            <option value="ذكر">ذكر</option>
-            <option value="أنثى">أنثى</option>
+            <option value="male">ذكر</option>
+            <option value="female">أنثى</option>
           </select>
           <span class="select-chevron">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
@@ -110,17 +110,6 @@
             [(ngModel)]="agencyName"
             name="agencyName"
             placeholder="الوكالة"
-          />
-        </div>
-
-        <!-- Column 8: Agency Address -->
-        <div class="form-group">
-          <input
-            type="text"
-            class="form-control"
-            [(ngModel)]="agencyAddress"
-            name="agencyAddress"
-            placeholder="عنوان الوكالة"
           />
         </div>
 

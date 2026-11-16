@@ -220,7 +220,17 @@
   color: #64748b;
   margin-bottom: 20px;
 }
-
+.empty-state{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  background-color: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  color: #64748b;
+  font-size: 16px;
+}
 /* ── 2-Column Grid ── */
 .agents-grid {
   display: grid;
