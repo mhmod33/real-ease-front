@@ -1,16 +1,17 @@
-import { Component, OnInit, AfterViewInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router,ActivatedRoute} from '@angular/router';
+import { Router } from '@angular/router';
 import * as Highcharts from 'highcharts';
 import { AgentService } from '../../services/agent.service';
 import { Agent, AgentsResponse, stats } from '../../models/agent.model';
 import { AppModal } from '../shared/app-modal/app-modal';
 import { ChatModal, ChatContact } from '../shared/chat-modal/chat-modal';
 import { signal } from '@angular/core';
+import {DeleteModalConfirm} from '../../components/agents/delete-modal-confirm/delete-modal-confirm'
 @Component({
   selector: 'app-agents',
   standalone: true,
-  imports: [CommonModule, AppModal, ChatModal],
+  imports: [CommonModule, AppModal, ChatModal,DeleteModalConfirm],
   templateUrl: './agents.html',
   styleUrl: './agents.css',
 })
@@ -19,12 +20,15 @@ export class Agents implements OnInit, AfterViewInit {
   stats=signal<stats|undefined> (undefined);
   private donutChart?: Highcharts.Chart;
   private viewInitialized = false;
-
+  isLoading=signal(false)
   // Info Modal
   modalOpen = false;
   modalTitle = '';
   modalMessage = '';
-
+  
+  // Delete Modal
+  deleteModalOpen = false;
+  selectedAgentId: number | null = null;
   // Chat Modal
   showChatModal = false;
   chatContact?: ChatContact;
@@ -32,8 +36,6 @@ export class Agents implements OnInit, AfterViewInit {
   constructor(
     private agentService: AgentService,
     private router: Router,
-    private changeDetector:ChangeDetectorRef
-
   ) {}
 
   ngOnInit(): void {
@@ -92,12 +94,15 @@ export class Agents implements OnInit, AfterViewInit {
     });
   }
   getAgents(){
+    this.isLoading.set(true)
     this.agentService.getAgents().subscribe({
       next:(res)=>{
+        this.isLoading.set(false)
         this.agents.set(res);
         console.log('Agents:', res);
       },
       error:(err)=>{
+        this.isLoading.set(false)
         console.error(err)
       }
     })
@@ -156,19 +161,33 @@ export class Agents implements OnInit, AfterViewInit {
   closeModal(): void {
     this.modalOpen = false;
   }
-  deleteAgent(id:number, event: MouseEvent){
-    // id = Number(this.route.snapshot.paramMap.get('id'));
+  // deleteAgent(id:number, event: MouseEvent){
+  //   event.stopPropagation();
+  //   window.confirm('are u shure u want to delete this user?')
+  //   if (id === undefined) return;
+  //   this.agentService.deleteAgent(id).subscribe({
+  //     next:()=>{
+  //     this.getAgents();
+  //     this.changeDetector.markForCheck();
+  //     },
+  //     error:(err)=>{
+  //       console.error(err);
+  //     },
+  //   })
+  // }
+  openDeleteModal(id: number, event: MouseEvent): void {
     event.stopPropagation();
-    window.alert('are u shure u want to delete this user?')
-    if (id === undefined) return;
-    this.agentService.deleteAgent(id).subscribe({
-      next:()=>{
-      this.getAgents();
-      this.changeDetector.markForCheck();
-      },
-      error:(err)=>{
-        console.error(err);
-      },
-    })
+    this.selectedAgentId = id;
+    this.deleteModalOpen = true;
+  }
+
+  closeDeleteModal(): void {
+    this.deleteModalOpen = false;
+    this.selectedAgentId = null;
+  }
+
+  onAgentDeleted(): void {
+    this.closeDeleteModal();
+    this.getAgents();
   }
 }

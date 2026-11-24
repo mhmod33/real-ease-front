@@ -141,8 +141,8 @@
         <button type="button" class="btn-cancel" (click)="onCancel()">
           إلغاء
         </button>
-                <button type="submit" class="btn-submit">
-          إضافه
+        <button type="submit" class="btn-submit">
+          {{isLoading() ? 'جاري الاضافة ...': 'اضافة'}}
         </button>
       </div>
 

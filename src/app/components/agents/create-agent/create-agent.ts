@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AgentService } from '../../../services/agent.service';
 import { AgentType, SocialMedia } from '../../../models/agent.model';
-
+import { signal } from '@angular/core';
 @Component({
   selector: 'app-create-agent',
   standalone: true,
@@ -23,7 +23,7 @@ export class CreateAgent {
   agencyName = '';
   agencyAddress = '';
   agencyDescription = '';
-
+  isLoading=signal(false)
   agentTypes: string[] = ['realEstateAgent', 'independentRealEstateAgent', 'realEstateCompany', 'commercialAgent'];
 
   constructor(
@@ -32,38 +32,47 @@ export class CreateAgent {
   ) {}
 
   onSubmit(): void {
+    this.isLoading.set(true)
+    
     if (!this.name.trim()) {
       this.nameError = true;
       return;
     }
     this.nameError = false;
     this.agentService
-      .addAgent({
-          name: this.name,
-          email: this.email,
-          email_verified_at: null,
-          avatar: null,
-          cover_photo: null,
-          google_id: null,
-          role: this.type === 'وكيل عقاري مستقل' ? 'agent' : 'agency',
-          type: this.type,
-          age: this.age,
-          gender: this.gender,
-          agency: this.agencyName,
-          location: this.agencyAddress || 'غير محدد',
-          description: this.agencyDescription,
-          phone: this.email,
-          whatsapp_phone: this.email,
-          social_media: {} as SocialMedia,
+    .addAgent({
+      name: this.name,
+      email: this.email,
+      email_verified_at: null,
+      avatar: null,
+      cover_photo: null,
+      google_id: null,
+      role: this.type === 'وكيل عقاري مستقل' ? 'agent' : 'agency',
+      type: this.type,
+      age: this.age,
+      gender: this.gender,
+      agency: this.agencyName,
+      location: this.agencyAddress || 'غير محدد',
+      description: this.agencyDescription,
+      phone: this.email,
+      whatsapp_phone: this.email,
+      social_media: {} as SocialMedia,
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString()
-      })
-      .subscribe(() => {
-        this.router.navigate(['/agents']);
-      });
-  }
-
-  onCancel(): void {
+        })
+        .subscribe({
+          next: () => {
+            this.isLoading.set(false)
+            this.router.navigate(['/agents'])              
+          },
+          error: (err) => {
+            this.isLoading.set(false)
+            console.error(err)
+          },
+        });
+      }
+      
+      onCancel(): void {
     this.router.navigate(['/agents']);
   }
 }
