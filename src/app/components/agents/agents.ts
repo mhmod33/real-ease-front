@@ -175,10 +175,11 @@ export class Agents implements OnInit, AfterViewInit {
   //     },
   //   })
   // }
-  openDeleteModal(id: number, event: MouseEvent): void {
+  openDeleteModal(id: number, event: Event): void {
     event.stopPropagation();
     this.selectedAgentId = id;
     this.deleteModalOpen = true;
+    console.log("clicked",this.deleteModalOpen,this.selectedAgentId)
   }
 
   closeDeleteModal(): void {

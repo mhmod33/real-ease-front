@@ -13,14 +13,14 @@ export class DeleteModalConfirm {
   @Input() open = false;
   @Input() agentId: number | null = null;
 
-  @Output() deleted = new EventEmitter<void>();
+  @Output() save = new EventEmitter<void>();
   @Output() cancel = new EventEmitter<void>();
 
   constructor(
     private agentService: AgentService
   ) {}
 
-  onDelete(): void {
+  delete(): void {
     if (this.agentId === null) {
       console.error('Cannot delete agent: no agent ID was provided.');
       return;
@@ -31,7 +31,7 @@ export class DeleteModalConfirm {
     this.agentService.deleteAgent(this.agentId).subscribe({
       next:()=>{
         this.isDeleting = false;
-        this.deleted.emit();
+        this.save.emit();
       },
       error:(err)=>{
         this.isDeleting = false;
@@ -40,7 +40,7 @@ export class DeleteModalConfirm {
     });
   }
 
-  onCancel(): void {
+  canceled(): void {
     if (this.isDeleting) return;
     this.cancel.emit();
   }
