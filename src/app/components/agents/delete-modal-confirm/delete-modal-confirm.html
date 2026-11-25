@@ -4,15 +4,15 @@
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">Modal title</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <h5 class="modal-title">حذف الوكيل</h5>
+          <button type="button" class="btn-close" (click)="canceled()" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <p>Modal body text goes here.</p>
+          <p>هل انت متأكد من ان انك تريد حذف هذا الوكيل بالفعل؟</p>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="canceled()">Close</button>
-          <button type="button" class="btn btn-primary" (click)="delete()">Save changes</button>
+          <button type="button" class="btn btn-primary" (click)="delete()">حذف</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="canceled()">الغاء</button>
         </div>
       </div>
     </div>
