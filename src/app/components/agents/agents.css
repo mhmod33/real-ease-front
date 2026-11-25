@@ -474,3 +474,25 @@
   background-color: #cbd5e1;
   color: #0f172a;
 }
+.btn-edit{
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background-color: #e2e8f0;
+  color: #334155 !important;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 0;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+.btn-edit:hover{
+  background-color: #003366;
+  color: #fff !important;
+
+}
