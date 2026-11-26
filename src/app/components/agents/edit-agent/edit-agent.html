@@ -1,0 +1,173 @@
+@if (open) {
+  <div class="edit-agent-backdrop" dir="rtl" (click)="onCancel()">
+    <section
+      class="edit-agent-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="edit-agent-title"
+      (click)="$event.stopPropagation()"
+    >
+      <header class="edit-agent-header">
+        <h1 id="edit-agent-title" class="edit-agent-title">تعديل الوكيل</h1>
+        <button type="button" class="btn-close-modal" aria-label="إغلاق" (click)="onCancel()">
+          &times;
+        </button>
+      </header>
+
+      <div class="form-container-card">
+        <form (ngSubmit)="onSubmit()" class="agent-form">
+
+      <!-- Form Grid (2 Columns) -->
+      <div class="form-grid">
+
+        <!-- Column 1: Agent Name (Right) -->
+        <div class="form-group">
+          <input
+            type="text"
+            class="form-control"
+            [class.input-error]="nameError"
+            [(ngModel)]="name"
+            (ngModelChange)="nameError = false"
+            name="name"
+            placeholder="اسم الوكيل"
+            required
+          />
+          @if (nameError) {
+            <span class="field-error">يرجى إدخال اسم الوكيل</span>
+          }
+        </div>
+
+        <!-- Column 2: Agent Type Dropdown (Left) -->
+        <div class="form-group select-group">
+          <select
+            class="form-control select-control"
+            [(ngModel)]="type"
+            name="type"
+          >
+            <option value="" disabled selected>نوع الوكيل</option>
+            @for (t of agentTypes; track t) {
+              <option [value]="t">{{ t== 'realEstateAgent' ? 'وكيل عقاري' : t== 'independentRealEstateAgent' ? 'وكيل عقاري مستقل' : t== 'realEstateCompany' ? 'شركة عقارية' : 'وكيل تجاري' }}</option>
+            }
+          </select>
+          <span class="select-chevron">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+              <polyline points="6 9 12 15 18 9"/>
+            </svg>
+          </span>
+        </div>
+        <!--  Agent role Dropdown  -->
+        <div class="form-group select-group">
+          <select
+            class="form-control select-control"
+            name="role"
+          >
+            <option value="" disabled selected>الدور</option>
+            @for (r of agentRoles; track r) {
+              <option [value]="r">{{ r=='admin' ? 'مدير' : r== 'user' ? 'مستخدم' : 'وكيل' }}</option>
+            }
+          </select>
+          <span class="select-chevron">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+              <polyline points="6 9 12 15 18 9"/>
+            </svg>
+          </span>
+        </div>
+
+        <!-- Column 3: Address -->
+        <div class="form-group">
+          <input
+            type="text"
+            class="form-control"
+            [(ngModel)]="address"
+            name="address"
+            placeholder="العنوان"
+          />
+        </div>
+
+        <!-- Column 4: Age -->
+        <div class="form-group">
+          <input
+            type="number"
+            class="form-control"
+            [(ngModel)]="age"
+            name="age"
+            placeholder="السن"
+          />
+        </div>
+
+        <!-- Column 5: Gender Dropdown -->
+        <div class="form-group select-group">
+          <select
+            class="form-control select-control"
+            [(ngModel)]="gender"
+            name="gender"
+          >
+            <option value="" disabled selected>الجنس</option>
+            <option value="male">ذكر</option>
+            <option value="female">أنثى</option>
+          </select>
+          <span class="select-chevron">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+              <polyline points="6 9 12 15 18 9"/>
+            </svg>
+          </span>
+        </div>
+
+        <!-- Column 6: Email -->
+        <div class="form-group">
+          <input
+            type="email"
+            class="form-control"
+            [(ngModel)]="email"
+            name="email"
+            placeholder="الايميل"
+          />
+        </div>
+
+        <!-- Column 7: Agency Name -->
+        <div class="form-group">
+          <input
+            type="text"
+            class="form-control"
+            [(ngModel)]="agencyName"
+            name="agencyName"
+            placeholder="الوكالة"
+          />
+        </div>
+
+        <!-- Column 9: Agency Description (Full Width) -->
+        <div class="form-group full-width textarea-group">
+          <textarea
+            class="form-control textarea-control"
+            [(ngModel)]="agencyDescription"
+            name="agencyDescription"
+            rows="5"
+            placeholder="وصف الوكالة"
+          ></textarea>
+          <span class="textarea-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+              <line x1="21" y1="10" x2="3" y2="10"/>
+              <line x1="21" y1="6" x2="3" y2="6"/>
+              <line x1="21" y1="14" x2="3" y2="14"/>
+              <line x1="21" y1="18" x2="3" y2="18"/>
+            </svg>
+          </span>
+        </div>
+
+      </div>
+
+      <!-- Form Action Buttons -->
+          <div class="form-actions-row">
+            <button type="button" class="btn-cancel" (click)="onCancel()">
+              إلغاء
+            </button>
+            <button type="submit" class="btn-submit">
+              {{isLoading() ? 'جاري الحفظ ...': 'حفظ'}}
+            </button>
+          </div>
+
+        </form>
+      </div>
+    </section>
+  </div>
+}

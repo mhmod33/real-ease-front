@@ -150,7 +150,7 @@
 
         <!-- Action Buttons Row -->
         <div class="agent-actions-row">
-           <button class="btn-edit" type="button" (click)="$event.stopPropagation()">
+           <button class="btn-edit" type="button" (click)="openEditModalfun(agent.id, $event)">
           <span aria-hidden="true">
             <svg xmlns="http://www.w3.org/2000/svg" stroke-width="2" width="16" height="16" viewBox="0 0 24 24" stroke="#003366" fill="none">
             <g clip-path="url(#clip0_4418_9717)">
@@ -221,3 +221,12 @@
 (cancel)="closeDeleteModal()"
 >
 </app-delete-modal-confirm>
+
+<app-edit-agent
+[open]="openEditModal"
+[agent]="agent"
+[agentId]="editAgentId"
+(save)="onAgentEdited()"
+(close)="closeEditModal()"
+>
+</app-edit-agent>

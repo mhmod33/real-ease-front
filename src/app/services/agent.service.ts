@@ -31,6 +31,9 @@ export class AgentService {
   addAgent(newAgentData: Partial<Agent>):Observable<Agent> {
     return this.http.post<Agent>(`${this.apiUrl}users/agents`, newAgentData);
   }
+  editAgent(id: number|undefined,newAgentData: Partial<Agent>):Observable<Agent> {
+    return this.http.put<Agent>(`${this.apiUrl}users/${id}`, newAgentData);
+  }
 
   deleteAgent(id: number|undefined) :Observable<any>{
    return this.http.delete<any>(`${this.apiUrl}users/agents/${id}`)

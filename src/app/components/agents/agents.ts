@@ -8,10 +8,11 @@ import { AppModal } from '../shared/app-modal/app-modal';
 import { ChatModal, ChatContact } from '../shared/chat-modal/chat-modal';
 import { signal } from '@angular/core';
 import {DeleteModalConfirm} from '../../components/agents/delete-modal-confirm/delete-modal-confirm'
+import { EditAgent } from './edit-agent/edit-agent';
 @Component({
   selector: 'app-agents',
   standalone: true,
-  imports: [CommonModule, AppModal, ChatModal,DeleteModalConfirm],
+  imports: [CommonModule, AppModal, ChatModal,DeleteModalConfirm,EditAgent],
   templateUrl: './agents.html',
   styleUrl: './agents.css',
 })
@@ -32,6 +33,10 @@ export class Agents implements OnInit, AfterViewInit {
   // Chat Modal
   showChatModal = false;
   chatContact?: ChatContact;
+  // edit modal
+  openEditModal=false;
+  editAgentId:number|undefined=undefined;
+  agent:Agent|null=null;
 
   constructor(
     private agentService: AgentService,
@@ -181,14 +186,28 @@ export class Agents implements OnInit, AfterViewInit {
     this.deleteModalOpen = true;
     console.log("clicked",this.deleteModalOpen,this.selectedAgentId)
   }
+  openEditModalfun(id: number, event: Event): void {
+    event.stopPropagation();
+    this.editAgentId = id;
+    this.openEditModal = true;
+    console.log("clicked",this.openEditModal,this.openEditModal,this.editAgentId)
+  }
 
   closeDeleteModal(): void {
     this.deleteModalOpen = false;
     this.selectedAgentId = null;
   }
+  closeEditModal(): void {
+    this.openEditModal = false;
+    this.editAgentId = undefined;
+  }
 
   onAgentDeleted(): void {
     this.closeDeleteModal();
+    this.getAgents();
+  }
+  onAgentEdited(): void {
+    this.closeEditModal();
     this.getAgents();
   }
 }
